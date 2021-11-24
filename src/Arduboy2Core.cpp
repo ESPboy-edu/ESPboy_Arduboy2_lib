@@ -179,6 +179,10 @@ uint8_t Arduboy2Core::buttonsState(){
 }
 
 
+uint8_t Arduboy2Core::getInput(){
+  buttonsState();
+}
+
 // delay in ms with 16 bit duration
 void Arduboy2Core::delayShort(uint16_t ms) {
   delay((unsigned long) ms);

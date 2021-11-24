@@ -880,6 +880,9 @@ void Arduboy2Base::clear(){
   memset(sBuffer, 0, HEIGHT*WIDTH/8);
 }
 
+void Arduboy2Base::clearDisplay(){
+  clear();
+}
 
 void IRAM_ATTR Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
@@ -917,9 +920,7 @@ if(!allpixelson_flag){
     myESPboy.tft.pushImage(0, 20+kPos*16, WIDTH, 16, oBuffer);
   }
 }
-else myESPboy.tft.fillScreen(foregroundColor);
-
-
+else {myESPboy.tft.fillRect(0,20,128,64,foregroundColor);}
 }
 
 

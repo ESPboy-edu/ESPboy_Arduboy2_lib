@@ -213,6 +213,7 @@ class Arduboy2Core
      * LEFT_BUTTON, RIGHT_BUTTON, UP_BUTTON, DOWN_BUTTON, A_BUTTON, B_BUTTON
      */
     uint8_t static buttonsState();
+    uint8_t static getInput();
 
     /** \brief
      * Paint 8 pixels vertically to the display.
