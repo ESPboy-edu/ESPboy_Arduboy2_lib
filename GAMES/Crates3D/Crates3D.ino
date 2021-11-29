@@ -1,6 +1,5 @@
 // Crates 3D. A port of the TI-83 calculator puzzle game.
 // Ion version by Badja. Arduboy port by Brian Smith.
-#include <ESP8266WiFi.h>
 #include "Arduboy2.h"
 #include "c3dstd.h"
 #include "title.h"
@@ -73,7 +72,6 @@ void save()
   for (i=0; i<768; i++) EEPROM.write(i+150,map3d[i]);
   EEPROM.write(918,x); EEPROM.write(919,y); EEPROM.write(920,z);
   EEPROM.write(921,end_x); EEPROM.write(922,end_y); EEPROM.write(923,end_z);
-  EEPROM.commit();
   print(0,8,"Saved to level 0."); arduboy.display();
   angle--; if (angle<0) angle=3;
   delay(1000);
@@ -270,15 +268,13 @@ int gameloop() {
     }
     draw_map(x,y,z,angle);
     print(0,0," Solved! "); arduboy.display();
-    while(!arduboy.pressed(B_BUTTON)) delay(2);
+    while(!arduboy.pressed(B_BUTTON)) delay(10);
     level++; if (level==17) level=1;
   }
 }
 
 //-------------------------------------------------------------------
 void setup() {
- WiFi.mode(WIFI_OFF); //disable wifi to save some battery power
- EEPROM.begin(2000);
  arduboy.begin();
 }
 
