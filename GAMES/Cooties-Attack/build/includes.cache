@@ -1,0 +1,87 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\cores\\arduboy"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\variants\\arduboy-promicro"
+  },
+  {
+    "Sourcefile": "c:\\Users\\diego\\OneDrive\\Escritorio\\arduboy\\Github\\Cooties-Attack\\build\\sketch\\cooties.ino.cpp",
+    "Include": "Arduboy2.h",
+    "Includepath": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\diego\\OneDrive\\Escritorio\\arduboy\\Github\\Cooties-Attack\\build\\sketch\\cooties.ino.cpp",
+    "Include": "EEPROM.h",
+    "Includepath": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\EEPROM\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\diego\\OneDrive\\Escritorio\\arduboy\\Github\\Cooties-Attack\\build\\sketch\\cooties.ino.cpp",
+    "Include": "ArduboyTones.h",
+    "Includepath": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\ArduboyTones\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\diego\\OneDrive\\Escritorio\\arduboy\\Github\\Cooties-Attack\\build\\sketch\\cooties.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "c:\\Users\\diego\\OneDrive\\Escritorio\\arduboy\\Github\\Cooties-Attack\\build\\sketch\\src\\fonts\\Font3x5.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Arduboy2.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Arduboy2Audio.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Arduboy2Beep.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Arduboy2Core.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Arduboy2Data.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\Sprites.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\SpritesB.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\ab_logo.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\Arduboy2\\src\\glcdfont.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\diego\\AppData\\Local\\Arduino15\\packages\\arduboy-homemade\\hardware\\avr\\1.2.9\\libraries\\ArduboyTones\\src\\ArduboyTones.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
