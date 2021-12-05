@@ -38,7 +38,7 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 - there is a problem with a "char" data (signed/unsigned problem). By default Arduino "char" is signed and ESP "char" is unsigned. So you have to change all "char" to "signed char".
 - it's also better to change all "short" to "int16_t", "unsigned shot" to "uint16_t", "byte" to "uint8_t", "int" to "int16_t", "unsigned int" to "uint16_t", "long" to "int32_t", "unsigned long" to "uint32_t" 
 - in AVR compiler "bool function();" returns FALSE in case of function out without "return(value);", but in ESP8266 compiler it returns TRUE
-
+- abs(); function does not work properly with type "float" and "double". It rounds number to integer, so you have to implement your own "abs_();
 
 # Advantages of ESPboy (ESP8266)
 - 8 keys
