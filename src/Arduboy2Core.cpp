@@ -180,7 +180,7 @@ uint8_t Arduboy2Core::buttonsState(){
 
 
 uint8_t Arduboy2Core::getInput(){
-  buttonsState();
+  return(buttonsState());
 }
 
 // delay in ms with 16 bit duration
