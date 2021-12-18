@@ -86,7 +86,6 @@ If authors against posting the code in this repository for the purpose of learni
 - **Arduminer** (Proprietary) by [Bergasms](http://www.bergasms.com/arduboy/Arduminer.html)
 - **Asteroid Belt** (???) by [Xhaku Hans](https://gist.github.com/Gitonym/30718996c12ea4b918b0daf47d0409b3)
 - **Cascade Path** (???) by [arduboychris](https://github.com/arduboychris/CascadePath)
-
 - **Diamonds** (MIT) by [redbug - Miguel Vanhove](https://community.arduboy.com/t/diamonds-a-breakout-puzzle-game-1st-kyuran-game/3368)
 - **Crates** (MIT) by [jessemillar](https://community.arduboy.com/t/crates-pedal-to-the-metal-car-crime/6744)
 - **CascadePath** (???) by [Chris](https://community.arduboy.com/t/cascade-path-wagon-train/1258) 
