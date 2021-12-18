@@ -77,6 +77,15 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **Onychophora** (MIT) by [renato-grottesi](https://community.arduboy.com/t/onychophora/8352)
+- **Cooties attack!** (???) by [Diego Tarragona](https://github.com/graziel666/Cooties-Attack)
+- **Crates 3D** (MIT) by [Brian](https://github.com/briansm-github/Crates3D)
+- **Space Quarth** (MIT) by [Schuemi](https://github.com/Schuemi/SpaceQuarth)
+- **ECOMD** (MIT) by [Team ARG](https://github.com/Team-ARG-Museum/ID-33-ECOMD)
+- **Ardubrain** (Proprietary) by [renato-grottesi](https://github.com/renato-grottesi/arduboy/tree/master/ardubrain)
+- **Arduminer** (Proprietary) by [Bergasms](http://www.bergasms.com/arduboy/Arduminer.html)
+- **Asteroid Belt** (???) by [Xhaku Hans](https://gist.github.com/Gitonym/30718996c12ea4b918b0daf47d0409b3)
+- **Cascade Path** (???) by [arduboychris](https://github.com/arduboychris/CascadePath)
 
 - **Diamonds** (MIT) by [redbug - Miguel Vanhove](https://community.arduboy.com/t/diamonds-a-breakout-puzzle-game-1st-kyuran-game/3368)
 - **Crates** (MIT) by [jessemillar](https://community.arduboy.com/t/crates-pedal-to-the-metal-car-crime/6744)
