@@ -162,7 +162,7 @@ static bool     isDefeated, isMenu;
 static bool     isMuteki = false;
 #endif
 
-
+/*
 int32_t min(int32_t a, int32_t b){
   return ((a>b)?b:a);
 };
@@ -171,7 +171,7 @@ int32_t min(int32_t a, int32_t b){
 int32_t max(int32_t a, int32_t b){
   return ((a>b)?a:b);
 };
-
+*/
 /*---------------------------------------------------------------------------*/
 /*                              Main Functions                               */
 /*---------------------------------------------------------------------------*/

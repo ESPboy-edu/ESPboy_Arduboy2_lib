@@ -1,5 +1,8 @@
 #include "common.h"
 
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#define max(a,b) ((a) < (b) ? (b) : (a))
+
 extern ESPboyPlaytune pTunes;
 /*  Defines  */
 
@@ -43,7 +46,7 @@ enum {
 #define sign(n)         (((n) > 0) - ((n) < 0))
 
 /*  Typedefs  */
-
+/*
 int32_t max(int32_t a, int32_t b){
   if(a>b) return (a);
   else return(b);
@@ -53,7 +56,7 @@ int32_t min(int32_t a, int32_t b){
   if(a<b) return (a);
   else return(b);
 };
-
+*/
 
 typedef struct {
     uint8_t type;
