@@ -77,6 +77,9 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- Trials of Astarok (Unknonw) by [press play on tape](https://github.com/Press-Play-On-Tape/TrialsOfAstarok)
+- Number Puzzle (Unknown) by [t-iwasaki](https://github.com/t-iwasaki/arduboy-NumberPuzzle)
+- Horde and LATE (Unknown) by [justcallmekoko](https://github.com/justcallmekoko/ArduboyTheHorde/releases/tag/v0.3)
 - **Onychophora** (MIT) by [renato-grottesi](https://community.arduboy.com/t/onychophora/8352)
 - **Cooties attack!** (???) by [Diego Tarragona](https://github.com/graziel666/Cooties-Attack)
 - **Crates 3D** (MIT) by [Brian](https://github.com/briansm-github/Crates3D)
