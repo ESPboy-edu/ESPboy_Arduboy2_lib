@@ -34,6 +34,7 @@ void Arduboy2Core::boot(){
   //Init ESPboy
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
   
+  myESPboy.tft.setAddrWindow(0, 20, WIDTH, HEIGHT);
 }
 
 

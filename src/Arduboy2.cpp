@@ -884,15 +884,17 @@ void Arduboy2Base::clearDisplay(){
   clear();
 }
 
+
+static uint16_t oBuffer[WIDTH*64] __attribute__ ((aligned));
+
 void IRAM_ATTR Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
 //but you can do it checking global 
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
 //the same way as for bool invert_flag; or bool allpixelson_flag;
-  static uint16_t oBuffer[WIDTH*16];
   static uint8_t currentDataByte;
-  static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
+  static uint16_t foregroundColor, backgroundColor, xPos, yPos, addr;
 
   
   if(!invert_flag){
@@ -904,23 +906,21 @@ void IRAM_ATTR Arduboy2Base::display(){
     foregroundColor = colors[backgroundclr];
   }
 
- 
+
 if(!allpixelson_flag){
-  for(kPos = 0; kPos<4; kPos++){  //if exclude this 4 parts screen devision and process all the big oBuffer, EPS8266 resets (
-    kkPos = kPos<<1;
-    for (xPos = 0; xPos < WIDTH; xPos++) {
-      for (yPos = 0; yPos < 16; yPos++) {		
-		    if (!(yPos % 8)) currentDataByte = sBuffer[xPos + ((yPos>>3)+kkPos) * WIDTH];
+     for (xPos = 0; xPos < WIDTH; xPos++) {
+      for (yPos = 0; yPos < HEIGHT; yPos++) {		
+		    if (!(yPos % 8)) currentDataByte = sBuffer[xPos + (yPos>>3) * WIDTH];
 		    addr = 	yPos*WIDTH+xPos;
             if (currentDataByte & 0x01) oBuffer[addr] = foregroundColor;
             else oBuffer[addr] = backgroundColor;
 			currentDataByte = currentDataByte >> 1;
 	  }
     }
-    myESPboy.tft.pushImage(0, 20+kPos*16, WIDTH, 16, oBuffer);
-  }
+    wdt_reset();
+    myESPboy.tft.pushColors(oBuffer, WIDTH*HEIGHT);
 }
-else {myESPboy.tft.fillRect(0,20,128,64,foregroundColor);}
+else {myESPboy.tft.fillRect(0, 20, WIDTH, HEIGHT, foregroundColor);}
 }
 
 
