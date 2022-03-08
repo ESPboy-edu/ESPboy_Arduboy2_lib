@@ -885,7 +885,6 @@ void Arduboy2Base::clearDisplay(){
 }
 
 
-static uint16_t oBuffer[WIDTH*64] __attribute__ ((aligned));
 
 void IRAM_ATTR Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
@@ -893,10 +892,10 @@ void IRAM_ATTR Arduboy2Base::display(){
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
 //the same way as for bool invert_flag; or bool allpixelson_flag;
-  static uint8_t currentDataByte;
-  static uint16_t foregroundColor, backgroundColor, xPos, yPos, addr;
+  static uint16_t oBuffer[WIDTH*16] __attribute__ ((aligned));
+  static uint16_t currentDataByte, currentDataAddr;
+  static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
 
-  
   if(!invert_flag){
     foregroundColor = colors[foregroundclr];
     backgroundColor = colors[backgroundclr];
@@ -907,21 +906,28 @@ void IRAM_ATTR Arduboy2Base::display(){
   }
 
 
+myESPboy.tft.setAddrWindow(0, 20, WIDTH, HEIGHT);
+ 
 if(!allpixelson_flag){
-     for (xPos = 0; xPos < WIDTH; xPos++) {
-      for (yPos = 0; yPos < HEIGHT; yPos++) {		
-		    if (!(yPos % 8)) currentDataByte = sBuffer[xPos + (yPos>>3) * WIDTH];
+  for(kPos = 0; kPos<4; kPos++){
+    kkPos = kPos<<1;
+    for (xPos = 0; xPos < WIDTH; xPos++) {
+            currentDataAddr = xPos + kkPos * WIDTH;
+            currentDataByte = sBuffer[currentDataAddr] + (sBuffer[currentDataAddr+128]<<8);
+      for (yPos = 0; yPos < 16; yPos++) {		
+		    //if (!(yPos % 8)) currentDataByte = sBuffer[xPos + ((yPos>>3)+kkPos) * WIDTH];
 		    addr = 	yPos*WIDTH+xPos;
             if (currentDataByte & 0x01) oBuffer[addr] = foregroundColor;
             else oBuffer[addr] = backgroundColor;
 			currentDataByte = currentDataByte >> 1;
 	  }
     }
-    wdt_reset();
-    myESPboy.tft.pushColors(oBuffer, WIDTH*HEIGHT);
+    myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+  }
 }
-else {myESPboy.tft.fillRect(0, 20, WIDTH, HEIGHT, foregroundColor);}
+else {myESPboy.tft.fillRect(0,20,128,64,foregroundColor);}
 }
+
 
 
 void Arduboy2Base::display(bool clear){
