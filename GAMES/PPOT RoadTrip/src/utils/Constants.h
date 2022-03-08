@@ -48,7 +48,7 @@ namespace Constants {
     constexpr uint16_t Gear2Max = 11200;
     constexpr uint16_t Gear3Max = 21000;
     constexpr uint16_t Gear4Max = 40000;
-    constexpr uint16_t Gear5Max = 50000;
+    constexpr uint16_t Gear5Max = 49000;
 
     constexpr uint16_t Gear0Min = 0;
     constexpr uint16_t Gear1Min = Gear1Max / 3 * 4;

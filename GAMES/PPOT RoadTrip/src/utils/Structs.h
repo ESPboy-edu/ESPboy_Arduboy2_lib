@@ -100,7 +100,7 @@ struct GamePlayVars {
                 return TimeOfDay::Dawn;
                 
         }
-
+     return(TimeOfDay::Day);
     }
 
 
@@ -123,7 +123,7 @@ struct GamePlayVars {
 
 
         }
-
+        return(0);
     }
 
     bool incTimeOfDay() {

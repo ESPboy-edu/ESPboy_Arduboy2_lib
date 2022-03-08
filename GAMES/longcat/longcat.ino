@@ -85,7 +85,7 @@ bool copyLevel(){
   hero.y = pgm_read_byte_near(levels[stage]+9);
   hero.dx = 0;
   hero.dy = 0;
-  return(0);
+  return (0);
 }
 
 bool isStuck(){
@@ -259,11 +259,11 @@ void updateSimulation(){
       nextStage();
       stage++;
       gamestate = GameState::LoadLevel;
-      if(stage >= savedLevel) {
+      //if(stage >= savedLevel) {
         savedLevel = stage;
         EEPROM.put(SAVELOCATION, savedLevel);
         EEPROM.commit();
-      }
+      //}
     }
   }
 
@@ -303,8 +303,8 @@ void updateSplashScreen(){
   if(arduboy.pressed(B_BUTTON)){
     stage = 0;
     EEPROM.put(SAVELOCATION, 0);
-    gamestate = GameState::LoadLevel;
     EEPROM.commit();
+    gamestate = GameState::LoadLevel;
   }
 }
 
