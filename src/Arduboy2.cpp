@@ -892,10 +892,11 @@ void IRAM_ATTR Arduboy2Base::display(){
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
 //the same way as for bool invert_flag; or bool allpixelson_flag;
-  static uint16_t oBuffer[WIDTH*16] __attribute__ ((aligned));
+  static uint16_t oBuffer[WIDTH*16] __attribute__ ((aligned));;
   static uint16_t currentDataByte, currentDataAddr;
   static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
-
+  static uint8_t vertOffset;
+  
   if(!invert_flag){
     foregroundColor = colors[foregroundclr];
     backgroundColor = colors[backgroundclr];
@@ -905,11 +906,13 @@ void IRAM_ATTR Arduboy2Base::display(){
     foregroundColor = colors[backgroundclr];
   }
 
+if (HEIGHT == 64) vertOffset = 20;
+else vertOffset = 0;
 
-myESPboy.tft.setAddrWindow(0, 20, WIDTH, HEIGHT);
+myESPboy.tft.setAddrWindow(0, vertOffset, WIDTH, HEIGHT);
  
 if(!allpixelson_flag){
-  for(kPos = 0; kPos<4; kPos++){
+  for(kPos = 0; kPos<4*(HEIGHT/64); kPos++){
     kkPos = kPos<<1;
     for (xPos = 0; xPos < WIDTH; xPos++) {
             currentDataAddr = xPos + kkPos * WIDTH;
@@ -925,7 +928,7 @@ if(!allpixelson_flag){
     myESPboy.tft.pushColors(oBuffer, WIDTH*16);
   }
 }
-else {myESPboy.tft.fillRect(0,20,128,64,foregroundColor);}
+else {myESPboy.tft.fillRect(0, vertOffset, WIDTH, HEIGHT,foregroundColor);}
 }
 
 
