@@ -551,8 +551,8 @@ void Arduboy2Base::fillRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t 
 
 
 void Arduboy2Base::fillScreen(uint8_t color){
-	if (color == BLACK) memset(sBuffer, 0x00, 1024);
-    else memset(sBuffer, 0xff, 1024);
+	if (color == BLACK) memset(sBuffer, 0x00, HEIGHT*WIDTH/8);
+    else memset(sBuffer, 0xff, HEIGHT*WIDTH/8);
 }
 
 
