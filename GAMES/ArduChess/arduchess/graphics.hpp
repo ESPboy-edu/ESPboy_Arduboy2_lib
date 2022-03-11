@@ -500,6 +500,7 @@ static void clear_buf()
   for(auto& i : buf) i = 0;
 }
 
+/*
 static void paint_half(bool side, uint8_t *b, bool clear)
 {
   static uint16_t oBuffer[WIDTH/2*HEIGHT] __attribute__ ((aligned));
@@ -526,7 +527,36 @@ static void paint_half(bool side, uint8_t *b, bool clear)
     myESPboy.tft.pushColors(oBuffer, WIDTH/2*HEIGHT);
 
     if(clear) memset(b, 0, WIDTH/2*HEIGHT/8);
+}*/
+
+
+void paint_half(bool side, uint8_t *b, bool clr){
+  static uint16_t oBuffer[WIDTH/2*16] __attribute__ ((aligned));;
+  static uint16_t currentDataByte, currentDataAddr;
+  static uint16_t xPos, yPos, kPos, kkPos, addr;
+  static uint8_t vertOffset;
+  
+  if (!side) myESPboy.tft.setAddrWindow(0, 20, WIDTH/2, HEIGHT);
+  else myESPboy.tft.setAddrWindow(64, 20, WIDTH/2, HEIGHT);
+ 
+  for(kPos = 0; kPos<4; kPos++){
+    kkPos = kPos<<1;
+    for (xPos = 0; xPos < WIDTH/2; xPos++) {
+            currentDataAddr = xPos + kkPos * WIDTH/2;
+            currentDataByte = b[currentDataAddr] + (b[currentDataAddr+WIDTH/2]<<8);
+      for (yPos = 0; yPos < 16; yPos++) {    
+        addr =  yPos*WIDTH/2+xPos;
+            if (currentDataByte & 0x01) oBuffer[addr] = TFT_YELLOW;
+            else oBuffer[addr] = TFT_BLACK;
+      currentDataByte = currentDataByte >> 1;
+    }
+    }
+    myESPboy.tft.pushColors(oBuffer, WIDTH/2*16);
+  }
+
+  if(clr) memset(b, 0, WIDTH/2*HEIGHT/8);
 }
+
 
 static void paint_left_half(bool clear)
 {
