@@ -1,5 +1,5 @@
 #include "src/utils/Arduboy2Ext.h"
-#include <ESP_EEPROM.h>
+//#include <EEPROM.h>
 
 void initEEPROM(bool forceOverwrite) {
 
@@ -33,7 +33,6 @@ void initEEPROM(bool forceOverwrite) {
 
     } 
     EEPROM.commit();
-   
 }
 
 
@@ -85,12 +84,13 @@ void writeHighScoreEntry(HighScoreVars &highScoreVars) {
     // Write score and initials to the nominated slot ..
 
     EEPROM.put(Constants::EEPROM_Scores + (7 * highScoreVars.slot), game.score + game.player.x / Constants::TileSize);
-    EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 2, highScoreVars.seeds[0]);
-    EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 3, highScoreVars.seeds[1]);
-    EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 4, highScoreVars.seeds[2]);
-    EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 5, highScoreVars.seeds[3]);
-    EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 6, highScoreVars.seeds[4]);
-    EEPROM.commit();
+
+    for (uint8_t i = 0; i < 5; i++) {
+
+        EEPROM.write(Constants::EEPROM_Scores + (7 * highScoreVars.slot) + 2 + i, highScoreVars.seeds[i]);
+
+    }
+ EEPROM.commit();
 }
 
 void highScores() {

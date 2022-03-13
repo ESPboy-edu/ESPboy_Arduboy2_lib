@@ -148,8 +148,38 @@ void Map::generateRoom(uint8_t roomNum) {
                                 break;
 
                             case 26 ... 27:
-                                if (flatFloor >= 2) {
-                                    this->addObject(ObjectTypes::Chest_Closed, tSpawnBarrier + x, floor - 1);
+                                if (flatFloor >= 2 && upperPlatform_X == Constants::NoPlatform) {
+
+                                    uint8_t upperRange = 1;
+
+                                    switch (this->game->mapNumber) {
+
+                                        case 1 ... 4:
+                                            upperRange = 1;
+                                            break;
+
+                                        case 5 ... 6:
+                                            upperRange = 2;
+                                            break;
+
+                                        case 7 ... 8:
+                                            upperRange = 3;
+                                            break;
+
+                                        case 9 ... 10:
+                                            upperRange = 4;
+                                            break;
+
+                                        default:
+                                            upperRange = 5;
+                                            break;
+                                            
+                                    }
+
+                                    if (hash(this->game->seed) % upperRange == 0) {
+                                        this->addObject(ObjectTypes::Chest_Closed, tSpawnBarrier + x, floor - 1);
+                                    }
+
                                 }
                                 break;
 

@@ -1,14 +1,24 @@
 #include "Sprite.h"
 #include "../../AstarokGame.h"
 
-uint8_t Sprite::getFlags()      { if (this->spriteData==NULL){return -1;} else return pgm_read_byte(this->spriteData + SpriteDataLayout::Flags); }
-uint8_t Sprite::getType()       { if (this->spriteData==NULL){return -1;} else return pgm_read_byte(this->spriteData + SpriteDataLayout::Type); }
+uint8_t Sprite::getFlags() { 
+    
+    if (this->spriteData == nullptr) { return 0; }
+    return pgm_read_byte(this->spriteData + SpriteDataLayout::Flags); 
+    
+}
+
+uint8_t Sprite::getType() { 
+    
+    if (this->spriteData == nullptr) { return 0; }
+    return pgm_read_byte(this->spriteData + SpriteDataLayout::Type); 
+    
+}
 
 int16_t Sprite::getRightX()     { return this->x + this->getWidth() - 1; }
 int16_t Sprite::getTopY()       { return this->y; }
 int16_t Sprite::getBottomY()    { return this->y + this->getHeight() - 1; }
 int16_t Sprite::getLeftX()      { return this->x; }
-
 
 uint8_t Sprite::getWidth() { 
 
@@ -33,6 +43,7 @@ uint8_t Sprite::getHeight() {
 }
 
 void Sprite::init(const uint8_t * data, const uint8_t * img, const uint8_t * mask, int tX, int tY) {
+
     this->spriteData = data;
     this->spriteImg = img;
     this->spriteMask = mask;
@@ -166,6 +177,8 @@ void Sprite::deactivate(bool explode) {
 }
 
 void Sprite::move() {
+        
+
     // Capture skulls etc in walls ..
 
     if (this->collide(this->x, this->y) == Constants::Collision_Platform) {
@@ -353,9 +366,8 @@ void Sprite::move() {
             break;
 
     }
+
 }
-
-
 
 bool Sprite::jump() {
 
@@ -392,14 +404,27 @@ void Sprite::draw() {
             break;
 
         case ObjectTypes::Fireball:
-            Sprites::drawExternalMask(x - this->game->camera.x, y - this->game->camera.y, this->spriteImg, this->spriteMask, this->vy > 0, this->vy > 0);
-            break;
+            if (this->game->mapNumber % 2 == 0) {
+
+                Sprites::drawExternalMask(x - this->game->camera.x, y - this->game->camera.y, this->spriteImg, this->spriteMask, this->vy > 0, this->vy > 0);
+
+            }
+            else {
+
+                if (this->vy > 0) {
+                    Sprites::drawExternalMask(x - this->game->camera.x, y - this->game->camera.y, Images::Pirahna_Down, Images::Pirahna_Down_Mask, arduboy->getFrameCountHalf(8), 0);
+                }
+                else {
+                    Sprites::drawExternalMask(x - this->game->camera.x, y - this->game->camera.y, Images::Pirahna_Up, Images::Pirahna_Up_Mask, arduboy->getFrameCountHalf(8), 0);
+                }
+
+            }
+            break;            
 
         case ObjectTypes::Coin:
 
             if (this->autoExpire > 20 || (this->autoExpire / 4) % 2 == 0) {
-                Sprites::drawSelfMasked(x - this->game->camera.x, y - this->game->camera.y, Images::Coins_Masks, arduboy->getFrameCount(16) / 4);
-                Sprites::drawErase(x - this->game->camera.x, y - this->game->camera.y, Images::Coins, arduboy->getFrameCount(16) / 4);
+                Sprites::drawPlusMask(x +2 - this->game->camera.x, y +2 - this->game->camera.y, Images::Coins, arduboy->getFrameCount(16) / 4);
             }
             break;
 

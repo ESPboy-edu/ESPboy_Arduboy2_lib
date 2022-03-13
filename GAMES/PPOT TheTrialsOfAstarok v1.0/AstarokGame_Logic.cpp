@@ -1,8 +1,9 @@
 #include "src/utils/Arduboy2Ext.h"
 #include "AstarokGame.h"
 
+//AstarokGame::AstarokGame(Arduboy2Ext *arduboy, ArduboyPlaytune *tunes) {
 AstarokGame::AstarokGame(Arduboy2Ext *arduboy, ESPboyPlaytune *tunes) {
-
+  
     this->player.game = this;
     this->level.game = this;
     this->arduboy = arduboy;
@@ -12,6 +13,7 @@ AstarokGame::AstarokGame(Arduboy2Ext *arduboy, ESPboyPlaytune *tunes) {
 
         mobileObject.game = this;
         mobileObject.arduboy = arduboy;
+        mobileObject.deactivate(false);
 
     }
 
@@ -19,6 +21,7 @@ AstarokGame::AstarokGame(Arduboy2Ext *arduboy, ESPboyPlaytune *tunes) {
 
         interactiveObject.game = this;
         interactiveObject.arduboy = arduboy;
+        interactiveObject.deactivate();
 
     }
 
@@ -382,111 +385,115 @@ void AstarokGame::cycle(GameState &gameState) {
 
             // Have we touched another object?
 
-            if (obj.getActive() && testCollision(&player, &obj)) {
-              
-                uint8_t type = obj.getType();
+            if (event != EventType::Death && event != EventType::Death_Init) {
 
-                switch (type) {
+                if (obj.getActive() && testCollision(&player, &obj)) {
+                
+                    uint8_t type = obj.getType();
 
-                    case ObjectTypes::Health:
-                        obj.deactivate(true);
-                        this->score += Constants::Points_Health;
-                        if (this->lives < 3) this->lives++;
-                        break;
+                    switch (type) {
 
-                    case ObjectTypes::Coin:
-                        obj.deactivate(false);
-                        this->score += Constants::Points_Coin;
-                        this->tunes->playScore(Sounds::Coin);
-                        break;
-                        
-                    default: break;
+                        case ObjectTypes::Health:
+                            obj.deactivate(true);
+                            this->score += Constants::Points_Health;
+                            if (this->lives < 3) this->lives++;
+                            break;
 
-                }
+                        case ObjectTypes::Coin:
+                            obj.deactivate(false);
+                            this->score += Constants::Points_Coin;
+                            this->tunes->playScore(Sounds::Coin);
+                            break;
+                            
+                        default: break;
 
-                if (obj.getActive()) { // May have been deativated just above (ie. a health) ..
+                    }
 
-                    if (isFalling) { // And therefore landing on top of an object
+                    if (obj.getActive()) { // May have been deativated just above (ie. a health) ..
 
-                        switch (type) {
+                        if (isFalling) { // And therefore landing on top of an object
 
-                            case ObjectTypes::Fireball:
+                            switch (type) {
 
-                                #ifndef NO_DEATH
+                                case ObjectTypes::Fireball:
 
-                                if (event != EventType::Flash) {
+                                    if (event != EventType::Flash) {
 
-                                    if (this->lives > 0) this->lives--; 
+                                        #ifndef NO_DEATH
 
-                                    if (this->lives == 0) {
+                                        if (this->lives > 0) this->lives--; 
 
-                                        if (this->eventCounter == 0) {
-                                            
-                                            this->event = EventType::Death_Init; 
-                                            this->eventCounter = Constants::EventCounter_Death;   
+                                        if (this->lives == 0) {
+
+                                            if (this->eventCounter == 0) {
+                                                
+                                                this->event = EventType::Death_Init; 
+                                                this->eventCounter = Constants::EventCounter_Death;   
+                                                this->tunes->playScore(Sounds::Dying);
+                                                obj.deactivate(true);
+
+                                            }
+
+                                        }
+                                        else {
+
+                                            #ifndef NO_DEATH
+                                            this->event = EventType::Flash; 
+                                            this->eventCounter = Constants::EventCounter_Flash;
                                             this->tunes->playScore(Sounds::Dying);
-                                            obj.deactivate(true);
+                                            #endif
 
                                         }
 
-                                    }
-                                    else {
-
-                                        #ifndef NO_DEATH
-                                        this->event = EventType::Flash; 
-                                        this->eventCounter = Constants::EventCounter_Flash;
-                                        this->tunes->playScore(Sounds::Dying);
                                         #endif
 
                                     }
 
-                                }
+                                    break;
 
+                                default:
+
+                                    obj.deactivate(true);
+                                    this->score += Constants::Points_Skill;
+                                    this->tunes->playScore(Sounds::LandOnTop);
+
+
+                                    // Get a bounce if we are pressing 'A' ..
+
+                                    if (arduboy->pressed(B_BUTTON)) { 
+                                        this->player.vy = -8;
+                                    }
+                                    else { 
+                                        this->player.vy = -3; 
+                                    } 
+
+                                    break;
+
+                            }
+
+                        }
+                        else if (this->eventCounter == 0) {
+
+                            if (this->lives > 0) this->lives--; 
+
+                            if (this->lives == 0) {
+
+                                #ifndef NO_DEATH
+                                this->event = EventType::Death_Init; 
+                                this->eventCounter = Constants::EventCounter_Death;
+                                this->tunes->playScore(Sounds::Dying);
                                 #endif
 
-                                break;
+                            }
+                            else {
 
-                            default:
+                                #ifndef NO_DEATH
+                                this->event = EventType::Flash; 
+                                this->eventCounter = Constants::EventCounter_Flash;
+                                this->tunes->playScore(Sounds::Dying);
+                                #endif
 
-                                obj.deactivate(true);
-                                this->score += Constants::Points_Skill;
-                                this->tunes->playScore(Sounds::LandOnTop);
-
-
-                                // Get a bounce if we are pressing 'A' ..
-
-                                if (arduboy->pressed(B_BUTTON)) { 
-                                    this->player.vy = -8;
-                                }
-                                else { 
-                                    this->player.vy = -3; 
-                                } 
-
-                                break;
-
-                        }
-
-                    }
-                    else if (this->eventCounter == 0) {
-
-                        if (this->lives > 0) this->lives--; 
-
-                        if (this->lives == 0) {
-
-                            #ifndef NO_DEATH
-                            this->event = EventType::Death_Init; 
-                            this->eventCounter = Constants::EventCounter_Death;
-                            this->tunes->playScore(Sounds::Dying);
-                            #endif
-
-                        }
-                        else {
-
-                            #ifndef NO_DEATH
-                            this->event = EventType::Flash; 
-                            this->eventCounter = Constants::EventCounter_Flash;
-                            this->tunes->playScore(Sounds::Dying);
-                            #endif
+                            }
 
                         }
 
@@ -579,7 +586,8 @@ void AstarokGame::die(GameState &gameState) {
 
 }
 
-uint8_t AstarokGame::addMob(const uint8_t *data, const uint8_t * img, const uint8_t * mask, int16_t x, uint8_t y, uint8_t maxHeight) {
+//uint8_t AstarokGame::addMob(const uint8_t *data, const uint8_t * img, const uint8_t * mask, int x, uint8_t y, uint8_t maxHeight) {
+uint8_t AstarokGame::addMob(const uint8_t *data, const uint8_t * img, const uint8_t * mask, int8_t x, uint8_t y, uint8_t maxHeight) {
 
     int distances[Constants::SpriteCap];
 
@@ -687,7 +695,7 @@ void AstarokGame::playMiniGame(GameState &gameState) {
 
                     for (uint8_t i = 0; i < 4; i++) {
 
-                        this->addMob(Data::Coin, Images::Coins, Images::Coins_Masks, this->chestObj->x, this->chestObj->y - 1);
+                        this->addMob(Data::Coin, Images::Coins, Images::Coins, this->chestObj->x, this->chestObj->y - 1);
 
                     }
 

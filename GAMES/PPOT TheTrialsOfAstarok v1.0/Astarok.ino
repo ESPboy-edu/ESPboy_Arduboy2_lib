@@ -1,5 +1,5 @@
-#include <ESP_EEPROM.h>
-//#include <SPI.h>
+//#include <EEPROM.h>
+#include <SPI.h>
 
 #include "AstarokGame.h"
 #include "src/images/Images.h"
@@ -12,9 +12,6 @@
 #include <ESPboyPlaytune.h>
 
 Arduboy2Ext arduboy;
-
-uint16_t line_buffer[46];
-
 boolean outEn() {return true;}
 ESPboyPlaytune tunes(outEn);
 //ArduboyPlaytune tunes(arduboy.audio.enabled);
@@ -27,11 +24,11 @@ IntroTextVars introTextVars;
 SeedVars seedVars;
 
 #ifndef DEBUG
-//    ARDUBOY_NO_USB 
+ //   ARDUBOY_NO_USB 
 #endif
 
 void setup() {
-    Serial.begin(115200);
+
     arduboy.boot();
     arduboy.setFrameRate(30);
 	arduboy.flashlight();

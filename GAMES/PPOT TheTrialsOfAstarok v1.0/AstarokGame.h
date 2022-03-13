@@ -19,9 +19,11 @@
 #include "src/entities/Particle.h"
 
 class AstarokGame {
-    public:  // Constructor
-        AstarokGame(Arduboy2Ext *arduboy, ESPboyPlaytune *tunes);
 
+    public:  // Constructor
+//        AstarokGame(Arduboy2Ext *arduboy, ArduboyPlaytune *tunes);
+        AstarokGame(Arduboy2Ext *arduboy, ESPboyPlaytune *tunes);
+        
     public:  // Variables
         EventType             event;
         uint8_t               eventCounter;
@@ -41,6 +43,7 @@ class AstarokGame {
         AISprite              mobs[Constants::SpriteCap];
         Map                   level;
         Arduboy2Ext           * arduboy;
+        //ArduboyPlaytune       * tunes;
         ESPboyPlaytune       * tunes;
         uint32_t              seed;
 
@@ -60,7 +63,7 @@ class AstarokGame {
         void newGame();
         void cycle(GameState &gameState);
         void draw();
-        uint8_t addMob(const uint8_t *data, const uint8_t *sprite, const uint8_t *mask, int16_t x, uint8_t y, uint8_t maxHeight = 255);
+        uint8_t addMob(const uint8_t *data, const uint8_t *sprite, const uint8_t *mask, int8_t x, uint8_t y, uint8_t maxHeight = 255);
         uint8_t getSpareMobCount();
         void drawScorePanel();
         void playMiniGame(GameState &gameState);
@@ -71,6 +74,7 @@ class AstarokGame {
         bool testCollision(Sprite * player, AISprite * sprite);
         void die(GameState &gameState);
         void drawMap_Background();
+        void drawMap_Background_2();
         void drawMap_Foreground();
         void drawHUD();
         void drawPlayer();

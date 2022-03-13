@@ -1,6 +1,6 @@
 #include "src/utils/Arduboy2Ext.h"
 #include "AstarokGame.h"
-#include <ESP_EEPROM.h>
+//#include <EEPROM.h>
 
 void AstarokGame::drawScorePanel() {
 
@@ -33,8 +33,8 @@ void AstarokGame::drawMobs() {
         if (obj.explodeCounter > 0) {
 
             Sprites::drawExternalMask(obj.x - this->camera.x - 2, obj.y - this->camera.y - 2, 
-                                      (const uint8_t*)pgm_read_ptr(&Images::Puffs[(21 - obj.explodeCounter) / 3]), 
-                                      (const uint8_t*)pgm_read_ptr(&Images::Puff_Masks[(21 - obj.explodeCounter) / 3]), 
+                                      (const uint8_t *)pgm_read_ptr(&Images::Puffs[(21 - obj.explodeCounter) / 3]), 
+                                      (const uint8_t *)pgm_read_ptr(&Images::Puff_Masks[(21 - obj.explodeCounter) / 3]), 
                                       this->mapNumber % 2 == 0 ? 0 : 1, 0);
 
         }
@@ -82,10 +82,10 @@ void AstarokGame::drawHUD() {
 
 void AstarokGame::drawMap_Background() {
 
-    int16_t backgroundXOffset = (this->camera.x / 4) % 64;
-    int16_t backgroundYOffset = (this->camera.y / 12) - 8;
-
     if (this->mapNumber % 2 == MapLevel::AboveGround) {
+
+        int16_t backgroundXOffset = (this->camera.x / 4) % 64;
+        int16_t backgroundYOffset = (this->camera.y / 12) - 8;
 
         for (uint8_t i = 0; i <= 128; i += 64) {
             Sprites::drawOverwrite(i - backgroundXOffset, backgroundYOffset + 2, Images::Sky, 0);
@@ -94,8 +94,12 @@ void AstarokGame::drawMap_Background() {
     }
     else {
 
+        int16_t backgroundXOffset = (this->camera.x / 4) % 64;
+        int16_t backgroundYOffset = (this->camera.y / 6) - 16;
+
         for (uint8_t i = 0; i <= 128; i += 64) {
 
+            Sprites::drawOverwrite(i + 7 - backgroundXOffset, backgroundYOffset - 12, Images::Underground_Chain, 0);
             Sprites::drawOverwrite(i + 7 - backgroundXOffset, backgroundYOffset, Images::Underground_Chain, 0);
             Sprites::drawOverwrite(i + 42 - backgroundXOffset, backgroundYOffset + 11, Images::Underground_Brick, 0);
             Sprites::drawOverwrite(i + 26 - backgroundXOffset, backgroundYOffset + 7, Images::Torch, arduboy->getFrameCount(16) / 4);
@@ -108,63 +112,85 @@ void AstarokGame::drawMap_Background() {
 
         for (int y = this->camera.y / Constants::TileSize; y < (this->camera.y / Constants::TileSize) + 9; y++) {
 
+            ObjectTypes tile = static_cast<ObjectTypes>(this->level.checkObject(x, y));
+
+            switch (tile) {
+
+                case ObjectTypes::QBlock ... ObjectTypes::Bricks:
+                    Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, (const uint8_t *)pgm_read_ptr(&Images::SpriteImages[tile]), (const uint8_t *)pgm_read_ptr(&Images::SpriteMasks[tile]), 0, 0);
+                    break;
+
+                case ObjectTypes::AboveGroundExit:
+                    Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x - 36, y * Constants::TileSize - this->camera.y - 24, Images::Outside_Exit_00, Images::Outside_Exit_00_Mask, 0, 0);
+                    break;
+
+                case ObjectTypes::UnderGroundExit:
+                    Sprites::drawOverwrite(x * Constants::TileSize - this->camera.x - 13, y * Constants::TileSize - this->camera.y - 4, Images::Underground_Exit_00, 0);
+                    break;
+
+                case ObjectTypes::Sign:
+                    Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x - 4, y * Constants::TileSize - this->camera.y - 4, Images::SignPost, Images::SignPost_Mask, this->mapNumber % 2, 0);
+                    break;
+
+                case ObjectTypes::Coin:
+                    Sprites::drawPlusMask(x * Constants::TileSize +2 - this->camera.x, y * Constants::TileSize +2 - this->camera.y, Images::Coins, arduboy->getFrameCount(16) / 4);
+                    break;
+
+                case ObjectTypes::Chest_Closed:
+                    Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y - 3, Images::Chest_Closed, Images::Chest_Closed_Mask, 0, 0);
+                    break;
+
+                case ObjectTypes::Chest_Open:
+                    Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y - 2, Images::Chest_Open, Images::Chest_Open_Mask, 0, 0);
+                    break;
+
+                default: break;
+            }
+
+        }
+
+    }
+
+}
+
+
+void AstarokGame::drawMap_Background_2() {
+
+    // Rneder water ..
+
+    if (mapNumber % 2 == MapLevel::AboveGround) {
+
+        for (int16_t i = -arduboy->getFrameCount(24) / 2; i < 128; i = i + 24) {
+            Sprites::drawErase(i, 183 - camera.y, Images::Water, 0);
+        }
+
+    }
+
+
+    // Render tiles last ..
+
+    for (int16_t x = (camera.x / Constants::TileSize) - 12; x < (camera.x / Constants::TileSize) + 17; x++) {
+
+        for (int16_t y = camera.y / Constants::TileSize; y < (camera.y / Constants::TileSize) + 9; y++) {
+
             if (this->level.isTile(x, y)) {
 
                 if (y == 15 || this->level.isTile(x, y + 1)) {
 
                     if (this->mapNumber % 2 == MapLevel::AboveGround) {   
                         Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, 
-                                                  Images::Tile_Brick, Images::Tile_Mask, MapLevel::AboveGround, 0);
+                                                    Images::Tile_Brick, Images::Tile_Mask, MapLevel::AboveGround, 0);
                     }
                     else {
                         Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, 
-                                                  Images::Tile_Brick, Images::Tile_Mask, MapLevel::BelowGround, 0);
+                                                    Images::Tile_Brick, Images::Tile_Mask, MapLevel::BelowGround, 0);
                     }
 
                 }
                 else {
                     Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, 
-                                              Images::Platform, Images::Platform_Mask, 0, 0);
+                                                Images::Platform, Images::Platform_Mask, 0, 0);
 
-                }
-
-            }
-            else {
-
-                ObjectTypes tile = static_cast<ObjectTypes>(this->level.checkObject(x, y));
-
-                switch (tile) {
-
-                    case ObjectTypes::QBlock ... ObjectTypes::Bricks:
-                        Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, (const uint8_t*)pgm_read_ptr(&Images::SpriteImages[tile]), (const uint8_t*)pgm_read_ptr(&Images::SpriteMasks[tile]), 0, 0);
-                        break;
-
-                    case ObjectTypes::AboveGroundExit:
-                        Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x - 36, y * Constants::TileSize - this->camera.y - 24, Images::Outside_Exit_00, Images::Outside_Exit_00_Mask, 0, 0);
-                        break;
-
-                    case ObjectTypes::UnderGroundExit:
-                        Sprites::drawOverwrite(x * Constants::TileSize - this->camera.x - 13, y * Constants::TileSize - this->camera.y - 4, Images::Underground_Exit_00, 0);
-                        break;
-
-                    case ObjectTypes::Sign:
-                        Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x - 4, y * Constants::TileSize - this->camera.y - 4, Images::SignPost, Images::SignPost_Mask, this->mapNumber % 2, 0);
-                        break;
-
-                    case ObjectTypes::Coin:
-                        Sprites::drawSelfMasked(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, Images::Coins_Masks, arduboy->getFrameCount(16) / 4);
-                        Sprites::drawErase(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y, Images::Coins, arduboy->getFrameCount(16) / 4);
-                        break;
-
-                    case ObjectTypes::Chest_Closed:
-                        Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y - 3, Images::Chest_Closed, Images::Chest_Closed_Mask, 0, 0);
-                        break;
-
-                    case ObjectTypes::Chest_Open:
-                        Sprites::drawExternalMask(x * Constants::TileSize - this->camera.x, y * Constants::TileSize - this->camera.y - 2, Images::Chest_Open, Images::Chest_Open_Mask, 0, 0);
-                        break;
-
-                    default: break;
                 }
 
             }
@@ -174,6 +200,7 @@ void AstarokGame::drawMap_Background() {
     }
 
 }
+
 
 void AstarokGame::drawMap_Foreground() {
 
@@ -252,8 +279,9 @@ void AstarokGame::drawPlayer() {
 void AstarokGame::draw() {
 
     drawMap_Background(); 
-    drawPlayer(); 
     drawMobs(); 
+    drawMap_Background_2(); 
+    drawPlayer(); 
     drawMap_Foreground(); 
     drawHUD();
     #ifdef PAUSE
