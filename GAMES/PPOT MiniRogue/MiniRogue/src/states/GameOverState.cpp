@@ -59,6 +59,7 @@ void GameOverState::activate(StateMachine & machine) {
 		eeprom_update_byte(/*(uint8_t *)*/(EEPROM_SCORE + gameStats.skillLevel), this->score);
 
 	}
+	EEPROM.commit();
 
 }
 
@@ -272,5 +273,5 @@ void GameOverState::initEEPROM(bool forceClear) {
 		for (uint8_t i = 0; i < 4; i++) eeprom_update_byte(/*(uint8_t *)*/(EEPROM_SCORE + i), score);
 
   }
-
+  EEPROM.commit();
 }
