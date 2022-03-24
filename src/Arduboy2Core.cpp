@@ -33,7 +33,6 @@ void Arduboy2Core::boot(){
 
   //Init ESPboy
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
-  
 }
 
 
@@ -176,6 +175,13 @@ uint8_t Arduboy2Core::buttonsState(){
     if (keystate&PAD_LFT)   { backgroundclr++; if (backgroundclr>18) backgroundclr=0; delay(300);} 
   }
   return buttons;
+}
+
+
+unsigned long Arduboy2Core::generateRandomSeed(){
+  unsigned long seed;
+  seed = ((unsigned long)random(255) << 16) + micros();
+  return seed;
 }
 
 
