@@ -1,9 +1,7 @@
 #include "common.h"
 #include "data.h"
-#include "ESPboyPlaytune.h"
-/*  Defines  */
 
-extern ESPboyPlaytune pt;
+/*  Defines  */
 
 #define PILLARS_NUM     16
 #define DOTS_NUM        64

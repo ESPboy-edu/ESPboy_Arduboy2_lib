@@ -1,9 +1,4 @@
 #include "common.h"
-#include "ESPboyPlaytune.h"
-
-bool outEn() {return arduboy.isAudioEnabled();}
-ESPboyPlaytune pt(outEn);
-
 
 /*  Defines  */
 
@@ -70,7 +65,8 @@ void setup()
     dprintln(F("Start " APP_TITLE " Version " APP_VERSION));
     //arduboy.initAudio(1);
     pt.setSynth(EPT_SYNTH_PIN, 10); //decrease 10 to even thinner sound
-    pt.initChannel(0);
+    if(!arduboy.isAudioEnabled())pt.closeChannels();
+    else pt.initChannel(1);
     readRecord();
     mode = (record.simpleMode) ? MODE_TITLE : MODE_LOGO;
     callInitFunc(mode);

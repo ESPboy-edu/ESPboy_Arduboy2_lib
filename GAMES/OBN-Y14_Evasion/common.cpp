@@ -1,8 +1,6 @@
 #include "common.h"
-#include "ESPboyPlaytune.h"
-/*  Defines  */
 
-extern ESPboyPlaytune pt;
+/*  Defines  */
 
 #define EEPROM_ADDR_BASE    640
 #define EEPROM_SIGNATURE    0x144E424FUL // "OBN\x14"
@@ -24,6 +22,9 @@ enum RECORD_STATE_T : uint8_t {
 /*  Global Variables  */
 
 MyArduboy2  arduboy;
+boolean outEn() { return true;}
+ESPboyPlaytune pt(outEn);
+
 RECORD_T    record;
 uint8_t     counter;
 int8_t      padX, padY, padRepeatCount;

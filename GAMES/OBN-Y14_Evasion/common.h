@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MyArduboy2.h"
+#include <ESPboyPlaytune.h>
 
 /*  Defines  */
 
@@ -99,6 +100,7 @@ void    drawGame(void);
 /*  Global Variables  */
 
 extern MyArduboy2   arduboy;
+extern ESPboyPlaytune pt;
 extern RECORD_T     record;
 extern uint8_t      counter;
 extern int8_t       padX, padY, padRepeatCount;
