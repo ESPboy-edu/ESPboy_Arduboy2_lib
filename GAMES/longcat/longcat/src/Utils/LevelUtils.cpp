@@ -34,13 +34,19 @@ void LevelUtils::initPlayer(Game &game)
     context.hero.y = 0;
     context.hero.direction = Direction::Center;
     context.hero.lastDirection = Direction::Center;
+	context.stuckFrames=0;
 }
 
 bool LevelUtils::isStuck(Game &game)
 {
     auto &context = game.getGameContext();
     if (context.mapObject.getNeighbourTileCount(context.hero.x, context.hero.y, TileType::Empty) == 0)
-        return true;
+	{
+		context.stuckFrames++;
+		if(context.stuckFrames>=10){
+			return true;
+		}
+	}
     return false;
 }
 

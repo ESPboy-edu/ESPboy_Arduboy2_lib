@@ -9,7 +9,7 @@
 class Game;
 class GameStateMainMenu
 {
-  static const uint8_t maxSelection = 2;
+  static const uint8_t maxSelection = 3;
   uint8_t selection = 0;
 
 public:

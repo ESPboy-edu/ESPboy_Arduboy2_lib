@@ -25,6 +25,5 @@ private:
   
   bool movePlayer(Game &game);
   void placeCatPiece(int8_t x, int8_t y, Game &game);
-  void gameEnd(Game &game);
   void nextStage(Game &game);
 };

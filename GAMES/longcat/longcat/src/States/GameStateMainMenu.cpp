@@ -34,6 +34,10 @@ void GameStateMainMenu::update(Game &game)
 			this->selection = 0;
 			game.setGameState(GameState::OptionsMenu);
 			break;
+		case 3:
+			this->selection = 0;
+			game.setGameState(GameState::CreditsMenu);
+			break;
 		}
 	}
 
@@ -51,8 +55,9 @@ void GameStateMainMenu::render(Game &game)
 	const char *linear_s = "  Campaign";
 	const char *random_s = "  Random";
 	const char *options_s = "  Options";
-	const char *strings[] = {linear_s, random_s, options_s};
-	for (uint8_t i = 0; i < 3; i++)
+	const char *credits_s = "  Credits";
+	const char *strings[] = {linear_s, random_s, options_s, credits_s};
+	for (uint8_t i = 0; i < 4; i++)
 	{
 		CatChars::print(0, (i * 9) + 12, false, strings[i]);
 		if (selection == i)
@@ -62,22 +67,5 @@ void GameStateMainMenu::render(Game &game)
 		}
 	}
 
-	const int loopLength = 80;
-	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
-	{
-		CatChars::print((arduboy.frameCount / 2 % loopLength), 2, false, "<  <  <  <");
-	}
-	else
-	{
-		CatChars::print(loopLength - (arduboy.frameCount / 2 % loopLength), 2, false, "<  <  <  <");
-	}
-
-	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
-	{
-		CatChars::print(loopLength / 2 - (arduboy.frameCount / 2 % loopLength), 52, false, "<  <  <  <");
-	}
-	else
-	{
-		CatChars::print((arduboy.frameCount / 2 % loopLength) - loopLength / 2, 52, false, "<  <  <  <");
-	}
+	CatChars::menuDecoration();
 }

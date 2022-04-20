@@ -1,13 +1,12 @@
 #pragma once
 
 #include <stdint.h>
-//#include <ESP_EEPROM.h>
+//#include <EEPROM.h>
 
 struct Save
 {
     uint16_t hash;
     uint8_t lastStage;
-    bool audioEnabled;
     uint8_t randomDifficulty;
 };
 

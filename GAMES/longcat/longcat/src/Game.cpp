@@ -6,20 +6,19 @@ void Game::setup()
   this->arduboy.setFrameRate(60);
   this->arduboy.initRandomSeed();
 
+  ArduboyTones(this->arduboy.audio.enabled);
+
   Save saveValue;
   if (SaveUtil::tryGet(saveValue))
   {
     this->gameContext.stage = saveValue.lastStage;
-    this->gameContext.audioEnabled = saveValue.audioEnabled;
     this->gameContext.randomDifficulty = saveValue.randomDifficulty;
   }
   else
   {
     this->gameContext.stage = 0;
-    this->gameContext.audioEnabled = true;
     this->gameContext.randomDifficulty = 0;
 
-    saveValue.audioEnabled = true;
     saveValue.lastStage = 0;
     saveValue.randomDifficulty = 0;
     SaveUtil::update(saveValue);
@@ -80,6 +79,21 @@ void Game::loop()
   case GameState::RandomMenu:
     this->randomMenuState.update(*this);
     this->randomMenuState.render(*this);
+    break;
+
+  case GameState::CreditsMenu:
+    this->creditsState.update(*this);
+    this->creditsState.render(*this);
+    break;
+
+  case GameState::OptionsMenu:
+    this->optionsMenuState.update(*this);
+    this->optionsMenuState.render(*this);
+    break;
+
+  case GameState::EndScreen:
+    this->endScreenState.update(*this);
+    this->endScreenState.render(*this);
     break;
 
   default:

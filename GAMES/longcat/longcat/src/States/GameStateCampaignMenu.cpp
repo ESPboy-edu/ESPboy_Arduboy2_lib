@@ -85,22 +85,5 @@ void GameStateCampaignMenu::render(Game &game)
 		}
 	}
 
-	const int loopLength = 80;
-	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
-	{
-		CatChars::print((arduboy.frameCount / 2 % loopLength), 2, false, "<  <  <  <");
-	}
-	else
-	{
-		CatChars::print(loopLength - (arduboy.frameCount / 2 % loopLength), 2, false, "<  <  <  <");
-	}
-
-	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
-	{
-		CatChars::print(loopLength / 2 - (arduboy.frameCount / 2 % loopLength), 52, false, "<  <  <  <");
-	}
-	else
-	{
-		CatChars::print((arduboy.frameCount / 2 % loopLength) - loopLength / 2, 52, false, "<  <  <  <");
-	}
+	CatChars::menuDecoration();
 }

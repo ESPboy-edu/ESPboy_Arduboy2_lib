@@ -9,6 +9,7 @@ enum class GameState : uint8_t
   CampaignMenu,
   RandomMenu,
   OptionsMenu,
+  CreditsMenu,
   //Level Selection
   SelectLevel,
   SelectSeed,
@@ -16,4 +17,6 @@ enum class GameState : uint8_t
   LoadLevel,
   GamePlay,
   Simulate,
+  //End GamePlay
+  EndScreen
 };

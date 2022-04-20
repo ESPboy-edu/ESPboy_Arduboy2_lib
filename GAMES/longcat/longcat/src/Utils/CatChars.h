@@ -152,5 +152,10 @@ public:
 			index++;
 		}
 	}
+	
+	static void menuDecoration(){
+		CatChars::print(2, 2, false, " <  <  <  <  <");
+		CatChars::print(2, 54, false, " <  <  <  <  <");
+	}
 
 };

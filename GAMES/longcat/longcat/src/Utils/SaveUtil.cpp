@@ -4,9 +4,8 @@
 uint16_t SaveUtil::hash(Save value)
 {
     uint16_t runner = static_cast<uint16_t>(value.lastStage);
-    runner ^= static_cast<uint16_t>(value.audioEnabled);
     runner ^= static_cast<uint16_t>(value.randomDifficulty);
-    return 0;
+    return (runner);
 }
 
 Save SaveUtil::get()

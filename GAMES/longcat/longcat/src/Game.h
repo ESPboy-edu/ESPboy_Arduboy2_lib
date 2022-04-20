@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduboy2.h>
+#include <ArduboyTones.h>
 
 #include "States/GameState.h"
 
@@ -34,8 +35,16 @@ private:
   GameStateSimulate simulateState;
   GameStateCampaignMenu campaignMenuState;
   GameStateRandomMenu randomMenuState;
+  GameStateCredits creditsState;
+  GameStateOptionsMenu optionsMenuState;
+  GameStateEndScreen endScreenState;
 
 public:
+  void clickSound()
+  {
+    ArduboyTones::tone(100, 20);
+  }
+
   void setGameMode(GameMode gameMode)
   {
     this->gameMode = gameMode;

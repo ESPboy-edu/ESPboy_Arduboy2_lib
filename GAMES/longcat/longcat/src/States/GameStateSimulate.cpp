@@ -21,8 +21,7 @@ void GameStateSimulate::update(Game &game)
     case GameMode::Linear:
       if (context.stage + 1 >= maxLevel)
       {
-        gameEnd(game);
-        game.setGameState(GameState::CampaignMenu);
+        game.setGameState(GameState::EndScreen);
       }
       else
       {
@@ -46,8 +45,7 @@ void GameStateSimulate::update(Game &game)
     }
     break;
     case GameMode::Fixed:
-      gameEnd(game);
-      game.setGameState(GameState::CampaignMenu);
+      game.setGameState(GameState::EndScreen);
     }
   }
 }
@@ -60,21 +58,9 @@ void GameStateSimulate::render(Game &game)
 void GameStateSimulate::nextStage(Game &game)
 {
   auto &arduboy = game.getArduboy();
-  arduboy.clear();
-  arduboy.setCursor(35, 30);
-  arduboy.print("Purrfect!");
-  arduboy.display();
-  arduboy.delayShort(1000);
-}
-
-void GameStateSimulate::gameEnd(Game &game)
-{
-  auto &arduboy = game.getArduboy();
-  arduboy.clear();
-  arduboy.setCursor(10, 30);
-  arduboy.print(F("Game Completed!"));
-  arduboy.display();
-  arduboy.delayShort(3000);
+  //arduboy.drawBitmap(63,0,thumbsup,64,64,WHITE);
+  //arduboy.display();
+  //arduboy.delayShort(1000);
 }
 
 void GameStateSimulate::placeCatPiece(int8_t x, int8_t y, Game &game)
@@ -178,6 +164,7 @@ bool GameStateSimulate::movePlayer(Game &game)
   {
     context.hero.dx = 0;
     context.hero.dy = 0;
+	game.clickSound();
     return false;
   }
 }
