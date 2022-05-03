@@ -31,7 +31,7 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 - - change EEPROM.update() to EEPROM.write()
 - - add EEPROM.commit() after the last EEPROM.put(), EEPORM.write() of each blocks of code.
 - For **"ArduboyPlaytune"** use [ESPboy ported verstion](https://github.com/ESPboy-edu/ESPboy_Playtune) and be sure you don't use "tone();" function anywhere (standard "tone();" function catches an interrupt which is ArduboyPlaytune also uses causing a reset)
-- FOR **"ATMlib"** use [ESPboy ported version](https://github.com/ESPboy-edu/ESPboy_ATMlib) and be sure to rename the folder from "ESPboy_ATMlib" to "ATMlib"
+- For **"ATMlib"** use [ESPboy ported version](https://github.com/ESPboy-edu/ESPboy_ATMlib) and be sure to rename the folder from "ESPboy_ATMlib" to "ATMlib"
 - you have to put delay(0); in all loops like while(1) {...}. EPS8266 needs time to process WiFi stack and other internal SDK interrupts and can do it during the pauses like delay(0). Otherwise it watchdog resets.
 - games that directly control the SPI or I2C bus to write to OLED display need much more work to port instead of the simple steps above.
 - font() array is used in TFT_eSPI display library so you have to change all "font" to "font_"
