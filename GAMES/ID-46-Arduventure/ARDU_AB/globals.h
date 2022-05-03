@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include <Arduboy2.h>
-//#include <ATMlib.h>
+#include <ATMlib.h>
 #include "bitmaps.h"
 
 
@@ -133,7 +133,7 @@ const byte MAGIC_COST[] = { 4, 5, 7, 9 };
 
 Arduboy2Base arduboy;
 Sprites sprites;
-//ATMsynth ATM;
+ATMsynth ATM;
 
 byte gameState = STATE_MENU_INTRO;           // start the game with the TEAM a.r.g. logo
 byte previousGameState = STATE_MENU_INTRO;

@@ -90,8 +90,8 @@ void updatePlayer()
 
 void openMiniMap()
 {
-  miniCamX = minVal(maxVal(((int)playerReducedX << 3) - 62, 0), 128);
-  miniCamY = minVal(maxVal(((int)playerReducedY << 3) - 30, 0), 176);
+  miniCamX = min(max(((int)playerReducedX << 3) - 62, 0), 128);
+  miniCamY = min(max(((int)playerReducedY << 3) - 30, 0), 176);
   gameState = STATE_GAME_MAP;
 }
 
@@ -389,7 +389,6 @@ void saveGame()
   firstGame = false;
   EEPROM.write(EEPROM_START, GAME_ID);
   EEPROM.put(EEPROM_START + 1, player);
-  EEPROM.commit();
 }
 
 void loadGame()

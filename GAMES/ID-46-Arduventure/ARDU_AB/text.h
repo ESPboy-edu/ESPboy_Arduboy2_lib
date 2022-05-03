@@ -112,7 +112,7 @@ void drawTextBox(byte x, byte y, boolean color)
     if (arduboy.everyXFrames(textspeed))
       textRollAmount++;
   }*/
-  //if (rollText) textRollAmount = minVal(++textRollAmount, textBox[0]);
+  //if (rollText) textRollAmount = min(++textRollAmount, textBox[0]);
   if (rollText) {
     textReset = false;
     if (arduboy.justPressed(B_BUTTON)) {

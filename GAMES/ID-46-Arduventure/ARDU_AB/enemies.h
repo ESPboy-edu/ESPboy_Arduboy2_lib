@@ -59,7 +59,7 @@ void createEnemy(byte player_level, byte lvl = 0, byte stattype = 4, byte type =
 {
   byte region = player.currentRegion - REGION_YOUR_GARDEN; // 1-4 (in)
   byte lvlRange = (region) * 2;                            // 2-8 (in)
-  byte monster = generateRandomNumber(minVal(7, lvlRange)); // 0-6 (in)
+  byte monster = generateRandomNumber(min(7, lvlRange)); // 0-6 (in)
   byte statType = stattype;
   // get random level offset
   enemy.level = lvl;
@@ -68,7 +68,7 @@ void createEnemy(byte player_level, byte lvl = 0, byte stattype = 4, byte type =
   if (lvl == 0)
   {
     //enemy.level = generateRandomNumber(lvlRange); // 0-7
-    if (region == 1) enemy.level = generateRandomNumber(minVal(player_level, 5)); // 0-4
+    if (region == 1) enemy.level = generateRandomNumber(min(player_level, 5)); // 0-4
     else  enemy.level = generateRandomNumber(lvlRange); // 0-7
     statType = generateRandomNumber(3);
     enemy.level++;  // 1-8 areas 2-4, 1-5 area 1
@@ -118,11 +118,11 @@ void createEnemy(byte player_level, byte lvl = 0, byte stattype = 4, byte type =
 
 void damageEnemy(uint16_t player_attack, uint16_t player_attack_addition, uint16_t player_level, bool magic = false)
 {
-  //lastDamageDealt = (byte)minVal(maxVal((player_attack + player_attack_addition) * player_level / ((magic == false) ? enemy.defense : enemy.specDefense), 1), 255);
+  //lastDamageDealt = (byte)min(max((player_attack + player_attack_addition) * player_level / ((magic == false) ? enemy.defense : enemy.specDefense), 1), 255);
   int dmg = (player_attack + player_attack_addition) * player_level / ((magic == false) ? enemy.defense : enemy.specDefense);
   lastDamageDealt = (((dmg < 1) ? 1 : dmg) > 255) ? 255 : dmg;
   int16_t ehp = (int16_t)enemy.health - lastDamageDealt;
-  enemy.health = maxVal(ehp, 0);
+  enemy.health = max(ehp, 0);
 }
 
 void drawEnemies(int8_t yoffset)

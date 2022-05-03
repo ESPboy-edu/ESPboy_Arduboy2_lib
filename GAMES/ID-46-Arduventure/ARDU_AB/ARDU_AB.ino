@@ -64,15 +64,15 @@ const FunctionPointer PROGMEM mainGameLoop[] = {
   stateMenuReboot,
 };
 
-int main() {
-  arduboy.mainNoUSB();
-  return 0;
-}
+//int main() {
+//  arduboy.mainNoUSB();
+//  return 0;
+//}
 
 void setup() {
   arduboy.boot();
   arduboy.audio.begin();
-  //ATM.play(titleSong);
+  ATM.play(titleSong);
   arduboy.setFrameRate(60);                                 // set the frame rate of the game at 60 fps
 }
 
@@ -85,7 +85,7 @@ void loop() {
   drawTiles();
   updateEyes();
   
-  ((FunctionPointer) pgm_read_dword(&mainGameLoop[gameState]))();
+  ((FunctionPointer) pgm_read_ptr(&mainGameLoop[gameState]))();
   checkInputs();
   if (question) drawQuestion();
   if (yesNo) drawYesNo();

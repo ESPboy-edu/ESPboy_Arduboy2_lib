@@ -70,14 +70,14 @@ void stateMenuContinue()
 {
   loadGame();
   gameState = STATE_GAME_PLAYING;
-  //ATM.stop();
+  ATM.stop();
 }
 
 void stateMenuNew()
 {
   setPlayer();
   gameState = STATE_GAME_NEW;
-  //ATM.play(nameSong);
+  ATM.play(nameSong);
 }
 
 void toggleSound()

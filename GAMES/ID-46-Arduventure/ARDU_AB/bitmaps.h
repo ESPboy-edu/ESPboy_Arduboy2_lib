@@ -108,7 +108,6 @@ const unsigned char PROGMEM titleStartMask[] =
 };
 
 
-
 ////////// Font bitmaps //////////////////////
 //////////////////////////////////////////////
 PROGMEM const unsigned char font_[] = {

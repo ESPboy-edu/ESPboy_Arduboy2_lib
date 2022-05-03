@@ -365,7 +365,7 @@ void stateGameBattle()
           else
           {
             gameState = STATE_GAME_OVER;
-            //ATM.play(youDied);
+            ATM.play(youDied);
             //++fadeCounter;    // Player is dead.
           }
         }
@@ -525,7 +525,7 @@ void stateGameBattle()
  */
 void setupBattle()
 {
-  //ATM.play(battleSong);
+  ATM.play(battleSong);
   songPlaying = 0;
   foundSomething = false;
   //textRollAmount = 0;
@@ -567,7 +567,7 @@ void setupBattle()
     }
     enemy.images = player.lastDoor - 28;
     enemy.health += 90 * (player.lastDoor - 27);
-    //player.experience = minVal((int)player.experience + 10 * (player.lastDoor - 27), 255);
+    //player.experience = min((int)player.experience + 10 * (player.lastDoor - 27), 255);
   }
   else
   {

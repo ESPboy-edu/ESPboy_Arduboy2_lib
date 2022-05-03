@@ -739,7 +739,7 @@ void changeSong(byte region)
       if (songPlaying != 1)
       {
         songPlaying = 1;
-        //ATM.play(fieldSong);
+        ATM.play(fieldSong);
       }
       break;
     case REGION_SWAMP:
@@ -749,7 +749,7 @@ void changeSong(byte region)
       if (songPlaying != 2)
       {
         songPlaying = 2;
-        //ATM.play(swampSong);
+        ATM.play(swampSong);
       }
       break;
     case REGION_FOREST:
@@ -757,28 +757,28 @@ void changeSong(byte region)
       if (songPlaying != 3)
       {
         songPlaying = 3;
-        //ATM.play(darkForest);
+        ATM.play(darkForest);
       }
       break;
     case REGION_CANYONS:
       if (songPlaying != 4)
       {
         songPlaying = 4;
-        //ATM.play(canyonSong);
+        ATM.play(canyonSong);
       }
       break;
     case REGION_CAVE_INTERIOR:
       if (songPlaying != 5)
       {
         songPlaying = 5;
-        //ATM.play(badNews);
+        ATM.play(badNews);
       }
       break;
     case REGION_YOUR_GARDEN:
       if (songPlaying != 6)
       {
         songPlaying = 6;
-        //ATM.play(nameSong);
+        ATM.play(nameSong);
       }
       break;
     default:

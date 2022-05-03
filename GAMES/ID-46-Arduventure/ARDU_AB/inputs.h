@@ -89,13 +89,13 @@ void checkInputs()
           currentLetter = 0;
           clearCursor();
           gameState = STATE_GAME_INTRO;
-          //ATM.play(badNews);
+          ATM.play(badNews);
           return;
         }
         else
         {
           player.name[currentLetter + 1] = selectedLetter;
-          currentLetter = minVal(currentLetter + 1, 5);
+          currentLetter = min(currentLetter + 1, 5);
         }
       }
 
@@ -325,7 +325,7 @@ void checkInputs()
         if (cursorYesNoY)
         {
           gameState = STATE_MENU_MAIN;
-          //ATM.play(titleSong);
+          ATM.play(titleSong);
           cursorY = 3;
           //gameState = STATE_GAME_OVER;
           //ATM.play(youDied);
@@ -344,7 +344,7 @@ void checkInputs()
       if (arduboy.justPressed(B_BUTTON))
       {
         gameState = STATE_MENU_MAIN;
-        //ATM.play(titleSong);
+        ATM.play(titleSong);
         cursorY = STATE_MENU_CONTINUE + firstGame;
       }
       break;
