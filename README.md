@@ -16,8 +16,8 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
     - ArduboyTones-master --> ArduboyTones
     - FixedPointsArduino-master --> FixedPointsArduino
 6. Copy the newly renamed "ArduboyTones" & "FixedPointsArduino" folder into the main Arduino\libraries folder.
-7. Clone/download the [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune) repo somewhere on your computer.
-8. Copy "ESPboy_Playtune" folder into Arduino\libraries folder.
+7. Clone/download the [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune) and [ATMlib](https://github.com/ESPboy-edu/ESPboy_ATMlib)repo somewhere on your computer.
+8. Copy "ESPboy_Playtune" and "ATMlib" folders into Arduino\libraries folder.
     - If you had downloaded the code as zip file instead of git clone, then you will have ESPboy_Playtune_master folder instead of ESPboy_Playtune.
 9. Goto Arduino\libraries\Arudboy2\GAMES folder and try to compile any main .ino file to check if everything is working fine; example Karateka\Karateka.ino.
     - Note: the name of the game folder directory should be exactly same as the main .ino file; please rename the game folder directory as required, example "PPOT RoadTrip" --> "RoadTrip"
@@ -30,12 +30,12 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 - if EEPROM is used by the game to keep configs/high scores:
 - - change EEPROM.update() to EEPROM.write()
 - - add EEPROM.commit() after the last EEPROM.put(), EEPORM.write() of each blocks of code.
-- remove any reference to the **"ATMlib"** this library has not been ported yet.
 - For **"ArduboyPlaytune"** use [ESPboy ported verstion](https://github.com/ESPboy-edu/ESPboy_Playtune) and be sure you don't use "tone();" function anywhere (standard "tone();" function catches an interrupt which is ArduboyPlaytune also uses causing a reset)
+- For **"ATMlib"** use [ESPboy ported version](https://github.com/ESPboy-edu/ESPboy_ATMlib) and be sure to rename the folder from "ESPboy_ATMlib" to "ATMlib"
 - you have to put delay(0); in all loops like while(1) {...}. EPS8266 needs time to process WiFi stack and other internal SDK interrupts and can do it during the pauses like delay(0). Otherwise it watchdog resets.
 - games that directly control the SPI or I2C bus to write to OLED display need much more work to port instead of the simple steps above.
 - font() array is used in TFT_eSPI display library so you have to change all "font" to "font_"
-- there is a problem with a "char" data (signed/unsigned problem). By default Arduino "char" is signed and ESP "char" is unsigned. So you have to change all "char" to "signed char".
+- there is a problem with a "char" data (signed/unsigned problem). By default Arduino AVR "char" is signed and ESP "char" is unsigned. So you have to change all "char" to "signed char".
 - it's also better to change all "short" to "int16_t", "unsigned shot" to "uint16_t", "byte" to "uint8_t", "int" to "int16_t", "unsigned int" to "uint16_t", "long" to "int32_t", "unsigned long" to "uint32_t" 
 - in AVR compiler "bool function();" returns FALSE in case of function out without "return(value);", but in ESP8266 compiler it returns TRUE
 - abs(); function does not work properly with type "float" and "double". It rounds number to integer, so you have to implement your own "abs_();
