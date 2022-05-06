@@ -32,7 +32,7 @@
 #endif
 
 #if defined(ESP8266) || defined(ARDUINO_SAM_DUE)
-#define FIXED_POINTS_NO_RANDOM
+//#define FIXED_POINTS_NO_RANDOM
 #endif
 
 // Pay no attention to the man behind the curtains

@@ -81,29 +81,29 @@ void Arduboy2Base::flashlight(){
 }
 
 void Arduboy2Base::systemButtons(){
-  while (pressed(B_BUTTON)) {
-    digitalWriteRGB(BLUE_LED, RGB_ON); // turn on blue LED
-    sysCtrlSound(UP_BUTTON + B_BUTTON, GREEN_LED, 0xff);
-    sysCtrlSound(DOWN_BUTTON + B_BUTTON, RED_LED, 0);
-    delayShort(200);
-  }
-  digitalWriteRGB(BLUE_LED, RGB_OFF); // turn off blue LED 
+  sysCtrlSound();
+  digitalWriteRGB(RED_LED, RGB_OFF);
+  digitalWriteRGB(BLUE_LED, RGB_OFF);
+  digitalWriteRGB(GREEN_LED, RGB_OFF);
 }
 
 
-void Arduboy2Base::sysCtrlSound(uint8_t buttons, uint8_t led, uint8_t eeVal){
-  if (pressed(buttons)) {
-    digitalWriteRGB(BLUE_LED, RGB_OFF); // turn off blue LED
-    delayShort(200);
-    digitalWriteRGB(led, RGB_ON); // turn on "acknowledge" LED
-    EEPROM.write(EEPROM_AUDIO_ON_OFF, eeVal);
+void Arduboy2Base::sysCtrlSound(){
+  bool soundset;
+  if (pressed(LEFT_BUTTON) || pressed(RIGHT_BUTTON)){
+    if (pressed(LEFT_BUTTON)) {
+      soundset=false;
+      digitalWriteRGB(RED_LED, RGB_ON);}
+    if (pressed(RIGHT_BUTTON)){
+      soundset=true;
+      digitalWriteRGB(GREEN_LED, RGB_ON);}
+      
+    EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
     EEPROM.commit();
     delayShort(500);
-    digitalWriteRGB(led, RGB_OFF); // turn off "acknowledge" LED
-
-    while (pressed(buttons)) { } // Wait for button release
   }
 }
+
 
 void Arduboy2Base::bootLogo(){
   bootLogoShell(drawLogoBitmap);
@@ -885,7 +885,6 @@ void Arduboy2Base::clearDisplay(){
 }
 
 
-
 void IRAM_ATTR Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
 //but you can do it checking global 
@@ -930,7 +929,6 @@ if(!allpixelson_flag){
 }
 else {myESPboy.tft.fillRect(0, vertOffset, WIDTH, HEIGHT,foregroundColor);}
 }
-
 
 
 void Arduboy2Base::display(bool clear){

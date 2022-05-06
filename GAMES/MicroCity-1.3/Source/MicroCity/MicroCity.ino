@@ -1,4 +1,3 @@
-#include <ESP8266WiFi.h>
 #include <Arduboy2.h>
 //#include <EEPROM.h>
 #include "Draw.h"
@@ -6,8 +5,9 @@
 #include "Game.h"
 #include "Simulation.h"
 
-
 Arduboy2Base arduboy;
+
+#define update write
 
 uint8_t GetInput()
 {
@@ -68,15 +68,15 @@ void SaveCity()
   uint16_t address = EEPROM_STORAGE_SPACE_START;
 
   // Add a header so we know that the EEPROM contains a saved city
-  EEPROM.write(address++, 'C'); 
-  EEPROM.write(address++, 'T'); 
-  EEPROM.write(address++, 'Y'); 
-  EEPROM.write(address++, '1'); 
+  EEPROM.update(address++, 'C'); 
+  EEPROM.update(address++, 'T'); 
+  EEPROM.update(address++, 'Y'); 
+  EEPROM.update(address++, '1'); 
 
   uint8_t* ptr = (uint8_t*) &State;
   for(size_t n = 0; n < sizeof(GameState); n++)
   {
-    EEPROM.write(address++, *ptr);
+    EEPROM.update(address++, *ptr);
     ptr++;
   }
   EEPROM.commit();
@@ -106,14 +106,14 @@ uint8_t* GetPowerGrid()
   return arduboy.getBuffer();
 }
 
-void setup(){ 
-  WiFi.mode(WIFI_OFF);
-  EEPROM.begin(2000);
+void setup()
+{
   arduboy.boot();
   arduboy.flashlight();
   arduboy.systemButtons();
   arduboy.bootLogo();
   arduboy.setFrameRate(25);
+
   InitGame();
 }
 

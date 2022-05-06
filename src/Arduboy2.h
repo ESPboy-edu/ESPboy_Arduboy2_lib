@@ -1264,7 +1264,7 @@ class Arduboy2Base : public Arduboy2Core
 
  protected:
   // helper function for sound enable/disable system control
-  void sysCtrlSound(uint8_t buttons, uint8_t led, uint8_t eeVal);
+  void sysCtrlSound();
 
   // functions passed to bootLogoShell() to draw the logo
   static void drawLogoBitmap(int16_t y);

@@ -5,6 +5,9 @@
 #include "src/images/images.h"
 #include "Enums.h"
 
+#define SOUNDS_ARDUBOYTONES 1
+#undef SOUNDS_ATMLIB 1
+
 #ifdef SOUNDS_ARDUBOYTONES
 #include <ArduboyTones.h>
 #include "src/sounds/Sounds_ArduboyTones.h"
@@ -18,7 +21,7 @@
 Arduboy2Ext arduboy;
 
 #ifdef SOUNDS_ARDUBOYTONES
-ArduboyTones sound(arduboy.audio.on);
+ArduboyTones sound(arduboy.audio.enabled);
 #endif
 
 #ifdef SOUNDS_ATMLIB
