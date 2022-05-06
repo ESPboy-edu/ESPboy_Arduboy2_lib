@@ -1,0 +1,6 @@
+{
+    "sketch": "Nineteen44/Nineteen44.ino",
+    "port": "/dev/cu.usbmodem1461",
+    "board": "arduino:avr:leonardo",
+    "output": "../build"
+}

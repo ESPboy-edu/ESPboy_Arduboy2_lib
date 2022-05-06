@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="2040" height="1080" viewBox="0 0 204 108">
+  <title>Roundel of the USAF</title>
+  <metadata><rdf:RDF><cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>Roundel of the USAF</dc:title>
+    </cc:Work></rdf:RDF></metadata>
+  <rect style="fill:#1a1e3b"
+     x="2.34928" y="33.17" height="36" width="199.30144"/>
+  <circle fill="#1a1e3b" cx="102" cy="54" r="54"/>
+  <rect style="fill:#ffffff"
+     x="8.34928" y="39.17" height="24" width="187.30144"/>
+  <rect style="fill:#8f1700"
+     x="8.34928" y="47.17" height="8" width="187.30144"/>
+  <circle fill="#1a1e3b" cx="102" cy="54" r="48"/>
+  <g transform="translate(102,54)scale(48)" fill="#fff">
+    <g id="cone">
+      <polygon id="triangle" points="0,0 0,1 .5,1"
+         transform="translate(0,-1)rotate(18)"/>
+      <use xlink:href="#triangle" transform="scale(-1,1)"/>
+    </g>
+    <use xlink:href="#cone" transform="rotate(72)"/>
+    <use xlink:href="#cone" transform="rotate(-72)"/>
+    <use xlink:href="#cone" transform="rotate(144)"/>
+    <use xlink:href="#cone" transform="rotate(-144)"/>
+  </g>
+</svg>
