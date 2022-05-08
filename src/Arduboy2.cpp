@@ -31,41 +31,25 @@ Arduboy2Base::Arduboy2Base()
 
 
 void Arduboy2Base::start(){
-  boot(); // raw hardware
+  boot();
   clear();  
-  display(); // blank the display (sBuffer is global, so cleared automatically)  
-  flashlight(); // light the RGB LED and screen if UP button is being held.
-  // check for and handle buttons held during start up for system control
+  display();
+  flashlight();
   systemButtons(); 
   audio.begin();
   bootLogo();
-  // alternative logo functions. Work the same as bootLogo() but may reduce
-  // memory size if the sketch uses the same bitmap drawing function
-//  bootLogoCompressed();
-//  bootLogoSpritesSelfMasked();
-//  bootLogoSpritesOverwrite();
-//  bootLogoSpritesBSelfMasked();
-//  bootLogoSpritesBOverwrite();
-  waitNoButtons(); // wait for all buttons to be release
+  waitNoButtons();
 }
 
 void Arduboy2Base::begin(){
-  boot(); // raw hardware
+  boot();
   clear();  
-  display(); // blank the display (sBuffer is global, so cleared automatically)  
-  flashlight(); // light the RGB LED and screen if UP button is being held.
-  // check for and handle buttons held during start up for system control
+  display();
+  flashlight();
   systemButtons(); 
   audio.begin();
   bootLogo();
-  // alternative logo functions. Work the same as bootLogo() but may reduce
-  // memory size if the sketch uses the same bitmap drawing function
-//  bootLogoCompressed();
-//  bootLogoSpritesSelfMasked();
-//  bootLogoSpritesOverwrite();
-//  bootLogoSpritesBSelfMasked();
-//  bootLogoSpritesBOverwrite();
-  waitNoButtons(); // wait for all buttons to be release
+  waitNoButtons();
 }
 
 
@@ -82,9 +66,6 @@ void Arduboy2Base::flashlight(){
 
 void Arduboy2Base::systemButtons(){
   sysCtrlSound();
-  digitalWriteRGB(RED_LED, RGB_OFF);
-  digitalWriteRGB(BLUE_LED, RGB_OFF);
-  digitalWriteRGB(GREEN_LED, RGB_OFF);
 }
 
 
@@ -93,14 +74,17 @@ void Arduboy2Base::sysCtrlSound(){
   if (pressed(LEFT_BUTTON) || pressed(RIGHT_BUTTON)){
     if (pressed(LEFT_BUTTON)) {
       soundset=false;
-      digitalWriteRGB(RED_LED, RGB_ON);}
+      digitalWriteRGB(RED_LED, RGB_ON);
+      myESPboy.tft.drawString(F("SOUND OFF"),36,30);}
     if (pressed(RIGHT_BUTTON)){
       soundset=true;
-      digitalWriteRGB(GREEN_LED, RGB_ON);}
+      digitalWriteRGB(GREEN_LED, RGB_ON);
+      myESPboy.tft.drawString(F("SOUND ON"),40,30);}
       
     EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
     EEPROM.commit();
-    delayShort(500);
+    delayShort(1000);
+  myESPboy.myLED.setRGB(0,0,0);
   }
 }
 
@@ -168,43 +152,39 @@ void Arduboy2Base::drawLogoSpritesBOverwrite(int16_t y){
 // if changes are made to one, equivalent changes should be made to the other
 void Arduboy2Base::bootLogoShell(void (*drawLogo)(int16_t)){	
   bool showLEDs = readShowBootLogoLEDsFlag();
-
-  //if (!readShowBootLogoFlag()) {
-  //  return;
-  //}
-
-  if (showLEDs) {
-    setRGBled(RED_LED, 4);
+  if (pressed(DOWN_BUTTON)){
+    showLEDs = !showLEDs;
+    writeShowBootLogoLEDsFlag(showLEDs);
+    digitalWriteRGB(BLUE_LED, RGB_ON);
+    if(showLEDs)myESPboy.tft.drawString(F("LOGO ON"),40,30);
+    else myESPboy.tft.drawString(F("LOGO OFF"),37,30);
+    delayShort(1000);
+    myESPboy.myLED.setRGB(0,0,0);
   }
+
+  if (!showLEDs) {
+     return;
+  }
+
+  setRGBled(RED_LED, 20);
 
   for (int16_t y = -16; y <= 24; y++) {
-    if (pressed(RIGHT_BUTTON)) {
-      setRGBled(RGB_OFF, RGB_OFF, RGB_OFF); // all LEDs off
-      return;
-    }
-
-    if (showLEDs && y == 4) {
+    if (y == 4) {
       setRGBled(RED_LED, RGB_OFF);    // red LED off
-      setRGBled(GREEN_LED, 4);   // green LED on
+      setRGBled(GREEN_LED, 20);   // green LED on
     }
     
-    // Using display(CLEAR_BUFFER) instead of clear() may save code space.
-    // The extra time it takes to repaint the previous logo isn't an issue.
     display(CLEAR_BUFFER);
-    (*drawLogo)(y); // call the function that actually draws the logo
+    (*drawLogo)(y); 
     display();		
-    
     delayShort(10);
-    
   }
 
-  if (showLEDs) {
     setRGBled(GREEN_LED, RGB_OFF);  // green LED off
-    setRGBled(BLUE_LED, 4);    // blue LED on
-  }
-  delayShort(1400);
+    setRGBled(BLUE_LED, 20);    // blue LED on
+  delayShort(1000);
   setRGBled(RGB_OFF,RGB_OFF,RGB_OFF);
-  bootLogoExtra();
+
 }
 
 
