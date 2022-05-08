@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RickArdurousEditor.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ImageRelativePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\..\image\</Value>
+    </Setting>
+    <Setting Name="GameRelativePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\..\</Value>
+    </Setting>
+    <Setting Name="DocRelativePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/../Doc/</Value>
+    </Setting>
+    <Setting Name="DefaultMapFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MapData.cpp</Value>
+    </Setting>
+    <Setting Name="BulletAndDynamiteCount" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

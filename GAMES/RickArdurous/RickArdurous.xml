@@ -1,0 +1,81 @@
+<NotepadPlus>
+    <Project name="RickArdurous">
+        <File name="README.md" />
+        <File name="RickArdurous.ino" />
+        <File name="RickArdurous.h" />
+        <File name="Rick.cpp" />
+        <File name="Rick.h" />
+        <File name="Input.h" />
+        <File name="Input.cpp" />
+        <File name="HUD.h" />
+        <File name="HUD.cpp" />
+        <File name="Physics.h" />
+        <File name="Physics.cpp" />
+        <File name="FXManager.h" />
+        <File name="FXManager.cpp" />
+        <Folder name="Items">
+            <Folder name="Pickup">
+                <File name="PickUpItem.h" />
+                <File name="PickUpItem.cpp" />
+                <File name="Statuette.h" />
+                <File name="Statuette.cpp" />
+                <File name="DynamiteCrate.h" />
+                <File name="DynamiteCrate.cpp" />
+                <File name="BulletCrate.h" />
+                <File name="BulletCrate.cpp" />
+                <File name="Graal.h" />
+                <File name="Graal.cpp" />
+            </Folder>
+            <Folder name="Destroyable">
+                <File name="DestroyableBlock.h" />
+                <File name="DestroyableBlock.cpp" />
+                <File name="BlockFragment.h" />
+                <File name="BlockFragment.cpp" />
+                <File name="Stalagmite.h" />
+                <File name="Stalagmite.cpp" />
+            </Folder>
+            <File name="Item.h" />
+            <File name="Item.cpp" />
+            <File name="LivingItem.h" />
+            <File name="LivingItem.cpp" />
+            <File name="Spike.h" />
+            <File name="Spike.cpp" />
+            <File name="Dynamite.h" />
+            <File name="Dynamite.cpp" />
+            <File name="ArrowBullet.h" />
+            <File name="ArrowBullet.cpp" />
+            <File name="ArrowLauncher.h" />
+            <File name="ArrowLauncher.cpp" />
+            <File name="Enemy.h" />
+            <File name="Enemy.cpp" />
+            <File name="Stalactite.h" />
+            <File name="Stalactite.cpp" />
+            <File name="Boulder.h" />
+            <File name="Boulder.cpp" />
+        </Folder>
+        <Folder name="MapManager">
+            <File name="MapManager.h" />
+            <File name="MapManager.cpp" />
+            <File name="MapData.h" />
+            <File name="MapData.cpp" />
+            <File name="MapDataConstVariables.h" />
+            <File name="SpriteData.h" />
+            <File name="SpriteData.cpp" />
+        </Folder>
+        <Folder name="GameManager">
+            <File name="GameManager.h" />
+            <File name="GameManager.cpp" />
+            <File name="MainMenu.h" />
+            <File name="MainMenu.cpp" />
+        </Folder>
+        <Folder name="CustomArduboy">
+            <File name="CustomArduboy.h" />
+            <File name="CustomArduboy.cpp" />
+            <File name="Arduboy_audio.h" />
+            <File name="Arduboy_audio.cpp" />
+            <File name="Arduboy_glcdfont.c" />
+            <File name="Arduboy_core.cpp" />
+            <File name="Arduboy_core.h" />
+        </Folder>
+    </Project>
+</NotepadPlus>

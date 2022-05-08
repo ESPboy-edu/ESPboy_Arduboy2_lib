@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 2,
+  "title": "Rick Ardurous",
+  "description": "Rick Ardurous is a game developed for the Arduboy, and inspired by the retro-game Rick Dangerous, where the player takes the role of an adventurer exploring caves in the hope of finding the Grail.",
+  "author": "Alban Nanty",
+  "version": "1.0",
+  "date": "2022-04-16",
+  "genre": "Puzzle",
+  "publisher": "Alban Nanty",
+  "idea": "Alban Nanty",
+  "code": "Alban Nanty",
+  "art": "Alban Nanty",
+  "sound": "Alban Nanty",
+  "url": "https://github.com/Lswbanban/RickArdurous",
+  "sourceUrl": "https://github.com/Lswbanban/RickArdurous",
+  "email": "banban@banban.org",
+  "companion": "https://github.com/Lswbanban/RickArdurous",
+  "banner": "Banner.png",
+  "screenshots": [
+    {
+      "title": "Level 5",
+      "filename": "Screenshot5.png"
+    },
+    {
+      "title": "Main Menu",
+      "filename": "Screenshot1.png"
+    },
+    {
+      "title": "Level 1",
+      "filename": "Screenshot2.png"
+    },
+    {
+      "title": "Level 2",
+      "filename": "Screenshot3.png"
+    },
+    {
+      "title": "Level 3",
+      "filename": "Screenshot4.png"
+    },
+    {
+      "title": "Level 6",
+      "filename": "Screenshot6.png"
+    },
+  ],
+  "binaries": [
+    {
+      "title": "The game",
+      "filename": "RickArdurous.ino.arduino_leonardo.hex",
+      "device": "Arduboy"
+    }
+  ],
+  "buttons": [
+    {
+      "control": "D-Pad",
+      "action": "Move"
+    },
+    {
+      "control": "Down + Left/Right",
+      "action": "Crawl"
+    },
+    {
+      "control": "A",
+      "action": "Jump"
+    },
+    {
+      "control": "B",
+      "action": "Fire"
+    },
+    {
+      "control": "B + Down",
+      "action": "Place a Dynamite"
+    },
+  ],
+}
