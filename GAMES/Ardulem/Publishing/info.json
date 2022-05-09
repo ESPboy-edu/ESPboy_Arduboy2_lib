@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 2,
+  "title": "Ardulem",
+  "description": "Ardulem is an attempt to bring the legendary \"Lemmings\" game to the Arduboy platform.",
+  "author": "Alban Nanty",
+  "version": "1.0",
+  "date": "2017-10-28",
+  "genre": "Puzzle",
+  "publisher": "Alban Nanty",
+  "idea": "Alban Nanty",
+  "code": "Alban Nanty",
+  "art": "Alban Nanty",
+  "sound": "Tim Wright, Brian Johnston",
+  "url": "https://bitbucket.org/banban/ardulem",
+  "sourceUrl": "https://bitbucket.org/banban/ardulem",
+  "email": "banban@banban.org",
+  "companion": "https://bitbucket.org/banban/ardulem/src/896322992b1caab5875ca003b43d81482ccf12b5/Release/?at=default",
+  "banner": "Banner.png",
+  "screenshots": [
+    {
+      "title": "Level 3",
+      "filename": "Screenshot1.png"
+    },
+    {
+      "title": "Level 0",
+      "filename": "Screenshot2.png"
+    },
+    {
+      "title": "Level 2",
+      "filename": "Screenshot3.png"
+    },
+    {
+      "title": "Level 1",
+      "filename": "Screenshot4.png"
+    },
+    {
+      "title": "Menu",
+      "filename": "Screenshot5.png"
+    }
+  ],
+  "binaries": [
+    {
+      "title": "The game",
+      "filename": "Ardulem.ino.arduino_leonardo.hex",
+      "device": "Arduboy"
+    }
+  ],
+  "buttons": [
+    {
+      "control": "D-Pad",
+      "action": "Move cursor/Scroll the screen"
+    },
+    {
+      "control": "Hold A+D-Pad",
+      "action": "Navigate in the toolbar"
+    },
+    {
+      "control": "A",
+      "action": "Select the next tool"
+    },
+    {
+      "control": "B (on Lem)",
+      "action": "Give an order to a Lem"
+    },
+    {
+      "control": "B (on timer)",
+      "action": "Pause the game"
+    },
+    {
+      "control": "B (on flag)",
+      "action": "Return to Menu"
+    },
+    {
+      "control": "Hold A+Right (on timer)",
+      "action": "Accelerate"
+    },
+    {
+      "control": "Hold A+Left (on timer)",
+      "action": "Normal speed"
+    },
+    {
+      "control": "Hold A+Right (on drop)",
+      "action": "Inc. drop speed"
+    },
+    {
+      "control": "Hold A+Left (on drop)",
+      "action": "Dec. drop speed"
+    }
+  ],
+  "eeprom": {
+    "variable": false,
+    "start": 16,
+    "end": 16
+  }
+}
