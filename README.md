@@ -77,6 +77,7 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **ArduRogue** (MPL-2.0) by [tiberiusbrown](https://github.com/tiberiusbrown/ardurogue)
 - **Ardulem** (Open source)[Alban Nanty](https://github.com/Lswbanban/Ardulem)
 - **RickArdurous** (Open source) [Alban Nanty](https://github.com/Lswbanban/RickArdurous)
 - **1944 Return to Midway** (MIT) [PPOT](https://github.com/Press-Play-On-Tape/Nineteen44)
