@@ -5,6 +5,8 @@
 #include "src/utils/Constants.h"
 #include "src/utils/Structs.h"
 #include "src/utils/EEPROM_Utils.h"
+#include <sigma_delta.h>
+
 
 #ifdef ARDUBOY_TONES_SOUNDS
 #include <ArduboyTones.h>
@@ -23,26 +25,22 @@ ArduboyTones sound(arduboy.audio.enabled);
 #endif
 
 #ifdef BYTE_BEAT_SOUNDS
-
 // interrupt service routines
-ISR(TIMER1_OVF_vect) {
-    byteBeatStep();
-}
+//ISR(TIMER1_OVF_vect) {
+//    byteBeatStep();
+//}
 
-ISR(TIMER1_CAPT_vect) {
-    byteBeatStep();
-}
+//ISR(TIMER1_CAPT_vect) {
+//    byteBeatStep();
+//}
 
-long t;
-#ifdef BYTE_BEAT_SOUNDS_1
+
 uint8_t hpISR = 46;
-#endif
-#ifdef BYTE_BEAT_SOUNDS_3
 uint8_t byteBeatIdx = ByteBeatIndex::Map;
-#endif
 
-void byteBeatStep()
-{
+void IRAM_ATTR byteBeatStep(){   
+  static uint32_t t=0;
+  uint8_t OCR4A;
     t++;
     #ifdef BYTE_BEAT_SOUNDS_1
     OCR4A = ((t*(t>>8|t>>18)&hpISR&t>>3))^(t&t>>8|t>>20);
@@ -65,7 +63,9 @@ void byteBeatStep()
     }
     #endif
 
+ sigmaDeltaWrite(0, OCR4A);
 }
+
 #endif
 
 Font3x5 font3x5 = Font3x5(6);

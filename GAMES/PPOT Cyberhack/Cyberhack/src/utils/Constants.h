@@ -16,7 +16,7 @@
     #define _USE_LED_ANALOGUE
     #define _TV_TRANSITION
 #else
-    //#define BYTE_BEAT_SOUNDS
+    #define BYTE_BEAT_SOUNDS
     #define ARDUBOY_TONES_SOUNDS
     #define FLICKERING
     #define USE_LED_ANALOGUE
@@ -29,7 +29,7 @@
 #define CREDITS
 #define NEW_TOTALS
 #define _OLD_TOTALS
-//#define _BYTE_BEAT_SOUNDS_1
+#define BYTE_BEAT_SOUNDS_1
 //#define BYTE_BEAT_SOUNDS_3
 
 #define NO_HACK_ID 255

@@ -17,25 +17,36 @@ void printHex(uint8_t data) {
 
 }
 
+
+#define SAMPLE_RATE 8000
+#define SOUNDPIN D3
+
 void initByteBeat() {
 
 	#ifdef BYTE_BEAT_SOUNDS
-
+   noInterrupts();
+  sigmaDeltaSetup(0, SAMPLE_RATE);
+  sigmaDeltaAttachPin(SOUNDPIN);
+  sigmaDeltaEnable();
+  timer1_attachInterrupt(byteBeatStep);
+  timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
+  timer1_write(160000000 / SAMPLE_RATE * 2);
+  interrupts(); 
         // Timer 1 setup for ByteBeat interrupts and red and blue RGB LED PWM.
         // Phase correct PWM 8 bit.
         // OC1A and OC1B set on up-counting / clear on down-counting (inverted).
         // Top set by ICR1. Clock set to system clock/8 (from prescaler).
         // Counting frequency will be 2MHz resulting in interrupts at 7812.5Hz
-        TCCR1A = _BV(COM1A1) | _BV(COM1A0) | _BV(COM1B1) | _BV(COM1B0) | _BV(WGM11);
-        TCCR1B = _BV(WGM13) | _BV(CS11);
+        //TCCR1A = _BV(COM1A1) | _BV(COM1A0) | _BV(COM1B1) | _BV(COM1B0) | _BV(WGM11);
+        //TCCR1B = _BV(WGM13) | _BV(CS11);
         // set top count
-        ICR1 = 255;
+        //ICR1 = 255;
         // interrupt on capture (top) and overflow (bottom)
-        TIMSK1 = _BV(ICIE1) | _BV(TOIE1);
+        //TIMSK1 = _BV(ICIE1) | _BV(TOIE1);
 
         // make sure blue and red RGB LEDs are turned off
-        OCR1A = 0;
-        OCR1B = 0;
+        //OCR1A = 0;
+        //OCR1B = 0;
 
         // // set up Timer 3
         // TCCR1A = 0; // normal operation
@@ -47,33 +58,39 @@ void initByteBeat() {
         //TCCR4A = _BV(COM4A1) | _BV(PWM4A); // Fast-PWM 8-bit, toggle speaker pin 2 
 
         // to mute ByteBeat (but continue with the score while muted):
-        TCCR4A = _BV(PWM4A);
-        TCCR4B = _BV(CS40); // 62500Hz
-        OCR4C = 0xFF; // Resolution to 8-bit (TOP=0xFF)   
+        //TCCR4A = _BV(PWM4A);
+        //TCCR4B = _BV(CS40); // 62500Hz
+        //OCR4C = 0xFF; // Resolution to 8-bit (TOP=0xFF)   
 
         // Set up Timer0 for PWM control of the green RGB LED and make sure it's off
-        TCCR0A = _BV(COM0A1) | _BV(WGM01) | _BV(WGM00);
-        OCR0A = 255;
+        //TCCR0A = _BV(COM0A1) | _BV(WGM01) | _BV(WGM00);
+        //OCR0A = 255;
 
     #endif
 
 }
 
 void disableByteBeat() {
-
+#ifdef BYTE_BEAT_SOUNDS
+  noInterrupts();
+  timer1_disable();
+  sigmaDeltaDisable();
+  interrupts();
 //RS    TCCR4A = _BV(PWM4A);
-    
+#endif
 }
 
-void enableByteBeat() {
 
+void enableByteBeat() {
+#ifdef BYTE_BEAT_SOUNDS
+  initByteBeat();
     // to unmute ByteBeat with both pins used for high volume:
     // TCCR4A = _BV(COM4A0) | _BV(PWM4A);
 
     // to unmute ByteBeat only on speaker pin 2 for normal volume
     // leaving speaker pin 1 free for ArduboyTones or BeepPin1:
 //RS    TCCR4A = _BV(COM4A1) | _BV(PWM4A);
-
+#endif
 }
 
 uint8_t isSubArray(uint8_t fullArray[], uint8_t subArray[], uint8_t fullArrayLength, uint8_t subArrayLength)  { 

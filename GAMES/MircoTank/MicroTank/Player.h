@@ -368,6 +368,7 @@ struct playerTank {
     else if (lvl == 4) {
       return 12;
     }
+ return 0;
   }
 
   uint8_t getCurrentWeaponWidth() {
@@ -390,6 +391,7 @@ struct playerTank {
     else if (lvl == 4) {
       return 13;
     }
+   return 0;
   }
 
   uint8_t getCurrentOffset() {
@@ -412,6 +414,7 @@ struct playerTank {
     else if (lvl == 4) {
       return 38;
     }
+ return 0;
   }
 
   void drawTankShop() {
