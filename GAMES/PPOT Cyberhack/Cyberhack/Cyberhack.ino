@@ -39,11 +39,12 @@ uint8_t hpISR = 46;
 uint8_t byteBeatIdx = ByteBeatIndex::Map;
 
 void IRAM_ATTR byteBeatStep(){   
-  static uint16_t t=0;  //actually it should be int32_t but with the sound is not good usualy after uint16_t so loop it on uint16_t
+  static uint32_t t=0;
   uint8_t OCR4A;
     t++;
     #ifdef BYTE_BEAT_SOUNDS_1
-    OCR4A = ((t*(t>>8|t>>18)&hpISR&t>>3))^(t&t>>8|t>>20);
+    OCR4A = ((t<<1)^((t<<1)+(t>>7)&t>>12))|t>>(4-(1^7&(t>>19)))|t>>7;
+    //OCR4A = ((t*(t>>8|t>>18)&hpISR&t>>3))^(t&t>>8|t>>20);
     #endif
     #ifdef BYTE_BEAT_SOUNDS_3
     switch (byteBeatIdx) {

@@ -18,19 +18,19 @@ void printHex(uint8_t data) {
 }
 
 
-#define SAMPLE_RATE 12000
+#define SAMPLE_RATE 8000
 #define SOUNDPIN D3
 
 void initByteBeat() {
 
 	#ifdef BYTE_BEAT_SOUNDS
   noInterrupts();
-  sigmaDeltaSetup(0, SAMPLE_RATE*4);
+  sigmaDeltaSetup(0, SAMPLE_RATE*8);
   sigmaDeltaAttachPin(SOUNDPIN);
   sigmaDeltaEnable();
   timer1_attachInterrupt(byteBeatStep);
   timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
-  timer1_write(80000000 / SAMPLE_RATE);
+  timer1_write(80000000 / SAMPLE_RATE * 2);
   interrupts(); 
         // Timer 1 setup for ByteBeat interrupts and red and blue RGB LED PWM.
         // Phase correct PWM 8 bit.
