@@ -1,0 +1,7 @@
+{
+    "configuration": "core=arduboy-core,boot=cathy3k,contrast=normal",
+    "board": "arduboy-homemade:avr:8bitcadexlup",
+    "output": "../build",
+    "sketch": "OBS.ino",
+    "port": "/dev/tty.usbmodem14101"
+}
