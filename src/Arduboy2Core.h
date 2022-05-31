@@ -35,12 +35,19 @@
 
 // bit values for button states
 // these are determined by the buttonsState() function
+//#define LEFT_BUTTON  32  /**< The Left button value for functions requiring a bitmask */
+//#define RIGHT_BUTTON 16 /**< The Right button value for functions requiring a bitmask */
+//#define UP_BUTTON    8    /**< The Up button value for functions requiring a bitmask */
+//#define DOWN_BUTTON  4  /**< The Down button value for functions requiring a bitmask */
+//#define A_BUTTON 	 2     /**< The A button value for functions requiring a bitmask */
+//#define B_BUTTON 	 1     /**< The B button value for functions requiring a bitmask */
+
 #define LEFT_BUTTON  32  /**< The Left button value for functions requiring a bitmask */
-#define RIGHT_BUTTON 16 /**< The Right button value for functions requiring a bitmask */
-#define UP_BUTTON    8    /**< The Up button value for functions requiring a bitmask */
-#define DOWN_BUTTON  4  /**< The Down button value for functions requiring a bitmask */
-#define A_BUTTON 	 2     /**< The A button value for functions requiring a bitmask */
-#define B_BUTTON 	 1     /**< The B button value for functions requiring a bitmask */
+#define RIGHT_BUTTON 64 /**< The Right button value for functions requiring a bitmask */
+#define UP_BUTTON    128    /**< The Up button value for functions requiring a bitmask */
+#define DOWN_BUTTON  16  /**< The Down button value for functions requiring a bitmask */
+#define A_BUTTON 	 8     /**< The A button value for functions requiring a bitmask */
+#define B_BUTTON 	 4     /**< The B button value for functions requiring a bitmask */
 
 
 #define WIDTH 128 /**< The width of the display in pixels */
