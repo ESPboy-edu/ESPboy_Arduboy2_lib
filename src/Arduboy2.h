@@ -1279,10 +1279,10 @@ class Arduboy2Base : public Arduboy2Core
   uint8_t previousButtonState;
 
   // For frame funcions
-  uint8_t eachFrameMillis;
-  uint8_t thisFrameStart;
+  uint32_t eachFrameMillis=1000/30;
+  uint32_t thisFrameStart=0;
   bool justRendered;
-  uint8_t lastFrameDurationMs;
+  uint32_t lastFrameDurationMs;
 };
 
 

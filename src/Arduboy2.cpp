@@ -217,30 +217,24 @@ bool Arduboy2Base::everyXFrames(uint8_t frames){
 
 
 bool Arduboy2Base::nextFrame(){
-  uint8_t now = (uint8_t) millis();
-  uint8_t frameDurationMs = now - thisFrameStart;
+  uint32_t now = millis();
+  uint32_t frameDurationMs = now - thisFrameStart;
 
-  if (justRendered) {
-    lastFrameDurationMs = frameDurationMs;
+  if (justRendered == true){
     justRendered = false;
     return false;
   }
-  else if (frameDurationMs < eachFrameMillis) {
-    // Only idle if at least a full millisecond remains, since idle() may
-    // sleep the processor until the next millisecond timer interrupt.
-    if (++frameDurationMs < eachFrameMillis) {
-      idle();
-    }
-
-    return false;
+  
+  
+  if (frameDurationMs > eachFrameMillis) {
+    justRendered = true;
+    lastFrameDurationMs =  frameDurationMs;
+    thisFrameStart = now;
+    frameCount++;
+    return true;
   }
-
-  // pre-render
-  justRendered = true;
-  thisFrameStart = now;
-  frameCount++;
-
-  return true;
+  else 
+    return false;
 }
 
 
