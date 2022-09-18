@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seqview xscroll="0.000000" yscroll="0" zoom="100">
+<sequence maintempo="160" measureAmount="7" currentTrack="0" beatResolution="48" internalName="" fileFormatVersion="4" channelManagement="auto" metronome="false">
+
+<measure  firstMeasure="0" denom="8" num="9"/>
+
+<tempo>
+  <controlevent type="201" tick="1512" value="79.84210205"/>
+</tempo>
+<text>
+</text>
+<copyright>
+</copyright>
+<defaultkeysig keytype="2" keysymbolamount="0" />
+
+
+<track name="Brass" id="0" channel="2" muted="false" soloed="false" volume="100" default_volume="80">
+  <key type="C" />
+  <editors height="128">
+    <score enabled="true" musical_notation="true" linear_notation="true" g_clef="true" f_clef="true" scroll="0.547945" proportion="1.000000"/>
+    <keyboard enabled="false" scroll="0.440278"/>
+    <guitar enabled="false"/>
+    <drum enabled="false" scroll="0.000000"/>
+    <controller enabled="false" controller="7"/>
+  </editors>
+  <magneticgrid divider="16" triplet="false" dotted="false"/>
+  <instrument id="56"/>
+  <drumkit id="0" collapseView="false"/>
+  <guitartuning  string0="67" string1="72" string2="76" string3="81" string4="86" string5="91"/>
+
+  <note pitch="72" start="59" end="74" volume="103"/>
+  <note pitch="77" start="98" end="106" volume="110"/>
+  <note pitch="72" start="107" end="123" volume="115"/>
+  <note pitch="69" start="131" end="197" volume="122"/>
+  <note pitch="72" start="203" end="271" volume="107"/>
+  <note pitch="69" start="276" end="292" volume="109"/>
+  <note pitch="72" start="314" end="320" volume="108"/>
+  <note pitch="69" start="324" end="339" volume="114"/>
+  <note pitch="65" start="347" end="414" volume="126"/>
+  <note pitch="69" start="420" end="487" volume="107"/>
+  <note pitch="65" start="491" end="506" volume="112"/>
+  <note pitch="69" start="530" end="537" volume="107"/>
+  <note pitch="65" start="539" end="556" volume="113"/>
+  <note pitch="62" start="563" end="630" volume="124"/>
+  <note pitch="74" start="635" end="700" volume="107"/>
+  <note pitch="69" start="707" end="722" volume="109"/>
+  <note pitch="74" start="745" end="750" volume="109"/>
+  <note pitch="69" start="756" end="771" volume="112"/>
+  <note pitch="65" start="780" end="1130" volume="127"/>
+  <controlevent type="10" tick="0" value="64.00000000"/>
+  <controlevent type="11" tick="0" value="0.00000000"/>
+  <controlevent type="91" tick="0" value="27.00000000"/>
+  <controlevent type="93" tick="0" value="77.00000000"/>
+  <controlevent type="7" tick="0" value="10.00000000"/>
+  <controlevent type="91" tick="216" value="27.00000000"/>
+  <controlevent type="11" tick="216" value="0.00000000"/>
+  <controlevent type="10" tick="216" value="64.00000000"/>
+  <controlevent type="7" tick="216" value="10.00000000"/>
+  <controlevent type="93" tick="216" value="77.00000000"/>
+</track>
+
+</sequence></seqview>
