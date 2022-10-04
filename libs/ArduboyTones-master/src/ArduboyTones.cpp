@@ -165,7 +165,6 @@ void ArduboyTones::nextTone(){
 	if (toneSilent) {
 		noTone();
 	} else {
-	    ::noTone(TONES_PIN);
 		::tone(TONES_PIN, freq);
 	}	
 

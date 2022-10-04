@@ -61,7 +61,7 @@ void ESPboyInit::begin(const char *appName) {
   delay(500);
 
 //clear TFT and backlit on high
-  dac.setVoltage(4095, true);
+  dac.setVoltage(4095, false);
   tft.fillScreen(TFT_BLACK);
 };
 

@@ -34,10 +34,9 @@ void Arduboy2Base::start(){
   boot();
   clear();  
   display();
-  flashlight();
   systemButtons(); 
   audio.begin();
-  bootLogo();
+  drawLogoBitmap();
   waitNoButtons();
 }
 
@@ -45,18 +44,14 @@ void Arduboy2Base::begin(){
   boot();
   clear();  
   display();
-  flashlight();
   systemButtons(); 
   audio.begin();
-  bootLogo();
+  drawLogoBitmap();
   waitNoButtons();
 }
 
 
 void Arduboy2Base::flashlight(){
-  if (!pressed(UP_BUTTON)) {
-    return;
-  }
   digitalWriteRGB(RGB_ON, RGB_ON, RGB_ON);
   myESPboy.tft.fillScreen(TFT_WHITE);
   while (true) {
@@ -64,132 +59,102 @@ void Arduboy2Base::flashlight(){
   }
 }
 
+
+#define SYS_BUTTONS_DELAY 10000 
+
 void Arduboy2Base::systemButtons(){
-  sysCtrlSound();
-}
+    bool soundset;
+    bool showlogoset;
+    bool ledset;
+    bool showunitnameset;
+    bool refreshDisplay = true;
+    uint32_t timerCount=millis();
+  
+  
+  if (!pressed(UP_BUTTON) && !pressed(DOWN_BUTTON) && !pressed(LEFT_BUTTON) && !pressed(RIGHT_BUTTON))
+    return;
+  
+  delayShort(200);
+  soundset = EEPROM.read(EEPROM_AUDIO_ON_OFF);
+  showlogoset = readShowBootLogoFlag();
+  ledset = readShowBootLogoLEDsFlag();
+  showunitnameset = readShowUnitNameFlag();
+  
+  myESPboy.tft.setTextSize(1);
+  myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
 
-
-void Arduboy2Base::sysCtrlSound(){
-  bool soundset;
-  if (pressed(LEFT_BUTTON) || pressed(RIGHT_BUTTON)){
-    if (pressed(LEFT_BUTTON)) {
-      soundset=false;
-      digitalWriteRGB(RED_LED, RGB_ON);
-      myESPboy.tft.drawString(F("SOUND OFF"),36,30);}
-    if (pressed(RIGHT_BUTTON)){
-      soundset=true;
-      digitalWriteRGB(GREEN_LED, RGB_ON);
-      myESPboy.tft.drawString(F("SOUND ON"),40,30);}
-      
-    EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
-    EEPROM.commit();
-    delayShort(1000);
-  myESPboy.myLED.setRGB(0,0,0);
-  }
-}
-
-
-void Arduboy2Base::bootLogo(){
-  bootLogoShell(drawLogoBitmap);
-}
-
-
-void Arduboy2Base::drawLogoBitmap(int16_t y){
-  drawBitmap(20, y, arduboy_logo, 88, 16);}
-
-
-void Arduboy2Base::bootLogoCompressed(){
-  bootLogoShell(drawLogoCompressed);
-}
-
-
-void Arduboy2Base::drawLogoCompressed(int16_t y){
-  drawCompressed(20, y, arduboy_logo_compressed);
-}
-
-
-void Arduboy2Base::bootLogoSpritesSelfMasked(){
-  bootLogoShell(drawLogoSpritesSelfMasked);
-}
-
-
-void Arduboy2Base::drawLogoSpritesSelfMasked(int16_t y){
-  Sprites::drawSelfMasked(20, y, arduboy_logo_sprite, 0);
-}
-
-
-void Arduboy2Base::bootLogoSpritesOverwrite(){
-  bootLogoShell(drawLogoSpritesOverwrite);
-}
-
-
-void Arduboy2Base::drawLogoSpritesOverwrite(int16_t y){
-  Sprites::drawOverwrite(20, y, arduboy_logo_sprite, 0);
-}
-
-
-void Arduboy2Base::bootLogoSpritesBSelfMasked(){
-  bootLogoShell(drawLogoSpritesBSelfMasked);
-}
-
-
-void Arduboy2Base::drawLogoSpritesBSelfMasked(int16_t y){
-  SpritesB::drawSelfMasked(20, y, arduboy_logo_sprite, 0);
-}
-
-
-void Arduboy2Base::bootLogoSpritesBOverwrite(){
-  bootLogoShell(drawLogoSpritesBOverwrite);
-}
-
-
-void Arduboy2Base::drawLogoSpritesBOverwrite(int16_t y){
-  SpritesB::drawOverwrite(20, y, arduboy_logo_sprite, 0);
-}
-
-
-// bootLogoText() should be kept in sync with bootLogoShell()
-// if changes are made to one, equivalent changes should be made to the other
-void Arduboy2Base::bootLogoShell(void (*drawLogo)(int16_t)){	
-  bool showLEDs = readShowBootLogoLEDsFlag();
-  if (pressed(DOWN_BUTTON)){
-    showLEDs = !showLEDs;
-    writeShowBootLogoLEDsFlag(showLEDs);
-    digitalWriteRGB(BLUE_LED, RGB_ON);
-    if(showLEDs)myESPboy.tft.drawString(F("LOGO ON"),40,30);
-    else myESPboy.tft.drawString(F("LOGO OFF"),37,30);
-    delayShort(1000);
-    myESPboy.myLED.setRGB(0,0,0);
-  }
-
-  if (!showLEDs) {
-     return;
-  }
-
-  setRGBled(RED_LED, 20);
-
-  for (int16_t y = -16; y <= 24; y++) {
-    if (y == 4) {
-      setRGBled(RED_LED, RGB_OFF);    // red LED off
-      setRGBled(GREEN_LED, 20);   // green LED on
-    }
+  while (!pressed(B_BUTTON) && (timerCount+SYS_BUTTONS_DELAY) > millis()){    
+    if (pressed(UP_BUTTON)) {soundset = !soundset; refreshDisplay = true; timerCount=millis();}
+    if (pressed(DOWN_BUTTON)) {showlogoset = !showlogoset; refreshDisplay = true; timerCount=millis();}
+    if (pressed(LEFT_BUTTON)) {ledset = !ledset;  refreshDisplay = true; timerCount=millis();}
+    if (pressed(RIGHT_BUTTON)) {showunitnameset = !showunitnameset;  refreshDisplay = true; timerCount=millis();}
+    if (pressed(A_BUTTON)) {flashlight();}
     
-    display(CLEAR_BUFFER);
-    (*drawLogo)(y); 
-    display();		
-    delayShort(10);
+    myESPboy.tft.drawString ((String)((SYS_BUTTONS_DELAY -(millis()-timerCount))/1000), 0, 0);
+    
+    if(refreshDisplay){
+      myESPboy.tft.fillScreen(TFT_BLACK);
+      if (soundset) myESPboy.tft.drawString(F("SOUND ON"),40,20);
+      else myESPboy.tft.drawString(F("SOUND OFF"),36,20);
+      if(showlogoset)myESPboy.tft.drawString(F("SHOW LOGO ON"),28,30);
+      else myESPboy.tft.drawString(F("SHOW LOGO OFF"),24,30);
+      if(ledset)myESPboy.tft.drawString(F("SHOW LED ON"),31,40);
+      else myESPboy.tft.drawString(F("SHOW LED OFF"),28,40);
+      if(showunitnameset)myESPboy.tft.drawString(F("UNIT NAME ON"),28,50);
+      else myESPboy.tft.drawString(F("UNIT NAME OFF"),24,50);
+      
+      writeShowBootLogoFlag(showlogoset);
+      writeShowBootLogoLEDsFlag(ledset);
+      writeShowUnitNameFlag(showunitnameset);
+      EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
+      
+      myESPboy.tft.drawString(F("UP for sound"),28,70);
+      myESPboy.tft.drawString(F("DOWN for logo"),24,80);
+      myESPboy.tft.drawString(F("LEFT for LEDs"),25,90);
+      myESPboy.tft.drawString(F("RIGHT for unit name"),7,100);
+      myESPboy.tft.drawString(F("A for flashlight"),16,110);
+      myESPboy.tft.drawString(F("B to exit"),37,120);
+      refreshDisplay = false;
+    }   
+    delayShort(200);
   }
-
-    setRGBled(GREEN_LED, RGB_OFF);  // green LED off
-    setRGBled(BLUE_LED, 20);    // blue LED on
-  delayShort(1000);
-  setRGBled(RGB_OFF,RGB_OFF,RGB_OFF);
-
-}
+  
+  EEPROM.commit();
+  myESPboy.myLED.setRGB(0,0,0);
+  myESPboy.tft.fillScreen(TFT_BLACK);
+};
 
 
-// Virtual function overridden by derived class
-void Arduboy2Base::bootLogoExtra() { }
+
+void Arduboy2Base::drawLogoBitmap(){
+  uint8_t cntr=0;
+  char nme[ARDUBOY_UNIT_NAME_LEN+1];
+  bool ledset = readShowBootLogoLEDsFlag();
+  String nmestr = (String)nme;
+  
+  nme[ARDUBOY_UNIT_NAME_LEN+1]=0;
+  if(readShowBootLogoFlag()){
+    Arduboy2Base::readUnitName(&nme[0]);
+    
+    if(readShowUnitNameFlag())myESPboy.tft.drawString(nmestr,(128-nmestr.length()*6)/2,120);
+    for (int16_t y = -16; y <= 24; y++) {  
+      Arduboy2Base::display(CLEAR_BUFFER);
+      drawBitmap(20, y, arduboy_logo, 88, 16);
+      Arduboy2Base::display();
+      if(ledset){		
+         if(cntr==1) myESPboy.myLED.setRGB(30,0,0);
+         if(cntr==13) myESPboy.myLED.setRGB(0,30,0);
+         if(cntr==26) myESPboy.myLED.setRGB(0,0,30);
+      }
+      delayShort(25);
+      cntr++;
+    }
+  myESPboy.myLED.setRGB(0,0,0); 
+  delay(1500); 
+  myESPboy.tft.fillScreen(TFT_BLACK);
+  } 
+};
+
 
 
 // wait for all buttons to be released
@@ -225,7 +190,6 @@ bool Arduboy2Base::nextFrame(){
     return false;
   }
   
-  
   if (frameDurationMs > eachFrameMillis) {
     justRendered = true;
     lastFrameDurationMs =  frameDurationMs;
@@ -243,7 +207,6 @@ int Arduboy2Base::cpuLoad(){
 }
 
 void Arduboy2Base::initRandomSeed(){
-
   randomSeed(ESP8266_DREG(0x20E44));
 }
 
@@ -864,7 +827,6 @@ void IRAM_ATTR Arduboy2Base::display(){
 //but you can do it checking global 
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
-//the same way as for bool invert_flag; or bool allpixelson_flag;
   static uint16_t oBuffer[WIDTH*16] __attribute__ ((aligned));;
   static uint16_t currentDataByte, currentDataAddr;
   static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
@@ -906,8 +868,8 @@ else {myESPboy.tft.fillRect(0, vertOffset, WIDTH, HEIGHT,foregroundColor);}
 
 
 void Arduboy2Base::display(bool clear){
-  this->display();
-  if (clear) this->clear();
+  Arduboy2Base::display();
+  if (clear) Arduboy2Base::clear();
 }
 
 
@@ -999,9 +961,9 @@ void Arduboy2Base::writeUnitName(char* name){
     }
     // write character or 0 pad if finished
     EEPROM.write(dest, done ? 0x00 : name[src]);
-    EEPROM.commit();
     dest++;
   }
+  EEPROM.commit();
 }
 
 
@@ -1014,7 +976,6 @@ void Arduboy2Base::writeShowBootLogoFlag(bool val){
   uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
   bitWrite(flags, SYS_FLAG_SHOW_LOGO, val);
   EEPROM.write(EEPROM_SYS_FLAGS, flags);
-  EEPROM.commit();
 }
 
 
@@ -1027,7 +988,6 @@ void Arduboy2Base::writeShowUnitNameFlag(bool val){
   uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
   bitWrite(flags, SYS_FLAG_UNAME, val);
   EEPROM.write(EEPROM_SYS_FLAGS, flags);
-  EEPROM.commit();
 }
 
 
@@ -1038,10 +998,8 @@ bool Arduboy2Base::readShowBootLogoLEDsFlag(){
 
 void Arduboy2Base::writeShowBootLogoLEDsFlag(bool val){
   uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
-
   bitWrite(flags, SYS_FLAG_SHOW_LOGO_LEDS, val);
   EEPROM.write(EEPROM_SYS_FLAGS, flags);
-  EEPROM.commit();
 }
 
 
@@ -1066,80 +1024,6 @@ Arduboy2::Arduboy2()
   textWrap = 0;
 }
 
-// bootLogoText() should be kept in sync with bootLogoShell()
-// if changes are made to one, equivalent changes should be made to the other
-void Arduboy2::bootLogoText(){
-  bool showLEDs = readShowBootLogoLEDsFlag();
-  //if (!readShowBootLogoFlag()) {
-  //  return;
- // }
-
-  if (showLEDs) {
-    digitalWriteRGB(RED_LED, RGB_ON);
-  }
-
-  for (int16_t y = -16; y <= 24; y++) {
-    if (pressed(RIGHT_BUTTON)) {
-      digitalWriteRGB(RGB_OFF, RGB_OFF, RGB_OFF); // all LEDs off
-      return;
-    }
-
-    if (showLEDs && y == 4) {
-      digitalWriteRGB(RED_LED, RGB_OFF);    // red LED off
-      digitalWriteRGB(GREEN_LED, RGB_ON);   // green LED on
-    }
-
-    // Using display(CLEAR_BUFFER) instead of clear() may save code space.
-    // The extra time it takes to repaint the previous logo isn't an issue.
-		
-    display(CLEAR_BUFFER);
-    cursor_x = 23;
-    cursor_y = y;
-    textSize = 2;
-    print(F("ARDUBOY"));
-    textSize = 1;
-    display();
-    delayShort(11);
-  }
-
-  if (showLEDs) {
-    digitalWriteRGB(GREEN_LED, RGB_OFF);  // green LED off
-    digitalWriteRGB(BLUE_LED, RGB_ON);    // blue LED on
-  }
-  delayShort(400);
-  digitalWriteRGB(BLUE_LED, RGB_OFF);
-  
-  bootLogoExtra();
-}
-
-
-void Arduboy2::bootLogoExtra(){
-  uint8_t c;
-
-  if (!readShowUnitNameFlag())
-  {
-    return;
-  }
-
-  c = EEPROM.read(EEPROM_UNIT_NAME);
-
-  if (c != 0xFF && c != 0x00)
-  {
-    uint8_t i = EEPROM_UNIT_NAME;
-    cursor_x = 50;
-    cursor_y = 56;
-
-    do
-    {
-      write(c);
-      c = EEPROM.read(++i);
-    }
-    while (i < EEPROM_UNIT_NAME + ARDUBOY_UNIT_NAME_LEN);
-
-    display();
-    delayShort(1000);
-  }
-}
 
 
 size_t Arduboy2::write(uint8_t c){

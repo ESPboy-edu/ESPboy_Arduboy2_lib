@@ -35,13 +35,6 @@
 
 // bit values for button states
 // these are determined by the buttonsState() function
-//#define LEFT_BUTTON  32  /**< The Left button value for functions requiring a bitmask */
-//#define RIGHT_BUTTON 16 /**< The Right button value for functions requiring a bitmask */
-//#define UP_BUTTON    8    /**< The Up button value for functions requiring a bitmask */
-//#define DOWN_BUTTON  4  /**< The Down button value for functions requiring a bitmask */
-//#define A_BUTTON 	 2     /**< The A button value for functions requiring a bitmask */
-//#define B_BUTTON 	 1     /**< The B button value for functions requiring a bitmask */
-
 #define LEFT_BUTTON  32  /**< The Left button value for functions requiring a bitmask */
 #define RIGHT_BUTTON 64 /**< The Right button value for functions requiring a bitmask */
 #define UP_BUTTON    128    /**< The Up button value for functions requiring a bitmask */
@@ -74,7 +67,7 @@ class Arduboy2Core
 
   public:
   
-    static uint8_t sBuffer[(HEIGHT*WIDTH)/8] __attribute__ ((aligned));;
+    static uint8_t sBuffer[(HEIGHT*WIDTH)/8] __attribute__ ((aligned));
     
     static uint16_t colors[19];
     
@@ -87,6 +80,8 @@ class Arduboy2Core
     
     Arduboy2Core();
 
+	
+	
 	
     /** \brief
      * Idle the CPU to save power.
@@ -584,7 +579,7 @@ class Arduboy2Core
      * \see Arduboy2Base::initRandomSeed()
      */
     static unsigned long generateRandomSeed();
-
+    
 
     /** \brief
      * Delay for the number of milliseconds, specified as a 16 bit value.
@@ -597,6 +592,8 @@ class Arduboy2Core
      * 65535 milliseconds (about 65.5 seconds). Using this function instead
      * of Arduino `delay()` will save a few bytes of code.
      */
+     
+     
     void static delayShort(uint16_t ms) __attribute__ ((noinline));
 
     /** \brief

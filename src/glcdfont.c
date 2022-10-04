@@ -5,7 +5,7 @@
  */
 
 #ifndef ESP8266
-#include <avr/io.h>
+//#include <avr/io.h>
 #include <avr/pgmspace.h>
 #endif
 

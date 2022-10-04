@@ -99,6 +99,7 @@ void ICACHE_RAM_ATTR ESPboyLED::ledset(uint8_t rled, uint8_t gled, uint8_t bled)
   pixel = (gled<<16) + (rled<<8) + bled;
   mask = 0x800000; 
   startTime = 0;
+  noInterrupts();
   os_intr_lock();
   for (i=0; i<24; i++){
     if (pixel & mask) t = t1h;
@@ -111,6 +112,7 @@ void ICACHE_RAM_ATTR ESPboyLED::ledset(uint8_t rled, uint8_t gled, uint8_t bled)
     mask>>=1;
   }
   os_intr_unlock();
+  interrupts();
   delay(1);
   GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, pinMask);
 

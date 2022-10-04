@@ -8,7 +8,6 @@
 
 ESPboyInit myESPboy;
 
-
 uint8_t Arduboy2Core::sBuffer[];
 uint16_t Arduboy2Core::colors[19] = { 
             TFT_BLACK, TFT_NAVY, TFT_DARKGREEN, TFT_DARKCYAN, TFT_MAROON,
@@ -28,11 +27,18 @@ Arduboy2Core::Arduboy2Core() {}
 
 
 void Arduboy2Core::boot(){
-  Serial.begin(115200);         
+  //Serial.begin(115200);         
   EEPROM.begin(2400);
 
   //Init ESPboy
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
+/*  
+  //Check OTA2
+  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+     OTA2obj = new ESPboyOTA2(terminalGUIobj);
+  }
+*/  
 }
 
 
