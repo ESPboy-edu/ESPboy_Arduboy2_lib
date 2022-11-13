@@ -81,7 +81,6 @@ void Arduboy2Base::systemButtons(){
   showunitnameset = readShowUnitNameFlag();
   
   myESPboy.tft.setTextSize(1);
-  myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
 
   while (!pressed(B_BUTTON) && (timerCount+SYS_BUTTONS_DELAY) > millis()){    
     if (pressed(UP_BUTTON)) {soundset = !soundset; refreshDisplay = true; timerCount=millis();}
@@ -93,6 +92,7 @@ void Arduboy2Base::systemButtons(){
     myESPboy.tft.drawString ((String)((SYS_BUTTONS_DELAY -(millis()-timerCount))/1000), 0, 0);
     
     if(refreshDisplay){
+      myESPboy.tft.setTextColor(TFT_GREEN, TFT_BLACK);  
       myESPboy.tft.fillScreen(TFT_BLACK);
       if (soundset) myESPboy.tft.drawString(F("SOUND ON"),40,20);
       else myESPboy.tft.drawString(F("SOUND OFF"),36,20);
@@ -108,6 +108,7 @@ void Arduboy2Base::systemButtons(){
       writeShowUnitNameFlag(showunitnameset);
       EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
       
+      myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
       myESPboy.tft.drawString(F("UP for sound"),28,70);
       myESPboy.tft.drawString(F("DOWN for logo"),24,80);
       myESPboy.tft.drawString(F("LEFT for LEDs"),25,90);
