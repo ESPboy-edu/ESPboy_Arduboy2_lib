@@ -18,7 +18,7 @@
 #include "SpritesB.h"
 #include <Print.h>
 #include <limits.h>
-
+#include "glcdfont.c"
 
 /** \brief
  * Library version
@@ -108,6 +108,24 @@ struct Rect
   int16_t y;      /**< The Y coordinate of the top left corner */
   uint8_t width;  /**< The width of the rectangle */
   uint8_t height; /**< The height of the rectangle */
+
+  /** \brief
+   * The default constructor
+   */
+  Rect() = default;
+
+  /** \brief
+   * The fully initializing constructor
+   *
+   * \param x The X coordinate of the top left corner. Copied to variable `x`.
+   * \param y The Y coordinate of the top left corner. Copied to variable `y`.
+   * \param width The width of the rectangle. Copied to variable `width`.
+   * \param height The height of the rectangle. Copied to variable `height`.
+   */
+  constexpr Rect(int16_t x, int16_t y, uint8_t width, uint8_t height)
+    : x(x), y(y), width(width), height(height)
+  {
+  }
 };
 
 /** \brief
@@ -1408,9 +1426,185 @@ class Arduboy2 : public Print, public Arduboy2Base
   bool getTextWrap();
 
   /** \brief
+   * Set or disable text raw mode, allowing special characters to be displayed.
+   *
+   * \param raw `true` enables text raw mode. `false` disables it.
+   *
+   * \details
+   * In text _raw_ mode, character values that would normally be treated
+   * specially will instead be displayed. The special characters are:
+   *
+   * - ASCII newline/line feed (`\n`, 0x0A, inverse white circle).
+   * - ASCII carriage return (`\r`, 0x0D, musical eighth note).
+   *
+   * All other characters can be displayed regardless of whether raw mode
+   * is enabled or not.
+   *
+   * \see getTextRawMode() Print
+   */
+  void setTextRawMode(bool raw);
+
+  /** \brief
+   * Get the current state of text raw mode.
+   *
+   * \return `true` if text raw mode is enabled, `false` if disabled.
+   *
+   * \see setTextRawMode()
+   */
+  bool getTextRawMode();
+
+
+  /** \brief
    * Clear the display buffer and set the text cursor to location 0, 0
    */
   void clear();
+
+ /** \brief
+   * Get the width, in pixels, of a character in the library's font.
+   *
+   * \param textSize The text size the character would be drawn at
+   * (optional; defaults to 1).
+   *
+   * \return The width, in pixels, that a character will occupy, not including
+   * inter-character spacing.
+   *
+   * \details
+   * Returns the width, in pixels, occupied by a character in the font used by
+   * the library for text functions. The result will be based on the provided
+   * text size, or size 1 if not included. Since the font is monospaced, all
+   * characters will occupy the same width for a given text size.
+   *
+   * The width does not include the spacing added after each character by the
+   * library text functions. The `getCharacterSpacing()` function can be used
+   * to obtain the character spacing value.
+   *
+   * \see getCharacterHeight() getCharacterSpacing()
+   * getTextSize() setTextSize() font5x7
+   */
+  uint8_t getCharacterWidth(uint8_t textSize = 1)
+  {
+    return characterWidth * textSize;
+  }
+
+  /** \brief
+   * Get the number of pixels added after each character to provide spacing.
+   *
+   * \param textSize The text size the character would be drawn at
+   * (optional; defaults to 1).
+   *
+   * \return The number of pixels of space added after each character.
+   *
+   * \details
+   * Returns the number of pixels added to the right of each character,
+   * to provide spacing, when drawn by the library text functions.
+   * The result will be based on the provided text size, or size 1 if not
+   * included.
+   *
+   * \see getCharacterWidth() getLineSpacing()
+   * getTextSize() setTextSize() font5x7
+   */
+  uint8_t getCharacterSpacing(uint8_t textSize = 1)
+  {
+    return characterSpacing * textSize;
+  }
+
+  /** \brief
+   * Get the height, in pixels, of a character in the library's font.
+   *
+   * \param textSize The text size the character would be drawn at
+   * (optional; defaults to 1).
+   *
+   * \return The height, in pixels, that a character will occupy.
+   *
+   * \details
+   * Returns the height, in pixels, that a character will occupy when drawn
+   * using the library text functions. The result will be based on the
+   * provided text size, or size 1 if not included.
+   *
+   * \see getCharacterWidth() getLineSpacing()
+   * getTextSize() setTextSize() font5x7
+   */
+  uint8_t getCharacterHeight(uint8_t textSize = 1)
+  {
+    return characterHeight * textSize;
+  }
+
+  /** \brief
+   * Get the number of pixels added below each character to provide
+   * line spacing.
+   *
+   * \param textSize The text size the character would be drawn at
+   * (optional; defaults to 1).
+   *
+   * \return The number of pixels of space added below each character.
+   *
+   * \details
+   * Returns the number of pixels added below each character, to provide
+   * spacing for wrapped lines, when drawn by the library text functions.
+   * The result will be based on the provided text size, or size 1 if
+   * not included.
+   *
+   * \note
+   * For this library, the value returned will be 0 because no spacing is added
+   * between lines. This function is included so that it can be used to write
+   * code that would be easily portable for use with a suite of equivalent
+   * functions that rendered text with added line spacing.
+   *
+   * \see getCharacterHeight() getCharacterSpacing()
+   * getTextSize() setTextSize() font5x7
+   */
+  uint8_t getLineSpacing(uint8_t textSize = 1)
+  {
+    return lineSpacing * textSize;
+  }
+
+  /** \brief
+   * The font used for text functions.
+   *
+   * \details
+   * This is a 5 pixel by 7 pixel font. Each character is actually coded as
+   * 8 pixels high to allow a 1 pixel descender below the baseline.
+   * Many symbols also use the 8th pixel. The library functions add a 1 pixel
+   * space after each character to separate them, so characters written at
+   * size 1 will occupy a 6 x 8 pixel area when drawn.
+   *
+   * The character set represented is code page 437, also known as OEM 437,
+   * OEM-US, PC-8 or DOS Latin US. This is an 8 bit set which includes all
+   * printable ASCII characters plus many accented characters, symbols and
+   * line drawing characters.
+   *
+   * The data for this font is from file `glcdfont.c` in the
+   * [Adafruit GFX graphics library](https://github.com/adafruit/Adafruit-GFX-Library).
+   *
+   * \note
+   * \parblock
+   * With the library's text functions, the line drawing characters in the font
+   * won't touch on the left and right sides, as originally intended, because
+   * of the extra blank pixel added to the right of each character.
+   * \endparblock
+   *
+   * \note
+   * \parblock
+   * The library's text functions, except `drawChar()`, handle two character
+   * values specially:
+   *
+   * - ASCII newline/line feed (`\n`, 0x0A, inverse white circle).
+   *   This will move the text cursor position to the start of the next line,
+   *   based on the current text size.
+   * - ASCII carriage return (`\r`, 0x0D, musical eighth note).
+   *   This character will be ignored.
+   *
+   * To override the special handling of the above values, to allow the
+   * characters they represent to be printed, text _raw_ mode can be selected
+   * using the `setTextRawMode()` function.
+   * \endparblock
+   *
+   * \see Print write() drawChar() setTextRawMode()
+   * getCharacterWidth() getCharacterHeight()
+   * getCharacterSpacing() getLineSpacing() readUnitName() writeUnitName()
+   */
+  uint8_t * font5x7 = (uint8_t *)&font[0];
+
 
  protected:
   int16_t cursor_x;
@@ -1419,6 +1613,21 @@ class Arduboy2 : public Print, public Arduboy2Base
   uint8_t textBackground;
   uint8_t textSize;
   bool textWrap;
+  bool textRaw;
+
+  // Width and height of a font5x7 character
+  // (not including inter-character spacing)
+  uint8_t characterWidth = 5;
+  uint8_t characterHeight = 8;
+  // Width of inter-character spacing
+  uint8_t characterSpacing = 1;
+  // Height of inter-line spacing
+  uint8_t lineSpacing = 0;
+  // Character sizes including spacing
+  uint8_t fullCharacterWidth = characterWidth + characterSpacing;
+  uint8_t fullCharacterHeight = characterHeight + lineSpacing;
+  
+  
 };
 
 #endif
