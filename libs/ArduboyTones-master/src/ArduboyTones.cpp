@@ -55,26 +55,38 @@ uint16_t *tonesStart;
 uint16_t tonesIndex;	
 uint16_t toneSequence[MAX_TONES * 2 + 1];
 
+volatile uint32_t waittime=0;
+volatile uint32_t tmrcount=0;
+
+
 static volatile bool inProgmem;
 
 void updateTones();
 
+void checkTones(){
+  if(tmrcount)
+    if(millis() > tmrcount+waittime){
+      tmrcount=0;
+      updateTones();
+    }
+}
+
+
 ArduboyTones::ArduboyTones(bool (*outEn)()){
   outputEnabled = outEn;
   toneSequence[MAX_TONES * 2] = TONES_END;
-
   // sets the update call interval
-  //tonesTicker.attach_ms(1000, updateTones);
+  tonesTicker.attach_ms(10, checkTones);
 }
 
 void ArduboyTones::tone(uint16_t freq, uint16_t dur){
   inProgmem = false;
   tonesStart = toneSequence; 
-  tonesIndex =0; // set to start of sequence array
+  tonesIndex = 0; // set to start of sequence array
   toneSequence[0] = freq;
   toneSequence[1] = dur;
   toneSequence[2] = TONES_END; // set end marker
-  nextTone(); // start playing
+  updateTones(); // start playing
 }
 
 void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2){
@@ -86,7 +98,7 @@ void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t 
   toneSequence[2] = freq2;
   toneSequence[3] = dur2;
   toneSequence[4] = TONES_END; // set end marker
-  nextTone(); // start playing
+  updateTones(); // start playing
 }
 
 void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t dur2, uint16_t freq3, uint16_t dur3){
@@ -100,21 +112,21 @@ void ArduboyTones::tone(uint16_t freq1, uint16_t dur1, uint16_t freq2, uint16_t 
   toneSequence[4] = freq3;
   toneSequence[5] = dur3;
   // end marker was set in the constructor and will never change
-  nextTone(); // start playing
+  updateTones(); // start playing
 }
 
 void ArduboyTones::tones(const uint16_t *tones){
   inProgmem = true;
   tonesStart = (uint16_t *)tones; // set to start of sequence array
   tonesIndex = 0;
-  nextTone(); // start playing
+  updateTones(); // start playing
 }
 
 void ArduboyTones::tonesInRAM(uint16_t *tones){
   inProgmem = false;
   tonesStart = tones;
   tonesIndex = 0; // set to start of sequence array
-  nextTone(); // start playing
+  updateTones(); // start playing
 }
 
 void ArduboyTones::noTone(){
@@ -135,7 +147,7 @@ void ArduboyTones::nextTone(){
   freq = getNext(); // get tone frequency
   if (freq == TONES_END) { // if freq is actually an "end of sequence" marker
     noTone(); // stop playing
-    tonesPlaying = false;
+    tonesPlaying = false; 
     return;
   }
 
@@ -165,6 +177,7 @@ void ArduboyTones::nextTone(){
 	if (toneSilent) {
 		noTone();
 	} else {
+	    ::noTone(TONES_PIN);
 		::tone(TONES_PIN, freq);
 	}	
 
@@ -180,7 +193,8 @@ void ArduboyTones::nextTone(){
 	Serial.println("");
 #endif 
 	// set a timer to update the tone after its duration
-	tonesTicker.once_ms(dur, updateTones);
+	tmrcount = millis();
+	waittime = dur;
 }
 
 

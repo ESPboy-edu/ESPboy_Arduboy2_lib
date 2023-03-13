@@ -127,7 +127,7 @@ THE SOFTWARE.
 
 // This must match the maximum number of tones that can be specified in
 // the tone() function.
-#define MAX_TONES 3
+#define MAX_TONES 5
 
 // The minimum frequency that can be produced without a clock prescaler.
 #define MIN_NO_PRESCALE_FREQ ((uint16_t)(((F_CPU / 2L) + (1L << 16) - 1L) / (1L << 16)))
