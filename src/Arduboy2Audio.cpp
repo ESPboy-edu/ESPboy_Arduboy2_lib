@@ -11,6 +11,8 @@
 #define FIRST_NOTE_IN_INT_ARRAY 52
 #define HIGHEST_NOTE 82
 
+extern ArduboySettings arduboySaveLoadSettings;
+
 // Table of midi note frequencies * 2
 //   They are times 2 for greater accuracy, yet still fits in a word.
 //   Generated from Excel by =ROUND(2*440/32*(2^((x-9)/12)),0) for 0<x<128
@@ -58,12 +60,10 @@ void Arduboy2Audio::toggle(){
 }
 
 void Arduboy2Audio::saveOnOff(){
-  EEPROM.write(EEPROM_AUDIO_ON_OFF, audio_enabled);
-  EEPROM.commit();
 }
 
 void Arduboy2Audio::begin(){
-  if (EEPROM.read(EEPROM_AUDIO_ON_OFF) == true) on();
+  if (arduboySaveLoadSettings.arduboyAudioOnOff) on();
   else off();
 }
 

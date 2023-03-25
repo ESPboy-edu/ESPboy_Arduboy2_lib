@@ -8,6 +8,9 @@
 
 ESPboyInit myESPboy;
 
+//ESPboyTerminalGUI *terminalGUIobj = NULL;
+//ESPboyOTA2 *OTA2obj = NULL;
+
 uint8_t Arduboy2Core::sBuffer[];
 uint16_t Arduboy2Core::colors[19] = { 
             TFT_BLACK, TFT_NAVY, TFT_DARKGREEN, TFT_DARKCYAN, TFT_MAROON,
@@ -16,8 +19,6 @@ uint16_t Arduboy2Core::colors[19] = {
             TFT_RED, TFT_MAGENTA, TFT_YELLOW, TFT_WHITE, 
             TFT_ORANGE, TFT_GREENYELLOW, TFT_PINK};
 
-uint8_t Arduboy2Core::foregroundclr = 14;
-uint8_t Arduboy2Core::backgroundclr = 0;
 bool Arduboy2Core::invert_flag = false;
 bool Arduboy2Core::flip_horizontal_flag = false;
 bool Arduboy2Core::flip_vertical_flag = false;
@@ -32,13 +33,13 @@ void Arduboy2Core::boot(){
 
   //Init ESPboy
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
-/*  
+  
   //Check OTA2
-  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
-     terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
-     OTA2obj = new ESPboyOTA2(terminalGUIobj);
-  }
-*/  
+  //if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+  //   terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
+  //   OTA2obj = new ESPboyOTA2(terminalGUIobj);
+  //}
+  
 }
 
 
@@ -147,19 +148,19 @@ void Arduboy2Core::setRGBled(uint8_t color, uint8_t val){
 
 
 void Arduboy2Core::digitalWriteRGB(uint8_t red, uint8_t green, uint8_t blue){
-  if (red) myESPboy.myLED.setR (200); else myESPboy.myLED.setR (0); 
-  if (green) myESPboy.myLED.setG (200); else myESPboy.myLED.setG (0); 
-  if (blue) myESPboy.myLED.setB (200); else myESPboy.myLED.setB (0); 
+  if (red) myESPboy.myLED.setR (20); else myESPboy.myLED.setR (0); 
+  if (green) myESPboy.myLED.setG (20); else myESPboy.myLED.setG (0); 
+  if (blue) myESPboy.myLED.setB (20); else myESPboy.myLED.setB (0); 
 };
 
 
 void Arduboy2Core::digitalWriteRGB(uint8_t color, uint8_t val){
   if (color == 0)
-  	if(val) myESPboy.myLED.setR (200); else myESPboy.myLED.setR (0);
+  	if(val) myESPboy.myLED.setR (20); else myESPboy.myLED.setR (0);
   if (color == 1)
-    if(val) myESPboy.myLED.setG (200); else myESPboy.myLED.setG (0);
+    if(val) myESPboy.myLED.setG (20); else myESPboy.myLED.setG (0);
   if (color == 2)
-    if(val) myESPboy.myLED.setB (200); else myESPboy.myLED.setB (0);
+    if(val) myESPboy.myLED.setB (20); else myESPboy.myLED.setB (0);
 }
 
 
@@ -177,8 +178,6 @@ uint8_t Arduboy2Core::buttonsState(){
     if (keystate&PAD_DOWN)  { buttons |= DOWN_BUTTON; }  // down
     if (keystate&PAD_ACT)   { buttons |= A_BUTTON; }  // a?
     if (keystate&PAD_ESC)   { buttons |= B_BUTTON; }  // b?
-    if (keystate&PAD_RGT)   { foregroundclr++; if (foregroundclr>18) foregroundclr=0; delay(300);} 
-    if (keystate&PAD_LFT)   { backgroundclr++; if (backgroundclr>18) backgroundclr=0; delay(300);} 
   }
   return buttons;
 }

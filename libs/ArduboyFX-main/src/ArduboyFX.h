@@ -1,9 +1,8 @@
-//FX CHIP -> W25Q128
-
 #ifndef ARDUBOYFX_H
 #define ARDUBOYFX_H
 
-#pragma once
+// if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
+//#define USE_LITTLEFS 
 
 // For uint8_t, uint16_t
 #include <stdint.h>
@@ -17,6 +16,29 @@
 // For Arduboy2Base::sBuffer, WIDTH, HEIGHT, CS_PORT ...
 #include <Arduboy2.h>
 
+#ifdef USE_LITTLEFS
+  #include <LittleFS.h>
+#endif
+
+
+// progam data and save data pages(set by PC manager tool)
+constexpr uint16_t FX_VECTOR_KEY_VALUE  = 0x9518;        /* RETI instruction used as magic key */
+constexpr uint16_t FX_DATA_VECTOR_KEY_POINTER  = 0x0014; /* reserved interrupt vector 5  area */
+constexpr uint16_t FX_DATA_VECTOR_PAGE_POINTER = 0x0016;
+constexpr uint16_t FX_SAVE_VECTOR_KEY_POINTER  = 0x0018; /* reserved interrupt vector 6  area */
+constexpr uint16_t FX_SAVE_VECTOR_PAGE_POINTER = 0x001A;
+
+// Serial Flash Commands
+constexpr uint8_t SFC_JEDEC_ID          = 0x9F;
+constexpr uint8_t SFC_READSTATUS1       = 0x05;
+constexpr uint8_t SFC_READSTATUS2       = 0x35;
+constexpr uint8_t SFC_READSTATUS3       = 0x15;
+constexpr uint8_t SFC_READ              = 0x03;
+constexpr uint8_t SFC_WRITE_ENABLE      = 0x06;
+constexpr uint8_t SFC_WRITE             = 0x02;
+constexpr uint8_t SFC_ERASE             = 0x20;
+constexpr uint8_t SFC_RELEASE_POWERDOWN = 0xAB;
+constexpr uint8_t SFC_POWERDOWN         = 0xB9;
 
 // drawbitmap bit flags (used by modes below and internally)
 constexpr uint8_t dbfWhiteBlack   = 0; // bitmap is used as mask
@@ -92,7 +114,10 @@ constexpr uint8_t dcmProportional = (1 << dcfProportional); // draw characters w
 // Note above modes may be combined like (dcmMasked | dcmProportional)
 
 
-using uint24_t = uint32_t;//__uint24;
+//using uint24_t = __uint24;
+#define uint24_t uint32_t
+#define sizeof_uint24_t 3
+
 
 struct JedecID
 {
@@ -144,27 +169,70 @@ struct FrameData
 class FX
 {
   public:
+    static void drawPixelOld(int16_t x, int16_t y, uint8_t color = 1);
+    
+    static void Rle_Decode(unsigned char *inbuf, uint32_t inSize);
+    
+    static void drawCharOld(int16_t x, int16_t y, uint8_t c, uint8_t color, uint8_t bg, uint8_t size);
+  
+    static void drawStringOld(int16_t x, int16_t y, uint8_t color, const char* buffer);
+  
+    [[gnu::always_inline]]
+    static inline void enableOLED() // selects OLED display.
+    {};
+
+    [[gnu::always_inline]]
+    static inline void disableOLED() // deselects OLED display.
+    {};
+
+    [[gnu::always_inline]]
+    static inline void enable() // selects external flash memory and allows new commands
+    {};
+
+    [[gnu::always_inline]]
+    static inline void disable() // deselects external flash memory and ends the last command
+    {};
+
+    [[gnu::always_inline]]
+    static inline void wait() // wait for a pending flash transfer to complete
+    {};
+
     static uint8_t writeByte(uint8_t data); // write a single byte to flash memory.
-    static void writeByteBeforeWait(uint8_t data){ writeByte(data); };
-    static void writeByteAfterWait(uint8_t data){ writeByte(data); };
+
+    [[gnu::always_inline]]
+    static inline void writeByteBeforeWait(uint8_t data){
+    writeByte(data);}
+
+    [[gnu::always_inline]]
+    static inline void writeByteAfterWait(uint8_t data){
+    writeByte(data);}
+
     static uint8_t readByte(); // read a single byte from flash memory
+
     static void displayPrefetch(uint24_t address, uint8_t* target, uint16_t len, bool clear);
+
     static void display(); // display screen buffer
+
     static void display(bool clear); // display screen buffer with clear
+
     static void begin(); // Initializes flash memory. Use only when program does not require data and save areas in flash memory
-    static void begin(uint16_t programDataPage); // Initializes flash memory. Use when program depends on data in flash memor
+
+    static void begin(uint16_t programDataPage); // Initializes flash memory. Use when program depends on data in flash memory
+
     static void begin(uint16_t datapage, uint16_t savepage); // Initializes flash memory. Use when program depends on both data and save data in flash memory
+
     /// @brief Reads the JedecID of the attached flash chip.
     /// @param id An object into which the ID will be read.
     static void readJedecID(JedecID & id);
-    static void readJedecID(JedecID * id);
+
+    static void readJedecID(JedecID* id);
+
     static bool detect(); //detect presence of initialized flash memory
+
     static void noFXReboot(); // flash RGB LED red and wait for DOWN button to exit to bootloader when no initialized external flash memory is present
-    static void seekCommand(uint24_t address);// Write command and selects flash memory address. Required by any read or write command
 
-    /// @brief selects flash address of program data for reading and starts the first read
-    /// @param address The base address of program data memory.
 
+    [[gnu::noinline]]
     static void seekData(uint24_t address);
 
     /// @brief Seeks an element of an array.
@@ -177,8 +245,9 @@ class FX
       // Note: By the laws of the language this should never happen.
       // This assert exists only as a precaution against e.g. weird compiler extensions.
       static_assert(sizeof(Type) > 0, "Cannot use a Type with a size of 0.");
+
       seekData(address + (index * sizeof(Type)));
-    };
+    }
 
     /// @brief Seeks a member of an object that is an element of an array.
     /// @tparam Type The type of the elements in the array.
@@ -195,33 +264,37 @@ class FX
       // Note: By the laws of the language this should never happen.
       // This assert exists only as a precaution against e.g. weird compiler extensions.
       static_assert(sizeof(Type) > 0, "Cannot use a Type with a size of 0.");
-      seekData(address + ((index * sizeof(Type)) + offset));
-    };
 
+      seekData(address + ((index * sizeof(Type)) + offset));
+    }
+
+    [[gnu::noinline]]
     static void seekDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t elementSize);
 
+    [[gnu::noinline]]
     static void seekSave(uint24_t address); // selects flashaddress of program save area for reading and starts the first read
 
-    static uint8_t readPendingUInt8();    //read a prefetched byte from the current flash location
-
+    [[gnu::always_inline]]
     static inline uint8_t readUnsafe() // read flash data without performing any checks and starts the next read.
-    {
-      return readPendingUInt8();
-    };
+    {return (readByte());};
 
+    [[gnu::always_inline]]
     static inline uint8_t readUnsafeEnd()
-    {
-      return readPendingUInt8();
-    };
+    {return (readByte());};
 
+    [[gnu::noinline]]
+    static uint8_t readPendingUInt8();    //read a prefetched byte from the current flash location
 
     /// @brief read the last prefetched byte from the current flash location and ends the read command.
     /// This function performs the same action as readEnd()
 
+    [[gnu::noinline]]
     static uint8_t readPendingLastUInt8();
 
+    [[gnu::noinline]]
     static uint16_t readPendingUInt16(); //read a partly prefetched 16-bit word from the current flash location
 
+    [[gnu::noinline]]
     static uint16_t readPendingLastUInt16(); //read a partly prefetched 16-bit word from the current flash location
 
     static uint24_t readPendingUInt24() ; //read a partly prefetched 24-bit word from the current flash location
@@ -252,6 +325,7 @@ class FX
 
     /// @brief read the last prefetched byte from the current flash location and ends the read command
 
+    [[gnu::noinline]]
     static uint8_t readEnd();
 
     /// @brief Reads an object from the specified address in the game's data section.
@@ -302,6 +376,7 @@ class FX
       return loadGameState((uint8_t*)(&object), sizeof(object));
     }
 
+    [[gnu::noinline]]
     static uint8_t loadGameState(uint8_t* gameState, size_t size); //loads GameState from program exclusive 4K save data block.
 
     /// @brief Saves a game state object into an exclusive 4KB save data block.
@@ -318,21 +393,25 @@ class FX
       saveGameState(reinterpret_cast<const uint8_t *>(&object), sizeof(object));
     }
 
+    [[gnu::noinline]]
     static void saveGameState(const uint8_t* gameState, size_t size); // Saves GameState in RAM to programes exclusive 4K save data block.
 
     static void eraseSaveBlock(uint16_t page); // erases 4K flash block
 
     static void writeSavePage(uint16_t page, uint8_t* buffer);
 
+    [[gnu::noinline]]
     static void drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8_t mode);
 
+    [[gnu::noinline]]
     static void setFrame(uint24_t frame, uint8_t repeat);
 
     static uint8_t drawFrame();
 
+    [[gnu::noinline]]
     static uint24_t drawFrame(uint24_t address); // draw a list of bitmap images located at address
 
-    static void readDataArray(uint24_t address, uint8_t index, uint8_t offset, uint16_t elementSize, uint8_t* buffer, size_t length);
+    static void readDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t elementSize, uint8_t* buffer, size_t length);
 
     static uint8_t readIndexedUInt8(uint24_t address, uint8_t index);
 
@@ -391,25 +470,31 @@ class FX
 
     /* general optimized functions */
 
+    [[gnu::always_inline]]
     static inline uint16_t multiplyUInt8 (uint8_t a, uint8_t b)
     {return (a * b);}
 
-
+    [[gnu::always_inline]]
     static inline uint8_t bitShiftLeftUInt8(uint8_t bit) //fast (1 << (bit & 7))
     {return 1 << (bit & 7);}
 
+    [[gnu::always_inline]]
     static inline uint8_t bitShiftRightUInt8(uint8_t bit) //fast (0x80 >> (bit & 7))
     {return 0x80 >> (bit & 7);}
 
+    [[gnu::always_inline]]
     static inline uint8_t bitShiftLeftMaskUInt8(uint8_t bit) //fast (0xFF << (bit & 7) & 0xFF)
     {return (0xFF << (bit & 7)) & 0xFF;}
 
+    [[gnu::always_inline]]
     static inline uint8_t bitShiftRightMaskUInt8(uint8_t bit) //fast (0xFF >> (bit & 7))
     {return 0xFF >> (bit & 7);}
 
+    [[gnu::always_inline]]
     static inline int16_t fastDiv8(int16_t i)
     {return i >> 3;};
 
+    [[gnu::always_inline]]
     static inline uint16_t fastDiv8(uint16_t i)
     {return i >> 3;};
 

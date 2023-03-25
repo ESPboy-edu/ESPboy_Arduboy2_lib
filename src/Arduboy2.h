@@ -20,6 +20,16 @@
 #include <limits.h>
 #include "glcdfont.c"
 
+#define PAD_LEFT        0x01
+#define PAD_UP          0x02
+#define PAD_DOWN        0x04
+#define PAD_RIGHT       0x08
+#define PAD_ACT         0x10
+#define PAD_ESC         0x20
+#define PAD_LFT         0x40
+#define PAD_RGT         0x80
+#define PAD_ANY         0xff
+
 /** \brief
  * Library version
  *
@@ -39,35 +49,20 @@
  * \endcode
  */
 #define ARDUBOY_LIB_VER 50100
+#define ARDUBOY_ID 0xFAEC
+#define EEPROM_STORAGE_SPACE_START 10
+
 
 // EEPROM settings
-#define ARDUBOY_UNIT_NAME_LEN 6 /**< The maximum length of the unit name string. */
+struct ArduboySettings{
+ uint32_t arduboyID = ARDUBOY_ID;
+ uint8_t arduboyBackground = 0;
+ uint8_t arduboyForeground = 14;
+ bool arduboyAudioOnOff = 1; 
+ bool arboyLogo = 0;
+ bool arduboyLeds = 0;
+};
 
-#define EEPROM_VERSION 0
-#define EEPROM_SYS_FLAGS 1
-#define EEPROM_AUDIO_ON_OFF 2
-#define EEPROM_UNIT_ID 8    // A uint16_t binary unit ID
-#define EEPROM_UNIT_NAME 10 // An up to 6 character unit name. Cannot contain
-                            // 0x00 or 0xFF. Lengths less than 6 are padded
-                            // with 0x00
-
-// EEPROM_SYS_FLAGS values
-#define SYS_FLAG_UNAME 0           // Display the unit name on the logo screen
-#define SYS_FLAG_UNAME_MASK _BV(SYS_FLAG_UNAME)
-#define SYS_FLAG_SHOW_LOGO 1       // Show the logo sequence during boot up
-#define SYS_FLAG_SHOW_LOGO_MASK _BV(SYS_FLAG_SHOW_LOGO)
-#define SYS_FLAG_SHOW_LOGO_LEDS 2  // Flash the RGB led during the boot logo
-#define SYS_FLAG_SHOW_LOGO_LEDS_MASK _BV(SYS_FLAG_SHOW_LOGO_LEDS)
-
-/** \brief
- * Start of EEPROM storage space for sketches.
- *
- * \details
- * An area at the start of EEPROM is reserved for system use.
- * This define specifies the first EEPROM location past the system area.
- * Sketches can use locations from here to the end of EEPROM space.
- */
-#define EEPROM_STORAGE_SPACE_START 16
 
 // eeprom settings above are neded for audio
 #include "Arduboy2Audio.h"
@@ -102,8 +97,7 @@
  *
  * \see Arduboy2Base::collide(Point, Rect) Arduboy2Base::collide(Rect, Rect)
  */
-struct Rect
-{
+struct Rect{
   int16_t x;      /**< The X coordinate of the top left corner */
   int16_t y;      /**< The Y coordinate of the top left corner */
   uint8_t width;  /**< The width of the rectangle */

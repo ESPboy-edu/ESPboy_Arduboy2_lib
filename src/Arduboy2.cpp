@@ -6,16 +6,26 @@
 
 #include "Arduboy2.h"
 #include "ab_logo.c"
+#include "nbSPI.h"
 
 extern ESPboyInit myESPboy;
+
+#if (HEIGHT == 64) 
+  #define VERT_OFFSET 20
+#else 
+  #define VERT_OFFSET 0
+#endif
+
+ArduboySettings arduboyDefaultSettings;
+ArduboySettings arduboySaveLoadSettings;
+
 
 //========================================
 //========== class Arduboy2Base ==========
 //========================================
 
 
-Arduboy2Base::Arduboy2Base()
-{
+Arduboy2Base::Arduboy2Base(){
   currentButtonState = 0;
   previousButtonState = 0;
   // frame management
@@ -31,6 +41,21 @@ Arduboy2Base::Arduboy2Base()
 
 void Arduboy2Base::start(){
   boot();
+  EEPROM.get(EEPROM_STORAGE_SPACE_START, arduboySaveLoadSettings);
+  if (arduboySaveLoadSettings.arduboyID != ARDUBOY_ID){
+    EEPROM.put(EEPROM_STORAGE_SPACE_START, arduboyDefaultSettings);
+    EEPROM.commit();
+    arduboySaveLoadSettings = arduboyDefaultSettings;
+    myESPboy.tft.setTextSize(1);
+    myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK); 
+    myESPboy.tft.fillScreen(TFT_BLACK);
+    myESPboy.tft.drawString(F("start with"), 33, 30); 
+    myESPboy.tft.drawString(F("UP or DOWN"), 33, 45); 
+    myESPboy.tft.drawString(F("buttons pressed"), 18, 60);
+    myESPboy.tft.drawString(F("for settings menu"), 12, 75);
+    delay(5000);
+    myESPboy.tft.fillScreen(TFT_BLACK);
+    }
   clear();  
   display();
   systemButtons(); 
@@ -40,13 +65,7 @@ void Arduboy2Base::start(){
 }
 
 void Arduboy2Base::begin(){
-  boot();
-  clear();  
-  display();
-  systemButtons(); 
-  audio.begin();
-  drawLogoBitmap();
-  waitNoButtons();
+  start();
 }
 
 
@@ -54,7 +73,7 @@ void Arduboy2Base::flashlight(){
   digitalWriteRGB(RGB_ON, RGB_ON, RGB_ON);
   myESPboy.tft.fillScreen(TFT_WHITE);
   while (true) {
-    idle();
+    delay(1000);
   }
 }
 
@@ -62,63 +81,49 @@ void Arduboy2Base::flashlight(){
 #define SYS_BUTTONS_DELAY 10000 
 
 void Arduboy2Base::systemButtons(){
-    bool soundset;
-    bool showlogoset;
-    bool ledset;
-    bool showunitnameset;
-    bool refreshDisplay = true;
-    uint32_t timerCount=millis();
-  
+    uint8_t keys;
   
   if (!pressed(UP_BUTTON) && !pressed(DOWN_BUTTON) && !pressed(LEFT_BUTTON) && !pressed(RIGHT_BUTTON))
     return;
   
   delayShort(200);
-  soundset = EEPROM.read(EEPROM_AUDIO_ON_OFF);
-  showlogoset = readShowBootLogoFlag();
-  ledset = readShowBootLogoLEDsFlag();
-  showunitnameset = readShowUnitNameFlag();
   
   myESPboy.tft.setTextSize(1);
 
-  while (!pressed(B_BUTTON) && (timerCount+SYS_BUTTONS_DELAY) > millis()){    
-    if (pressed(UP_BUTTON)) {soundset = !soundset; refreshDisplay = true; timerCount=millis();}
-    if (pressed(DOWN_BUTTON)) {showlogoset = !showlogoset; refreshDisplay = true; timerCount=millis();}
-    if (pressed(LEFT_BUTTON)) {ledset = !ledset;  refreshDisplay = true; timerCount=millis();}
-    if (pressed(RIGHT_BUTTON)) {showunitnameset = !showunitnameset;  refreshDisplay = true; timerCount=millis();}
-    if (pressed(A_BUTTON)) {flashlight();}
+  while (1){    
+    if (keys&PAD_UP) {arduboySaveLoadSettings.arduboyAudioOnOff = !arduboySaveLoadSettings.arduboyAudioOnOff;}
+    if (keys&PAD_DOWN) {arduboySaveLoadSettings.arboyLogo = !arduboySaveLoadSettings.arboyLogo;}
+    if (keys&PAD_LEFT) {arduboySaveLoadSettings.arduboyLeds = !arduboySaveLoadSettings.arduboyLeds;}
+    if (keys&PAD_RGT) {arduboySaveLoadSettings.arduboyBackground++; if(arduboySaveLoadSettings.arduboyBackground>18)arduboySaveLoadSettings.arduboyBackground=0;}
+    if (keys&PAD_LFT) {arduboySaveLoadSettings.arduboyForeground++; if(arduboySaveLoadSettings.arduboyForeground>18)arduboySaveLoadSettings.arduboyForeground=0;}
+    if (keys&PAD_ACT) flashlight();
+    if (keys&PAD_ESC) break;
     
-    myESPboy.tft.drawString ((String)((SYS_BUTTONS_DELAY -(millis()-timerCount))/1000), 0, 0);
+    myESPboy.tft.setTextColor(TFT_GREEN, TFT_BLACK);  
+    myESPboy.tft.fillScreen(TFT_BLACK);
+    if (arduboySaveLoadSettings.arduboyAudioOnOff) myESPboy.tft.drawString(F("SOUND ON"),40,20);
+    else myESPboy.tft.drawString(F("SOUND OFF"),36,20);
+    if(arduboySaveLoadSettings.arboyLogo)myESPboy.tft.drawString(F("SHOW LOGO ON"),28,30);
+    else myESPboy.tft.drawString(F("SHOW LOGO OFF"),24,30);
+    if(arduboySaveLoadSettings.arduboyLeds)myESPboy.tft.drawString(F("SHOW LED ON"),31,40);
+    else myESPboy.tft.drawString(F("SHOW LED OFF"),28,40);
     
-    if(refreshDisplay){
-      myESPboy.tft.setTextColor(TFT_GREEN, TFT_BLACK);  
-      myESPboy.tft.fillScreen(TFT_BLACK);
-      if (soundset) myESPboy.tft.drawString(F("SOUND ON"),40,20);
-      else myESPboy.tft.drawString(F("SOUND OFF"),36,20);
-      if(showlogoset)myESPboy.tft.drawString(F("SHOW LOGO ON"),28,30);
-      else myESPboy.tft.drawString(F("SHOW LOGO OFF"),24,30);
-      if(ledset)myESPboy.tft.drawString(F("SHOW LED ON"),31,40);
-      else myESPboy.tft.drawString(F("SHOW LED OFF"),28,40);
-      if(showunitnameset)myESPboy.tft.drawString(F("UNIT NAME ON"),28,50);
-      else myESPboy.tft.drawString(F("UNIT NAME OFF"),24,50);
+    myESPboy.tft.setTextColor(Arduboy2Core::colors[arduboySaveLoadSettings.arduboyForeground], Arduboy2Core::colors[arduboySaveLoadSettings.arduboyBackground]);
+    myESPboy.tft.drawString(F("FOREGRND / BACKGRND"), 6, 50);
       
-      writeShowBootLogoFlag(showlogoset);
-      writeShowBootLogoLEDsFlag(ledset);
-      writeShowUnitNameFlag(showunitnameset);
-      EEPROM.write(EEPROM_AUDIO_ON_OFF, soundset);
-      
-      myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
-      myESPboy.tft.drawString(F("UP for sound"),28,70);
-      myESPboy.tft.drawString(F("DOWN for logo"),24,80);
-      myESPboy.tft.drawString(F("LEFT for LEDs"),25,90);
-      myESPboy.tft.drawString(F("RIGHT for unit name"),7,100);
-      myESPboy.tft.drawString(F("A for flashlight"),16,110);
-      myESPboy.tft.drawString(F("B to exit"),37,120);
-      refreshDisplay = false;
-    }   
-    delayShort(200);
+    myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
+    myESPboy.tft.drawString(F("UP for sound"),28,70);
+    myESPboy.tft.drawString(F("DOWN for logo"),24,80);
+    myESPboy.tft.drawString(F("LEFT for LEDs"),25,90);
+    myESPboy.tft.drawString(F("LFT/RGT for colors"),9,100);
+    myESPboy.tft.drawString(F("A for flashlight"),16,110);
+    myESPboy.tft.drawString(F("B to exit"),37,120);
+   
+    while(myESPboy.getKeys())delay(10);
+    while(!(keys=myESPboy.getKeys()))delay(10);
   }
   
+  EEPROM.put(EEPROM_STORAGE_SPACE_START, arduboySaveLoadSettings);
   EEPROM.commit();
   myESPboy.myLED.setRGB(0,0,0);
   myESPboy.tft.fillScreen(TFT_BLACK);
@@ -128,20 +133,12 @@ void Arduboy2Base::systemButtons(){
 
 void Arduboy2Base::drawLogoBitmap(){
   uint8_t cntr=0;
-  char nme[ARDUBOY_UNIT_NAME_LEN+1];
-  bool ledset = readShowBootLogoLEDsFlag();
-  String nmestr = (String)nme;
-  
-  nme[ARDUBOY_UNIT_NAME_LEN+1]=0;
-  if(readShowBootLogoFlag()){
-    Arduboy2Base::readUnitName(&nme[0]);
-    
-    if(readShowUnitNameFlag())myESPboy.tft.drawString(nmestr,(128-nmestr.length()*6)/2,120);
+  if(arduboySaveLoadSettings.arboyLogo){
     for (int16_t y = -16; y <= 24; y++) {  
       Arduboy2Base::display(CLEAR_BUFFER);
       drawBitmap(20, y, arduboy_logo, 88, 16);
       Arduboy2Base::display();
-      if(ledset){		
+      if(arduboySaveLoadSettings.arduboyLeds){		
          if(cntr==1) myESPboy.myLED.setRGB(30,0,0);
          if(cntr==13) myESPboy.myLED.setRGB(0,30,0);
          if(cntr==26) myESPboy.myLED.setRGB(0,0,30);
@@ -821,31 +818,30 @@ void Arduboy2Base::clearDisplay(){
   clear();
 }
 
+#define SWPLH(x) ((x>>8)|(x<<8))
 
 void IRAM_ATTR Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
 //but you can do it checking global 
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
-  static uint16_t oBuffer[WIDTH*16] __attribute__ ((aligned));;
+  static uint16_t oBuffer1[WIDTH*16] __attribute__ ((aligned));
+  static uint16_t oBuffer2[WIDTH*16] __attribute__ ((aligned));
+  static uint16_t* oBuffer = oBuffer1;
   static uint16_t currentDataByte, currentDataAddr;
   static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
-  static uint8_t vertOffset;
-  
+  bool flipBuf;
+   
+   myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
   if(!invert_flag){
-    foregroundColor = colors[foregroundclr];
-    backgroundColor = colors[backgroundclr];
+    foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
+    backgroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyBackground]);
   }
   else{
-    backgroundColor = colors[foregroundclr];
-    foregroundColor = colors[backgroundclr];
+    backgroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
+    foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyBackground]);
   }
 
-if (HEIGHT == 64) vertOffset = 20;
-else vertOffset = 0;
-
-myESPboy.tft.setAddrWindow(0, vertOffset, WIDTH, HEIGHT);
- 
 if(!allpixelson_flag){
   for(kPos = 0; kPos<4*(HEIGHT/64); kPos++){
     kkPos = kPos<<1;
@@ -860,10 +856,17 @@ if(!allpixelson_flag){
 			currentDataByte = currentDataByte >> 1;
 	  }
     }
-    myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+    while(nbSPI_isBusy()); 
+    nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);  
+    flipBuf = !flipBuf;
+    oBuffer = flipBuf?oBuffer1:oBuffer2;
+    //myESPboy.tft.pushColors(oBuffer, WIDTH*16);
   }
 }
-else {myESPboy.tft.fillRect(0, vertOffset, WIDTH, HEIGHT,foregroundColor);}
+else {
+  while(nbSPI_isBusy()); 
+  myESPboy.tft.fillRect(0, VERT_OFFSET, WIDTH, HEIGHT,foregroundColor);
+  }
 }
 
 
@@ -919,87 +922,47 @@ bool Arduboy2Base::collide(Rect rect1, Rect rect2){
 
 
 uint16_t Arduboy2Base::readUnitID(){
-  return EEPROM.read(EEPROM_UNIT_ID) |
-         (((uint16_t)(EEPROM.read(EEPROM_UNIT_ID + 1))) << 8);
+  return ARDUBOY_ID;
 }
 
 
 void Arduboy2Base::writeUnitID(uint16_t id){
-  EEPROM.write(EEPROM_UNIT_ID, (uint8_t)(id & 0xff));
-  EEPROM.write(EEPROM_UNIT_ID + 1, (uint8_t)(id >> 8));
-  EEPROM.commit();
 }
 
 
 uint8_t Arduboy2Base::readUnitName(char* name){
-  char val;
-  uint8_t dest;
-  uint8_t src = EEPROM_UNIT_NAME;
-
-  for (dest = 0; dest < ARDUBOY_UNIT_NAME_LEN; dest++)
-  {
-    val = EEPROM.read(src);
-    name[dest] = val;
-    src++;
-    if (val == 0x00 || (byte)val == 0xFF) {
-      break;
-    }
-  }
-  name[dest] = 0x00;
-  return dest;
+  return ('A');
 }
 
 
 void Arduboy2Base::writeUnitName(char* name){
-  bool done = false;
-  uint8_t dest = EEPROM_UNIT_NAME;
-
-  for (uint8_t src = 0; src < ARDUBOY_UNIT_NAME_LEN; src++)
-  {
-    if (name[src] == 0x00) {
-      done = true;
-    }
-    // write character or 0 pad if finished
-    EEPROM.write(dest, done ? 0x00 : name[src]);
-    dest++;
-  }
-  EEPROM.commit();
 }
 
 
 bool Arduboy2Base::readShowBootLogoFlag(){
-  return (EEPROM.read(EEPROM_SYS_FLAGS) & SYS_FLAG_SHOW_LOGO_MASK);
+  return arduboySaveLoadSettings.arboyLogo;
 }
 
 
 void Arduboy2Base::writeShowBootLogoFlag(bool val){
-  uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
-  bitWrite(flags, SYS_FLAG_SHOW_LOGO, val);
-  EEPROM.write(EEPROM_SYS_FLAGS, flags);
 }
 
 
 bool Arduboy2Base::readShowUnitNameFlag(){
-  return (EEPROM.read(EEPROM_SYS_FLAGS) & SYS_FLAG_UNAME_MASK);
+  return 0;
 }
 
 
 void Arduboy2Base::writeShowUnitNameFlag(bool val){
-  uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
-  bitWrite(flags, SYS_FLAG_UNAME, val);
-  EEPROM.write(EEPROM_SYS_FLAGS, flags);
 }
 
 
 bool Arduboy2Base::readShowBootLogoLEDsFlag(){
-  return (EEPROM.read(EEPROM_SYS_FLAGS) & SYS_FLAG_SHOW_LOGO_LEDS_MASK);
+  return arduboySaveLoadSettings.arduboyLeds;
 }
 
 
 void Arduboy2Base::writeShowBootLogoLEDsFlag(bool val){
-  uint8_t flags = EEPROM.read(EEPROM_SYS_FLAGS);
-  bitWrite(flags, SYS_FLAG_SHOW_LOGO_LEDS, val);
-  EEPROM.write(EEPROM_SYS_FLAGS, flags);
 }
 
 
