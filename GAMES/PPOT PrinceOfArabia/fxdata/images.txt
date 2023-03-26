@@ -1,0 +1,141 @@
+namespace Images {
+
+    // PPoT Splash Screen ..
+
+    image_t PPOT                    = "../images/splash/PPOT_65x31_1.png"
+
+
+    // Title Screen ..
+
+    image_t Title_PoP               = "../images/title/Title_PoP.png"
+    image_t Title_PoA               = "../images/title/Title_PoA.png"
+    image_t Title_Main_NC           = "../images/title/Title_Main_NC.png"
+    image_t Title_Main_NRC          = "../images/title/Title_Main_NRC.png"
+    image_t Title_Main_NCH          = "../images/title/Title_Main_NCH.png"
+    image_t Title_Main_NRCH         = "../images/title/Title_Main_NRCH.png"
+    image_t Title_Cursor            = "../images/title/Title_Cursor.png"
+    image_t Title_Credits           = "../images/title/Title_Credits.png"
+    image_t Title_Select            = "../images/title/Title_Select.png"
+    image_t Saves                   = "../images/title/Saves.png"
+
+
+    // Cut scenes ..
+
+    image_t TimeRemaining           = "../images/title/TimeRemaining.png"
+    image_t LevelNumber             = "../images/title/LevelNumber.png"
+    image_t GameOver                = "../images/title/GameOver.png"
+    image_t PressA                  = "../images/title/PressA.png"
+    image_t TimeOut_PoP             = "../images/title/TimeOut_PoP.png"
+    image_t TimeOut_PoA             = "../images/title/TimeOut_PoA.png"
+
+    image_t IntroGame_1A            = "../images/title/IntroGame_1A.png"
+    image_t IntroGame_1B            = "../images/title/IntroGame_1B.png"
+    image_t IntroGame_9_PoP         = "../images/title/IntroGame_9_PoP.png"
+    image_t IntroGame_9_PoA         = "../images/title/IntroGame_9_PoA.png"
+    image_t Chambers_BG             = "../images/title/Chambers_BG.png"
+    image_t Chambers_BG_01          = "../images/title/Chambers_BG_01.png"
+    image_t Chambers_BG_02          = "../images/title/Chambers_BG_02.png"
+    image_t Chambers_FG             = "../images/title/Chambers_FG.png"
+    image_t Credits_BG              = "../images/title/Credits_BG.png"
+    image_t Eeek                    = "../images/title/Eeek.png"
+    image_t LevelRect               = "../images/title/LevelRect.png"
+
+    image_t Mouse                   = "../images/mouse/Mouse_16x16.png"
+    image_t HourGlasses             = "../images/hourGlass/HourGlasses_19x23.png"
+
+
+    // HUD
+
+    image_t Menu                    = "../images/hud/Menu_42x64.png"
+    image_t Sword_Cursor            = "../images/hud/Sword.png"
+    image_t HUD_Backgrounds         = "../images/hud/HUD_Background_8x64_1.png"
+    image_t Numbers_Upright         = "../images/title/Numbers_Upright_7x5_1.png"
+    image_t Numbers                 = "../images/hud/Numbers_11x7_1.png"
+    image_t Numbers_Large           = "../images/hud/Numbers_22x14_2.png"    
+    image_t Numbers_Small           = "../images/hud/Numbers_Small_5x7_1.png"
+    image_t Numbers_Divider         = "../images/hud/Numbers_Divider.png"
+    image_t Healths                 = "../images/hud/Health_5x3_1.png"
+    image_t Sword_HUD               = "../images/hud/Sword_HUD.png"
+    image_t Potion_Float_HUD        = "../images/hud/Float.png"
+    image_t HighScore               = "../images/title/HighScore.png"
+
+    image_t Sword                   = "../images/items/Sword.png"
+    image_t Skeleton                = "../images/items/Skeleton.png"
+    image_t Gates                   = "../images/items/Gates_9x28_1.png"
+
+
+    // Game Play items and tiles
+
+    image_t Blades                  = "../images/items/Blades_9x28_1.png"
+    image_t ExitDoors               = "../images/items/ExitDoors_25x33_1.png"
+    image_t Potions_Small           = "../images/items/Potions_Small_6x15_1.png"
+    image_t Potions_Large           = "../images/items/Potions_Large_6x15_1.png"
+    image_t Potions_Poison          = "../images/items/Potions_Poison_6x15_1.png"
+    image_t Potions_Float           = "../images/items/Potions_Float_6x15_1.png"
+
+    image_t DecorativeDoor          = "../images/items/DecorativeDoor.png"
+    image_t CollapsedFloor          = "../images/items/CollapsedTile.png"
+    image_t CollapsingFloors        = "../images/items/CollapsingTiles_21x31_1.png"
+    image_t FloorButtons_0and1      = "../images/items/FloorButtons_0and1_21x32_1.png"
+    image_t FloorButtons_2          = "../images/items/FloorButtons_2_12x31_1.png"
+
+    image_t Torches                 = "../images/items/Torches_3x11_1.png"
+    image_t Mirrors                 = "../images/items/Mirrors_12x31_1.png"
+
+    image_t Spikes_FG_Full          = "../images/items/Spikes_FG_19x18_1.png"
+    image_t Spikes_BG_Full          = "../images/items/Spikes_BG_19x18_1.png"
+    image_t Spikes_FG_Half          = "../images/items/Spikes_FG_11x18_1.png"
+    image_t Spikes_BG_Half          = "../images/items/Spikes_BG_11x18_1.png"
+
+    image_t Flashes                 = "../images/hud/Flash_22x20_1.png"
+    image_t Tiles_Dungeon           = "../images/tiles/tiles_dungeon_12x31.png"
+    image_t Tile_Dungeon_97         = "../images/tiles/tile_dungeon_97.png"
+    image_t Tile_Dungeon_98         = "../images/tiles/tile_dungeon_98.png"
+    image_t Tiles_Dungeon_Torch     = "../images/tiles/tiles_dungeon_torch_12x31.png"
+
+
+    // Princess Images
+
+    image_t Princess                = "../images/princess/Princess_32x32_1.png"
+    image_t Princess_Bounce         = "../images/princess/Princess_Bounce_48x32_1.png"
+    image_t Hearts                  = "../images/princess/Hearts_7x6_1.png"
+
+
+    // Jaffar Images 
+
+    image_t Jaffar                  = "../images/jaffar/Jaffar_32x32_1.png"
+
+
+    // Prince Images
+
+    image_t Prince_Left             = "../images/prince/left/Prince_Left_36x36.png"
+    image_t Prince_Right            = "../images/prince/right/Prince_Right_36x36.png"
+
+
+    // Mirror images
+
+    image_t Mirror_Right            = "../images/mirror/right/Mirror_Right_36x36.png"
+    image_t Mirror_Left             = "../images/mirror/left/Mirror_Left_36x36.png"
+
+
+    // Enemy images
+
+    image_t Enemy_Right             = "../images/enemy/right/Enemy_Right_36x36.png"
+    image_t Enemy_Left              = "../images/enemy/left/Enemy_Left_36x36.png"
+    image_t Skeleton_Right          = "../images/skeleton/right/Skeleton_Right_36x36.png"
+    image_t Skeleton_Left           = "../images/skeleton/left/Skeleton_Left_36x36.png"
+
+
+    // Invaders
+
+    image_t Invaders                = "../images/invaders/Enemies_25x23_1.png"
+    image_t Barriers                = "../images/invaders/Barrier_4x2_1.png"
+    image_t Barrier                = "../images/invaders/Barrier_Whole.png"
+    image_t Player                  = "../images/invaders/Player_25x25_1.png"
+    image_t Bullet                  = "../images/invaders/Bullet.png"
+    image_t HUD_Spaceship           = "../images/invaders/HUD_lives_4x17.png"
+    image_t Levels                  = "../images/invaders/Levels_57x13_1.png"
+
+}
+
+namespace_end

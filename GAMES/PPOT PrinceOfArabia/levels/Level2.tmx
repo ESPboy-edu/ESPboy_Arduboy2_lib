@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="130" height="12" tilewidth="12" tileheight="31" infinite="0" nextlayerid="3" nextobjectid="1">
+ <editorsettings>
+  <export target="Level2.csv" format="csv"/>
+ </editorsettings>
+ <tileset firstgid="1" name="tile_dungeon" tilewidth="12" tileheight="31" tilecount="50" columns="0">
+  <grid orientation="orthogonal" width="1" height="1"/>
+  <tile id="86">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_12.png"/>
+  </tile>
+  <tile id="87">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_13.png"/>
+  </tile>
+  <tile id="88">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_14.png"/>
+  </tile>
+  <tile id="75">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_01.png"/>
+  </tile>
+  <tile id="92">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_18.png"/>
+  </tile>
+  <tile id="76">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_02.png"/>
+  </tile>
+  <tile id="77">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_03.png"/>
+  </tile>
+  <tile id="78">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_04.png"/>
+  </tile>
+  <tile id="99">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_25.png"/>
+  </tile>
+  <tile id="79">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_05.png"/>
+  </tile>
+  <tile id="80">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_06.png"/>
+  </tile>
+  <tile id="81">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_07.png"/>
+  </tile>
+  <tile id="82">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_08.png"/>
+  </tile>
+  <tile id="97">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_23.png"/>
+  </tile>
+  <tile id="120">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_46.png"/>
+  </tile>
+  <tile id="91">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_17.png"/>
+  </tile>
+  <tile id="119">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_45.png"/>
+  </tile>
+  <tile id="83">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_09.png"/>
+  </tile>
+  <tile id="109">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_35.png"/>
+  </tile>
+  <tile id="113">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_39.png"/>
+  </tile>
+  <tile id="100">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_26.png"/>
+  </tile>
+  <tile id="84">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_10.png"/>
+  </tile>
+  <tile id="112">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_38.png"/>
+  </tile>
+  <tile id="96">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_22.png"/>
+  </tile>
+  <tile id="89">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_15.png"/>
+  </tile>
+  <tile id="90">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_16.png"/>
+  </tile>
+  <tile id="101">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_27.png"/>
+  </tile>
+  <tile id="104">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_30.png"/>
+  </tile>
+  <tile id="95">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_21.png"/>
+  </tile>
+  <tile id="74">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_00.png"/>
+  </tile>
+  <tile id="102">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_28.png"/>
+  </tile>
+  <tile id="93">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_19.png"/>
+  </tile>
+  <tile id="98">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_24.png"/>
+  </tile>
+  <tile id="85">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_11.png"/>
+  </tile>
+  <tile id="103">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_29.png"/>
+  </tile>
+  <tile id="94">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_20.png"/>
+  </tile>
+  <tile id="111">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_37.png"/>
+  </tile>
+  <tile id="115">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_41.png"/>
+  </tile>
+  <tile id="114">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_40.png"/>
+  </tile>
+  <tile id="118">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_44.png"/>
+  </tile>
+  <tile id="121">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_47.png"/>
+  </tile>
+  <tile id="122">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_48.png"/>
+  </tile>
+  <tile id="106">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_32.png"/>
+  </tile>
+  <tile id="123">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_49.png"/>
+  </tile>
+  <tile id="105">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_31.png"/>
+  </tile>
+  <tile id="110">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_36.png"/>
+  </tile>
+  <tile id="107">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_33.png"/>
+  </tile>
+  <tile id="108">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_34.png"/>
+  </tile>
+  <tile id="116">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_42.png"/>
+  </tile>
+  <tile id="117">
+   <image width="12" height="31" source="../../PrinceOfPersiaFX/Assets/Graphics/tile_dungeon/tile_dungeon_43.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="125" source="../../PrinceOfPersiaFX/Assets/TileSets/tile_dungeon.tsx"/>
+ <layer id="2" name="BG" width="130" height="12">
+  <data encoding="csv">
+222,200,76,76,76,0,0,0,0,0,0,0,92,76,76,76,76,0,0,0,0,0,0,0,0,0,92,76,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+208,249,223,76,76,97,91,249,78,90,91,90,91,249,78,78,249,90,91,78,90,91,249,78,249,90,104,76,76,0,0,114,249,78,78,78,95,76,76,0,0,0,0,0,0,121,93,0,0,0,0,0,187,93,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,222,76,76,97,86,0,0,0,0,101,104,76,97,91,78,90,91,78,90,91,78,78,78,90,91,79,100,0,0,0,0,98,76,97,91,78,78,90,105,0,0,0,0,208,249,90,104,77,78,90,78,249,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,98,76,76,0,114,90,91,90,91,90,104,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,208,78,90,104,76,76,217,76,217,76,76,76,76,76,97,91,78,78,90,86,76,76,0,0,0,0,0,0,187,76,93,76,76,77,78,79,116,115,90,91,78,95,77,79,90,91,116,119,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,121,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,0,
+0,0,98,76,76,0,0,0,0,0,0,101,210,76,97,91,249,203,249,78,90,91,78,249,78,203,78,249,78,90,91,249,90,91,78,90,91,249,249,78,78,78,249,249,78,99,76,0,0,0,0,0,208,202,202,78,90,91,249,90,90,91,249,202,78,249,90,86,93,0,0,0,0,101,104,0,0,0,0,0,84,78,90,91,249,78,78,249,78,90,91,90,104,76,0,0,0,0,238,79,90,86,93,76,0,0,0,0,0,0,0,98,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,76,0,
+0,0,208,78,100,0,0,0,0,0,0,0,98,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,208,78,90,90,91,79,90,91,90,91,100,0,0,0,0,0,0,0,0,0,0,0,0,0,101,104,76,0,0,0,0,0,0,0,84,95,77,90,91,100,0,0,0,0,84,78,78,78,78,78,78,78,78,78,78,78,78,78,78,78,78,78,0,
+0,0,0,0,0,0,0,0,0,0,0,0,98,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,101,86,76,76,97,91,203,78,203,78,90,104,76,0,0,0,0,0,0,0,187,76,76,76,93,76,76,76,76,158,159,76,93,76,158,159,76,76,0,
+0,0,0,0,0,0,0,0,0,0,0,0,98,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,76,77,90,91,249,202,249,78,90,91,78,90,86,77,78,249,90,90,91,203,78,249,202,249,95,76,77,156,157,202,202,202,156,157,99,76,0,
+0,0,0,0,0,0,0,0,0,0,0,0,208,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,208,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,208,100,0,0,0,0,0,0,0,0,0,0,0,208,90,91,100,0,0,245,77,90,91,79,85,91,100,0,0,0,0,0,0,0,0,208,224,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,93,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,93,97,91,79,90,86,93,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,208,100,0,0,0,0,208,100,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer id="1" name="FG" width="130" height="12">
+  <data encoding="csv">
+0,0,0,0,0,87,88,88,88,88,88,89,0,0,0,0,0,87,88,88,88,88,88,88,88,89,0,0,0,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,
+0,231,0,0,0,108,230,0,0,108,0,108,230,230,230,230,230,108,106,106,108,106,106,106,106,108,0,0,0,82,83,0,0,0,230,106,0,0,0,81,82,82,82,82,83,0,0,81,82,82,82,83,0,0,0,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,
+88,89,0,0,0,108,0,87,88,88,89,108,0,0,108,0,0,108,0,0,108,0,0,0,0,108,154,154,155,88,88,88,89,0,0,108,106,106,154,108,106,87,88,88,89,230,230,108,0,107,106,108,106,154,155,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,
+82,83,0,0,186,123,0,108,0,108,0,108,0,0,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,106,106,108,0,0,0,0,0,0,0,0,0,0,0,108,0,0,0,108,0,0,0,81,82,82,82,82,83,0,0,0,0,0,107,106,106,118,230,108,0,106,0,107,0,108,0,117,0,0,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,
+88,89,0,0,186,87,88,88,88,88,89,108,0,0,108,0,0,0,0,0,108,0,0,0,0,0,0,0,0,108,0,0,108,0,0,108,0,0,0,0,0,0,0,0,0,0,186,87,88,88,88,89,0,0,0,118,108,0,0,108,108,0,0,0,0,0,108,0,0,87,88,88,89,108,186,88,88,88,88,89,0,0,108,0,0,0,0,0,0,108,0,108,0,0,87,88,88,89,0,0,108,0,0,0,88,88,88,88,88,88,89,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,87,
+82,83,154,154,155,81,82,82,82,82,82,83,0,186,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,186,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,0,108,108,0,0,108,0,108,0,186,81,82,82,82,82,82,82,82,82,82,82,82,83,108,0,0,81,82,82,82,82,82,83,231,0,231,108,0,0,81,82,82,83,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,
+88,88,88,88,88,88,88,88,88,88,88,89,0,186,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,89,0,186,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,89,108,0,0,0,108,230,230,230,230,230,108,0,0,87,88,88,88,88,88,89,0,0,0,0,0,0,0,0,0,160,0,0,0,0,160,0,0,0,87,
+82,82,82,82,82,82,82,82,82,82,82,83,0,186,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,186,81,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,0,107,108,0,0,0,0,0,108,0,0,108,0,231,230,230,108,108,230,230,230,230,230,231,0,0,107,161,0,0,0,0,161,230,0,0,87,
+88,88,88,88,88,88,88,88,88,88,88,89,154,155,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,89,154,155,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,89,154,155,87,88,88,88,88,88,88,88,88,88,89,0,108,0,0,87,89,0,0,108,0,0,108,0,0,81,82,82,82,82,82,82,83,154,155,87,
+82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,0,87,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,
+88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,88,89,0,0,108,0,0,108,0,0,81,82,82,82,82,82,82,82,82,82,82,
+82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,82,83,0,0,87,88,88,89,154,155,87,88,88,88,88,88,88,88,88,88,88
+</data>
+ </layer>
+</map>
