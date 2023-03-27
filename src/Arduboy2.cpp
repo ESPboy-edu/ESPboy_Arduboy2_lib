@@ -72,9 +72,9 @@ void Arduboy2Base::begin(){
 void Arduboy2Base::flashlight(){
   digitalWriteRGB(RGB_ON, RGB_ON, RGB_ON);
   myESPboy.tft.fillScreen(TFT_WHITE);
-  while (true) {
-    delay(1000);
-  }
+  while (myESPboy.getKeys()) delay(100);
+  while (!myESPboy.getKeys()) delay(100);
+  digitalWriteRGB(0, 0, 0);
 }
 
 
@@ -119,8 +119,8 @@ void Arduboy2Base::systemButtons(){
     myESPboy.tft.drawString(F("A for flashlight"),16,110);
     myESPboy.tft.drawString(F("B to exit"),37,120);
    
-    while(myESPboy.getKeys())delay(10);
-    while(!(keys=myESPboy.getKeys()))delay(10);
+    while(myESPboy.getKeys())delay(100);
+    while(!(keys=myESPboy.getKeys()))delay(100);
   }
   
   EEPROM.put(EEPROM_STORAGE_SPACE_START, arduboySaveLoadSettings);

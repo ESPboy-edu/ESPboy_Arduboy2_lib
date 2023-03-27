@@ -93,19 +93,22 @@ ArduboyTonesFX::ArduboyTonesFX(boolean (*outEn)()){
 
 
 ArduboyTonesFX::ArduboyTonesFX(boolean (*outEn)(), uint16_t *tonesArray, uint8_t tonesArrayLen){
+  outputEnabled = outEn;
+ if(outputEnabled()){ 
   tonesPlaying = true;
   tonesBuffer = (uint16_t *) malloc(MAX_TONES*sizeof(uint16_t));
   tmrcount = 0;
-  outputEnabled = outEn;
   tonesBufferFX.Head = 0;
   tonesBufferFX.FX = tonesArray;
   tonesBufferFX.Len = tonesArrayLen;
   tonesTicker.attach_ms(20, checkTones);
-  nextTone(); 
+  nextTone();
+ }
 }
 
 
 void ArduboyTonesFX::tonesFromFX(uint24_t tones){
+ if(outputEnabled()){ 
   tonesPlaying = true;
   tonesBuffer = (uint16_t *) malloc(MAX_TONES*sizeof(uint16_t));
   fillBufferFromFX(tones);
@@ -113,6 +116,7 @@ void ArduboyTonesFX::tonesFromFX(uint24_t tones){
   tonesBufferFX.FX = tonesBuffer;
   tonesTicker.attach_ms(20, checkTones);
   nextTone();
+ }
 }
 
 
@@ -142,10 +146,12 @@ bool ArduboyTonesFX::playing(){
 void ArduboyTonesFX::nextTone(){
   uint16_t freq;
   uint16_t dur;
+  
+  if(!outputEnabled()) return;
 
   freq = getNext(); // get tone frequency
 
-  if (freq == TONES_END || !outputEnabled()) { // if freq is actually an "end of sequence" marker
+  if (freq == TONES_END) { // if freq is actually an "end of sequence" marker
     noTone(); // stop playing
     return;
   }
