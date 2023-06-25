@@ -40,7 +40,7 @@ THE SOFTWARE.
 #ifndef ARDUBOY_TONES_H
 #define ARDUBOY_TONES_H
 
-#define TONES_PIN D3
+#define TONES_PIN 0 //D3
 
 #include <Arduino.h>
 #include <ArduboyFX.h>

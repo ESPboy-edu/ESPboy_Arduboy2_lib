@@ -955,6 +955,12 @@ bool Arduboy2Base::pressed(uint8_t buttons){
 }
 
 
+bool Arduboy2Base::anyPressed(uint8_t buttons)
+{
+  return (buttonsState() & buttons) != 0;
+}
+
+
 bool Arduboy2Base::notPressed(uint8_t buttons){
   return (buttonsState() & buttons) == 0;
 }

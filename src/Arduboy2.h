@@ -776,6 +776,29 @@ class Arduboy2Base : public Arduboy2Core
    */
   bool pressed(uint8_t buttons);
 
+/** \brief
+   * Test if any of the specified buttons are pressed.
+   *
+   * \param buttons A bit mask indicating which buttons to test.
+   * (Can be a single button)
+   *
+   * \return `true` if *one or more* of the buttons in the provided mask are
+   * currently pressed.
+   *
+   * \details
+   * Read the state of the buttons and return `true` if one or more of the
+   * buttons in the specified mask are being pressed.
+   *
+   * Example: `if (anyPressed(RIGHT_BUTTON | LEFT_BUTTON))`
+   *
+   * \note
+   * This function does not perform any button debouncing.
+   *
+   * \see pressed() notPressed()
+   */
+  bool anyPressed(uint8_t buttons);
+
+
   /** \brief
    * Test if the specified buttons are not pressed.
    *
