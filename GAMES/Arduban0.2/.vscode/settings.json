@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "**/ipch": true,
+    "build": true,
+    "**/bin": true,
+    "**/obj": true
+  }
+}

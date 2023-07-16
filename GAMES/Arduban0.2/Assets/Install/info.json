@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 3,
+  "title": "Arduban",
+  "description": "Arduban is a port of the popular Sokoban puzzle game to the Arduboy with 300 levels. The objective of the game is to move the man, pushing all of the boxes onto the goal squares. You can only push the boxes, you cannot pull them and you can only push one box at a time. The game keeps track of the number of moves you've made and saves your best scores (lowest number of moves) for each level.",
+  "author": "Rob Prouse",
+  "version": "0.2",
+  "date": "2019-06-02",
+  "genre": "Puzzle",
+  "publisher": "Rob Prouse",
+  "idea": "Rob Prouse",
+  "code": "Rob Prouse",
+  "art": "Rob Prouse",
+  "sound": "Rob Prouse",
+  "url": "http://www.alteridem.net",
+  "sourceUrl": "https://github.com/rprouse/Arduban",
+  "email": "rob@prouse.org",
+  "companion": "",
+  "banner": "banner.png",
+  "screenshots": [
+    {
+      "title": "Level",
+      "filename": "screenshot00.png"
+    },
+    {
+      "title": "Level",
+      "filename": "screenshot01.png"
+    }
+  ],
+  "binaries": [
+    {
+      "title": "Arduboy Version",
+      "filename": "arduban.ino.hex",
+      "device": "Arduboy"
+    }
+  ],
+  "buttons": [
+    {
+      "control": "A",
+      "action": "Undo move or long press to reset level"
+    },
+    {
+      "control": "B",
+      "action": "Abandon level and return to intro screen"
+    },
+    {
+      "control": "Left or Right",
+      "action": "Change the design of the spinner"
+    },
+    {
+      "control": "Up or Down",
+      "action": "Change the background color"
+    }
+  ],
+  "eeprom": {
+    "variable": false,
+    "start": 16,
+    "end": 1023
+  }
+}

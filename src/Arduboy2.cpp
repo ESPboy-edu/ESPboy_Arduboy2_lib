@@ -41,9 +41,9 @@ Arduboy2Base::Arduboy2Base(){
 
 void Arduboy2Base::start(){
   boot();
-  EEPROM.get(EEPROM_STORAGE_SPACE_START, arduboySaveLoadSettings);
+  EEPROM.get(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboySaveLoadSettings);
   if (arduboySaveLoadSettings.arduboyID != ARDUBOY_ID){
-    EEPROM.put(EEPROM_STORAGE_SPACE_START, arduboyDefaultSettings);
+    EEPROM.put(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboyDefaultSettings);
     EEPROM.commit();
     arduboySaveLoadSettings = arduboyDefaultSettings;
     myESPboy.tft.setTextSize(1);
@@ -123,7 +123,7 @@ void Arduboy2Base::systemButtons(){
     while(!(keys=myESPboy.getKeys()))delay(100);
   }
   
-  EEPROM.put(EEPROM_STORAGE_SPACE_START, arduboySaveLoadSettings);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboySaveLoadSettings);
   EEPROM.commit();
   myESPboy.myLED.setRGB(0,0,0);
   myESPboy.tft.fillScreen(TFT_BLACK);

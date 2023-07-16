@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:leonardo",
+    "port": "COM20",
+    "sketch": "Arduban/Arduban.ino",
+    "output": "./build"
+}

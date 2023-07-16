@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Arduino",
+            "browse": {
+                "path": []
+            },
+            "includePath": [
+              "${workspaceFolder}/Arduban/**",
+              "C:\\Program Files (x86)\\Arduino\\tools\\**",
+              "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
+              "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\avr\\include\\**",
+              "C:\\Src\\Arduino\\libraries\\**"
+            ],
+            "forcedInclude": [
+              "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h",
+              "C:\\Src\\Arduino\\libraries\\Arduboy2\\src\\Arduboy2.h"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr\\bin\\avr-gcc.exe"
+        }
+    ],
+    "version": 4
+}
