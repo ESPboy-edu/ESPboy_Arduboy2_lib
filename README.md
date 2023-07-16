@@ -78,6 +78,13 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **Prince of Arabia FX** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/prince-of-arabia-fx/10926)
+- **Piracy - Avast Ye Landlubbers!** (MIT license) by [Prototype (Bert Veer)](https://community.arduboy.com/t/piracy-avast-ye-landlubbers/10692)
+- **Choplifter** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/choplifter-v1-1-1/4867)
+- **1943: The Battle of Midway** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/1943-the-battle-of-midway/4070)
+- **ArduGolf - 18-Hole Mini Golf** (MPL-2.0 license) by [brow1067](https://community.arduboy.com/t/ardugolf-18-hole-mini-golf/10462)
+- **OBS - OneButtonShoter** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/obs-one-button-shooter/10445)
+- **CyberHack** (BSD-3-Clause) by [PPOT)](https://community.arduboy.com/t/cyberhack-v1-0/9639)
 - **ArduRogue** (MPL-2.0) by [tiberiusbrown](https://github.com/tiberiusbrown/ardurogue)
 - **Ardulem** (Open source)[Alban Nanty](https://github.com/Lswbanban/Ardulem)
 - **RickArdurous** (Open source) [Alban Nanty](https://github.com/Lswbanban/RickArdurous)
