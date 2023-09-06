@@ -1,22 +1,29 @@
 
-// check "ArduboyFX.h" for #define USE_LITTLEFS
+// check "ArduboyFX.h" for
+//
+//#define USE_LITTLEFS
 // if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
-
+//
+//#define USE_RLE_COMPRESSION
+//if defined, then put RLE compressed data to fxdta[]
 
 #include "ArduboyFX.h"
 
 //font5x7
 #include "font5x7local.h"
 
+//#ifndef USE_LITTLEFS
+//  #undef USE_RLE_COPMPRESSION
+//#endif
 
+
+#ifdef USE_RLE_COMPRESSION
+  extern uint8_t fxdta[];
+#endif
 
 #ifdef USE_LITTLEFS
-  #define RLE_FILE_SIZE 382127
-  #define UNPACKED_FILE_SIZE 956419
-
   #define CACHE_BUF_SIZE 4098
   File fle;
-  extern uint8_t fxdta[];
 #else
   volatile uint32_t globalAddress=0;
   extern uint8_t fxdta[];
@@ -29,7 +36,7 @@ Cursor   FX::cursor = {0,0,0,WIDTH};
 
 FrameControl FX::frameControl;
 
-
+#ifdef USE_RLE_COMPRESSION
 void FX::Rle_Decode(unsigned char *inbuf, uint32_t inSize){
     uint8_t *outBuf;
     uint16_t cntOutBuf=0;
@@ -72,7 +79,7 @@ void FX::Rle_Decode(unsigned char *inbuf, uint32_t inSize){
     }
     delete(outBuf);
 }
-
+#endif
 
 
 
@@ -108,29 +115,51 @@ uint8_t IRAM_ATTR FX::readByte(){
 
 
 void FX::begin(){ 
-  #ifdef USE_LITTLEFS
-    //Serial.println();
+#ifdef USE_LITTLEFS
+
+#ifdef DEBUG_INFO_ON
+    Serial.begin(115200);
+    Serial.println();
+#endif
+    
     LittleFSConfig cfg;
     cfg.setAutoFormat(true);
     LittleFS.setConfig(cfg);
     LittleFS.begin();
     fle = LittleFS.open("/fxdta.bin", "r+");
     fle.seek(0, SeekEnd);
-    //Serial.println();
-    //Serial.println(fle.position());
+#ifdef DEBUG_INFO_ON
+    Serial.println();
+    Serial.println(fle.position());
+#endif    
+    
+#ifdef USE_RLE_COMPRESSION
     if (!fle || fle.position()!=UNPACKED_FILE_SIZE) {
-      //Serial.println("fxdta.bin not found!");
+#else
+    if (!fle) {
+#endif
+
+#ifdef DEBUG_INFO_ON
+      Serial.println("fxdta.bin not found!");
+#endif
+
       fle.close();
       LittleFS.format();
       fle = LittleFS.open("/fxdta.bin", "w+");
-      //Serial.println("Decoding file from PROGMEM...");
+#ifdef USE_RLE_COMPRESSION
+  #ifdef DEBUG_INFO_ON
+      Serial.println("Decoding file from PROGMEM...");
+  #endif    
       Rle_Decode((unsigned char *)fxdta, RLE_FILE_SIZE);
+#endif
       fle.close();
       fle = LittleFS.open("/fxdta.bin", "r+");
     }
     fle.seek(0,SeekSet);
-     //Serial.println("FX data OK");
-  #endif
+#ifdef DEBUG_INFO_ON
+     Serial.println("FX data OK");
+#endif
+#endif
 }
 
 
@@ -435,9 +464,10 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
         pixels ^= display;
         Arduboy2Base::sBuffer[displayoffset + WIDTH] = pixels;
       }
-      displayoffset++;
+      (mode & (1 << dbfFlip)) ? displayoffset-- : displayoffset++;
     }
-    displayoffset += WIDTH - renderwidth;
+    displayoffset += WIDTH;
+    (mode & (1 << dbfFlip)) ?  displayoffset += renderwidth : displayoffset -= renderwidth;
     displayrow ++;
     renderheight -= 8;
     

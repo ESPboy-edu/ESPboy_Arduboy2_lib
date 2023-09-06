@@ -2,7 +2,17 @@
 #define ARDUBOYFX_H
 
 // if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
-//#define USE_LITTLEFS 
+#define USE_LITTLEFS 
+
+//if defined, then put RLE compressed data to fxdta[]
+#define USE_RLE_COMPRESSION
+#define RLE_FILE_SIZE 317581
+#define UNPACKED_FILE_SIZE 675072
+
+
+//Debug info to Serial ON
+//#define DEBUG_INFO_ON
+
 
 // For uint8_t, uint16_t
 #include <stdint.h>
@@ -46,6 +56,7 @@ constexpr uint8_t dbfInvert       = 1; // bitmap is exclusive or-ed with display
 constexpr uint8_t dbfBlack        = 2; // bitmap will be blackened
 constexpr uint8_t dbfReverseBlack = 3; // reverses bitmap data
 constexpr uint8_t dbfMasked       = 4; // bitmap contains mask data
+constexpr uint8_t dbfFlip         = 5; // mirror bitmap
 constexpr uint8_t dbfExtraRow     = 7; // ignored (internal use)
 constexpr uint8_t dbfEndFrame     = 6; // last bitmap image of a frame
 constexpr uint8_t dbfLastFrame    = 7; // last bitmap image of the last frame
@@ -62,6 +73,11 @@ constexpr uint8_t dbmWhite   = (1 << dbfWhiteBlack);      // white pixels in bit
 constexpr uint8_t dbmInvert  = (1 << dbfInvert);          // when a pixel in bitmap has a different color than on display the
                                                         // pixel on display will be drawn as white. In all other cases the
                                                         // pixel will be drawn as black
+                                                        
+constexpr uint8_t dbmFlip  = (1 << dbfFlip);            // when a pixel in bitmap has a different color than on display the
+                                                        // pixel on display will be drawn as white. In all other cases the
+                                                        // pixel will be drawn as black
+                                                        
 // additional drawBitmap modes
 constexpr uint8_t dbmNormal     = 0;                    // White pixels in bitmap will be drawn as white pixels on display
 constexpr uint8_t dbmOverwrite  = 0;                    // Black pixels in bitmap will be drawn as black pixels on display
