@@ -58,7 +58,8 @@ MenuItem menu;
 
 void setup() {
 
-    arduboy.boot();
+    //arduboy.boot();
+    arduboy.begin();
     FX::display(CLEAR_BUFFER);
     #ifndef SAVE_MEMORY_SYSTEM_BUTTONS
     arduboy.systemButtons();

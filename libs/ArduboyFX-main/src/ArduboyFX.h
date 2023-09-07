@@ -7,7 +7,7 @@
 //if defined, then put RLE compressed data to fxdta[]
 #define USE_RLE_COMPRESSION
 #define RLE_FILE_SIZE 317581
-#define UNPACKED_FILE_SIZE 675072
+#define UNPACKED_FILE_SIZE 671449
 
 
 //Debug info to Serial ON
