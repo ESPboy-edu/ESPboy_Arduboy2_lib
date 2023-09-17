@@ -1,5 +1,5 @@
 //	Circuit Dude
-//	Version 3.1, Aug 6, 2019
+//	Version 3.2, July 8, 2020
 //	By Jonathan Holmes (crait)
 //
 //	Website: http://www.crait.net/
@@ -23,6 +23,9 @@
 //	Circuit Dude Level Tool: http://www.crait.net/download.php?file=CircuitDudeLevelTool.zip
 //
 //	Release History:
+//	3.2 - July 8, 2020
+//		Fixed the savedata location to no longer conflict with custom level 5! This makes older saves incompatible! SORRY!
+//    Changed the sound to BeepPin2, which fixes the temperature guage noise, but also may break compatibility with DIY Arduboys
 //	3.1 - Aug 6, 2019
 //		Added download/upload options to transfer levels to/from the PC to save them and play them on other systems
 //		Saves audio mute state to EEPROM
@@ -55,11 +58,10 @@
 //	design element derived from this game must have explicit permission from me if it is
 //	intended to be released or distributed to others.
 
-#include <ESP8266WiFi.h>
 #include <Arduboy2.h>
 Arduboy2 arduboy;
 #include <Arduboy2Beep.h>
-BeepPin1 beep;
+BeepPin2 beep;
 
 #define SOUND_MENU_EXIT			215
 #define SOUND_MENU_BACK			215
@@ -836,7 +838,7 @@ const signed char corners[4][2] = {
 #define PROP_X			0
 #define PROP_Y			1
 
-#define SAVELOCATION	(EEPROM_STORAGE_SPACE_START + 412)
+#define SAVELOCATION	((EEPROM_STORAGE_SPACE_START + 90) + 6 * 70)
 #define CUSTOMLOCATION	(EEPROM_STORAGE_SPACE_START + 90)
 #define FRAMERATE		45
 
@@ -1883,41 +1885,41 @@ void drawmap() {
 		for(unsigned char x = 0; x < MAP_WIDTH; x++) {
 			signed char bx = x * 8 + sx;
 			signed char by = y * 8 + sy;
-			const unsigned char* tile = nullptr;
+			unsigned char* tile = nullptr;
 			switch(currentmap[y][x]) {
 				default:
-					tile = blocks[currentmap[y][x]];
+					tile = (unsigned char *)blocks[currentmap[y][x]];
 					break;
 				case BLANK:
 					break;
 				case LED:
 					if(levelcomplete) {
-						tile = blocks[LED_ON];
+						tile = (unsigned char *)blocks[LED_ON];
 					} else {
-						tile = blocks[LED];
+						tile = (unsigned char *)blocks[LED];
 					}
 					break;
 				case EXIT:
 					if(levelcomplete) {
-						tile = blocks[EXIT + animation / 4];
+						tile = (unsigned char *)blocks[EXIT + animation / 4];
 					} else {
-						tile = blocks[EXIT];
+						tile = (unsigned char *)blocks[EXIT];
 					}
 					break;
 				case TELE:
-					tile = blocks[TELE + animation / 4];
+					tile = (unsigned char *)blocks[TELE + animation / 4];
 					break;
 				case CON_U:
-					tile = conveyors[DIR_UP * 4 + animation / 3];
+					tile = (unsigned char *)conveyors[DIR_UP * 4 + animation / 3];
 					break;
 				case CON_D:
-					tile = conveyors[DIR_DOWN * 4 + animation / 3];
+					tile = (unsigned char *)conveyors[DIR_DOWN * 4 + animation / 3];
 					break;
 				case CON_L:
-					tile = conveyors[DIR_LEFT * 4 + animation / 3];
+					tile = (unsigned char *)conveyors[DIR_LEFT * 4 + animation / 3];
 					break;
 				case CON_R:
-					tile = conveyors[DIR_RIGHT * 4 + animation / 3];
+					tile = (unsigned char *)conveyors[DIR_RIGHT * 4 + animation / 3];
 					break;
 				case BLOCK:
 					for(signed char quad = 0; quad < 4; quad++) {
@@ -2243,7 +2245,6 @@ void gameloop() {
 }
 
 void setup() {
-  WiFi.mode(WIFI_OFF); 
 	arduboy.begin();
 	arduboy.setFrameRate(FRAMERATE);
 	beep.begin();
