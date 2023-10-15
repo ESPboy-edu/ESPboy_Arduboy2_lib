@@ -891,7 +891,37 @@ void IRAM_ATTR Arduboy2Base::display(){
   static uint16_t* oBuffer1;
   static uint16_t* oBuffer2;
   static uint16_t* oBuffer;
+  static uint8_t keys;
+  static uint32_t tickcount;
   bool flipBuf;
+  
+  keys = 0;
+  
+  if (millis() - tickcount > 200){
+    keys = myESPboy.getKeys();
+    tickcount = millis();
+  }
+  if (keys&PAD_RGT) {
+  arduboySaveLoadSettings.arduboyBackground++; 
+  if(arduboySaveLoadSettings.arduboyBackground>18)
+    arduboySaveLoadSettings.arduboyBackground=0; 
+  while (myESPboy.getKeys()) 
+    delay(1);
+  EEPROM.put(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboySaveLoadSettings);
+  EEPROM.commit();
+}
+  
+if (keys&PAD_LFT) {
+  arduboySaveLoadSettings.arduboyForeground++; 
+  if(arduboySaveLoadSettings.arduboyForeground>18)
+    arduboySaveLoadSettings.arduboyForeground=0;
+  while (myESPboy.getKeys()) 
+    delay(1);  
+  EEPROM.put(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboySaveLoadSettings);
+  EEPROM.commit();
+}
+
+if (!displayoff_flag){
    
    if(mallocFlag==false){
      mallocFlag=true;
@@ -937,6 +967,11 @@ else {
   myESPboy.tft.fillRect(0, VERT_OFFSET, WIDTH, HEIGHT,foregroundColor);
   }
 }
+else {
+  myESPboy.tft.fillScreen(TFT_BLACK);
+  }
+}
+
 
 
 void Arduboy2Base::display(bool clear){

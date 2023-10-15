@@ -14,6 +14,7 @@
 #include <ESP_EEPROM.h>
 
 #include "lib/ESPboyInit.h"
+
 //#include "lib/ESPboyTerminalGUI.h"
 //#include "lib/ESPboyOTA2.h"
 
@@ -79,6 +80,7 @@ class Arduboy2Core
     static bool flip_horizontal_flag;
     static bool flip_vertical_flag;
     static bool allpixelson_flag;
+    static bool displayoff_flag;
     
     Arduboy2Core();
 

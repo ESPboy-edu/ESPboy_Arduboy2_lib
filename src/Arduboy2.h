@@ -57,7 +57,7 @@
 // EEPROM settings
 struct ArduboySettings{
  uint32_t arduboyID = ARDUBOY_ID;
- uint8_t arduboyBackground = 0;
+ uint8_t arduboyBackground = 4;
  uint8_t arduboyForeground = 14;
  bool arduboyAudioOnOff = 1; 
  bool arboyLogo = 0;

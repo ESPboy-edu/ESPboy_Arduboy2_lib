@@ -1215,6 +1215,7 @@ void readcustommap(unsigned char l) {
 
 void savecustommap(unsigned char l) {
 	EEPROM.put(CUSTOMLOCATION + l * 70, compressedmap);
+  EEPROM.commit();
 }
 
 void compressmap() {
@@ -1448,6 +1449,7 @@ void onenter() {
 						menulevel = currentlevel;
 						maxlevel = currentlevel;
 						EEPROM.put(SAVELOCATION, maxlevel);
+            EEPROM.commit();
 						loadlevel(currentlevel, false);
 						buttonblock = 10;
 					} else {
@@ -1780,20 +1782,20 @@ void drawnumber(unsigned char x, unsigned char y, unsigned char value) {
 void drawdude() {
 	if(temperature > 0) {
 		if(temperature >= TEMP_MAX) {
-			arduboy.setRGBled(255, 0, 0);
+			//arduboy.setRGBled(255, 0, 0);
 			sound(65 + 100 * pgm_read_byte(&explosionsounds[(TIME_EXPLOSION - movetimer - 1) / (TIME_EXPLOSION / 4)]), SOUND_TINY);
 			arduboy.drawBitmap(posx, posy, explosion[(TIME_EXPLOSION - movetimer - 1) / (TIME_EXPLOSION / 4) + 4], 8, 8, BLACK);
 			arduboy.drawBitmap(posx, posy, explosion[(TIME_EXPLOSION - movetimer - 1) / (TIME_EXPLOSION / 4)], 8, 8, WHITE);
 		} else {
-			arduboy.setRGBled(temperature * 7, 0, 0);
+			//arduboy.setRGBled(temperature * 7, 0, 0);
 			arduboy.drawBitmap(posx, posy, blocks[DUDE_BACK], 8, 8, BLACK);
 			arduboy.drawBitmap(posx, posy, blocks[DUDE + animation % 2], 8, 8, WHITE);
 		}
 	} else {
 		if(levelcomplete) {
-			arduboy.setRGBled(0, 255, 0);
+			//arduboy.setRGBled(0, 255, 0);
 		} else {
-			arduboy.setRGBled(0, 0, 0);
+			//arduboy.setRGBled(0, 0, 0);
 		}
 		if(state == DIR_TELE) {
 			sound(SOUND_TELE + (pgm_read_byte(&explosionsounds[(movetimer - 1) % (TIME_TELE / 4)])) * 100, SOUND_TINY);
@@ -1806,14 +1808,14 @@ void drawdude() {
 			arduboy.drawBitmap(posx, posy, blocks[DUDE_BACK], 8, 8, BLACK);
 			arduboy.drawBitmap(posx, posy, blocks[DUDE], 8, 8, WHITE);
 		} else {
-			arduboy.setRGBled(255, 0, 0);
+			//arduboy.setRGBled(255, 0, 0);
 			sound(SOUND_FALL - (TIME_FALL - movetimer) * 14, SOUND_TINY);
 		}
 	}
 }
 
 void draweditor() {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	switch(editstate) {
 		case EDIT_PICKING:
 			if(animation / 6 == 1) {
@@ -1947,7 +1949,7 @@ void drawmap() {
 			}
 		}
 		if(state == DIR_FALL && posy / 8 == y) {
-			arduboy.setRGBled(255, 0, 0);
+			//arduboy.setRGBled(255, 0, 0);
 			arduboy.drawBitmap(posx, posy + (TIME_FALL - movetimer) / 4, blocks[DUDE_BACK], 8, 8, BLACK);
 			arduboy.drawBitmap(posx, posy + (TIME_FALL - movetimer) / 4, blocks[DUDE], 8, 8, WHITE);
 
@@ -1976,7 +1978,7 @@ void systems() {
 }
 
 void title() {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	arduboy.drawBitmap(0 - MAIN_OFFSET, 41, rightarm, 8, 24, WHITE);
 	arduboy.drawBitmap(8 - MAIN_OFFSET, 11, circuitdude, 48, 56, WHITE);
 	arduboy.drawBitmap(56 - MAIN_OFFSET, 43, leftarm, 16, 16, WHITE);
@@ -2011,7 +2013,7 @@ void menu() {
 }
 
 void select() {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	if(buttonblock == 0 && arduboy.justReleased(B_BUTTON)) {
 		sound(SOUND_MENU_BACK, SOUND_SHORT);
 		gamestate = STATE_TITLE;
@@ -2055,7 +2057,7 @@ void select() {
 }
 
 void ending1() {
-	arduboy.setRGBled(150, 0, 0);
+	//arduboy.setRGBled(150, 0, 0);
 	arduboy.drawBitmap(23, 48, ending_table, 80, 16, WHITE);
 	arduboy.drawBitmap(27, 4, ending_laughing_face, 53, 32, WHITE);
 	arduboy.drawBitmap(32, 36, ending_laughing_body, 58, 16, WHITE);
@@ -2065,7 +2067,7 @@ void ending1() {
 }
 
 void ending2() {
-	arduboy.setRGBled(255, 0, 0);
+	//arduboy.setRGBled(255, 0, 0);
 	arduboy.drawBitmap(23, 48, ending_table, 80, 16, WHITE);
 	arduboy.drawBitmap(43, 48, ending_smile_body_back, 46, 8, BLACK);
 	arduboy.drawBitmap(34, 41, ending_smile_body, 61, 16, WHITE);
@@ -2073,17 +2075,17 @@ void ending2() {
 }
 
 void ending3() {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	arduboy.drawBitmap(30, 0, ending_circle_1, 60, 64, WHITE);
 }
 
 void ending4() {
-	arduboy.setRGBled(255, 0, 0);
+	//arduboy.setRGBled(255, 0, 0);
 	arduboy.drawBitmap(16, 0, ending_circle_2, 96, 64, WHITE);
 }
 
 void ending5() {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	arduboy.drawBitmap(52, 28, ending_label, 25, 8, WHITE);
 }
 
@@ -2119,7 +2121,7 @@ void swapall(unsigned char from, unsigned char to) {
 }
 
 void loadlevel(unsigned char l, boolean iscustom) {
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 	posx = 0;
 	posy = 0;
 	if(l >= LEVELS) {
@@ -2248,12 +2250,13 @@ void setup() {
 	arduboy.begin();
 	arduboy.setFrameRate(FRAMERATE);
 	beep.begin();
-	arduboy.setRGBled(0, 0, 0);
+	//arduboy.setRGBled(0, 0, 0);
 
 	EEPROM.get(SAVELOCATION, maxlevel);
 	if(maxlevel >= LEVELS) {
 		maxlevel = 0;
 		EEPROM.put(SAVELOCATION, maxlevel);
+    EEPROM.commit();
 	}
 	menulevel = maxlevel;
 	

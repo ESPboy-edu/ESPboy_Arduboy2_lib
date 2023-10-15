@@ -23,6 +23,7 @@ bool Arduboy2Core::invert_flag = false;
 bool Arduboy2Core::flip_horizontal_flag = false;
 bool Arduboy2Core::flip_vertical_flag = false;
 bool Arduboy2Core::allpixelson_flag = false;
+bool Arduboy2Core::displayoff_flag = false;
 
 Arduboy2Core::Arduboy2Core() {}
 
@@ -35,7 +36,7 @@ void Arduboy2Core::boot(){
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
   
   //Check OTA2
-  //if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
+//  if (myESPboy.getKeys()&PAD_ACT || myESPboy.getKeys()&PAD_ESC) { 
   //   terminalGUIobj = new ESPboyTerminalGUI(&myESPboy.tft, &myESPboy.mcp);
   //   OTA2obj = new ESPboyOTA2(terminalGUIobj);
   //}
@@ -101,13 +102,15 @@ delay(1);
 
 // Shut down the display
 void Arduboy2Core::displayOff() {
-myESPboy.dac.setVoltage(0, false);
+  //myESPboy.mcp.writeDAC(0, false);
+  Arduboy2Core::displayoff_flag = 1;
 };
 
 
 // Restart the display after a displayOff()
 void Arduboy2Core::displayOn() {
-myESPboy.dac.setVoltage(4095, false);
+  //myESPboy.mcp.writeDAC(4095, false);
+  Arduboy2Core::displayoff_flag = 0;
 };
 
 uint8_t Arduboy2Core::width() { return WIDTH; }
