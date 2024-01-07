@@ -1,17 +1,33 @@
 #ifndef ARDUBOYFX_H
 #define ARDUBOYFX_H
 
+
+//===================================================
+
 // if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
 #define USE_LITTLEFS 
 
 //if defined, then put RLE compressed data to fxdta[]
 #define USE_RLE_COMPRESSION
-#define RLE_FILE_SIZE 317581
-#define UNPACKED_FILE_SIZE 671449
+
+//NOTE: put the following string at the end of your ".h" file with RLE FX data array
+//size_t sizeOfFxdta(){ return sizeof(fxdta); };
+
+
+//===================================================
+
 
 
 //Debug info to Serial ON
 //#define DEBUG_INFO_ON
+
+#ifdef USE_RLE_COMPRESSION
+  #define USE_LITTLEFS 
+#endif
+
+#ifndef USE_LITTLEFS
+  #undef USE_RLE_COPMPRESSION
+#endif
 
 
 // For uint8_t, uint16_t

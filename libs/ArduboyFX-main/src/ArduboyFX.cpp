@@ -12,10 +12,6 @@
 //font5x7
 #include "font5x7local.h"
 
-//#ifndef USE_LITTLEFS
-//  #undef USE_RLE_COPMPRESSION
-//#endif
-
 
 #ifdef USE_RLE_COMPRESSION
   extern uint8_t fxdta[];
@@ -134,7 +130,7 @@ void FX::begin(){
 #endif    
     
 #ifdef USE_RLE_COMPRESSION
-    if (!fle || fle.position()!=UNPACKED_FILE_SIZE) {
+    if (!fle /*|| fle.position()!=UNPACKED_FILE_SIZE*/) {
 #else
     if (!fle) {
 #endif
@@ -150,7 +146,7 @@ void FX::begin(){
   #ifdef DEBUG_INFO_ON
       Serial.println("Decoding file from PROGMEM...");
   #endif    
-      Rle_Decode((unsigned char *)fxdta, RLE_FILE_SIZE);
+      Rle_Decode((unsigned char *)fxdta, sizeOfFxdta()/*RLE_FILE_SIZE*/);
 #endif
       fle.close();
       fle = LittleFS.open("/fxdta.bin", "r+");
