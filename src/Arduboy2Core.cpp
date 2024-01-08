@@ -30,7 +30,7 @@ Arduboy2Core::Arduboy2Core() {}
 
 void Arduboy2Core::boot(){
   //Serial.begin(115200);         
-  EEPROM.begin(4096);
+  EEPROM.begin(4088);
 
   //Init ESPboy
   myESPboy.begin(((String)F("Arduboy2 lib port")).c_str());
