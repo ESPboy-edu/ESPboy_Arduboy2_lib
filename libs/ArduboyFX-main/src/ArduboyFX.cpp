@@ -7,9 +7,9 @@
 //#define USE_RLE_COMPRESSION
 //if defined, then put RLE compressed data to fxdta[]
 
-#include "ArduboyFX.h"
 
-//font5x7
+
+#include "ArduboyFX.h"
 #include "font5x7local.h"
 
 
@@ -18,12 +18,14 @@
 #endif
 
 #ifdef USE_LITTLEFS
-  #define CACHE_BUF_SIZE 4098
+  #define CACHE_BUF_SIZE 4096
   File fle;
 #else
   volatile uint32_t globalAddress=0;
   extern uint8_t fxdta[];
 #endif
+
+volatile uint32_t globalAddressSave=EEPROMWRITEOFFSET;
 
 uint16_t FX::programDataPage = 0; // program read only data location in flash memory
 uint16_t FX::programSavePage = 0; // program read and write data location in flash memory
@@ -95,29 +97,30 @@ uint8_t FX::writeByte(uint8_t data){
 
 
 
-static uint8_t  result;
-
 uint8_t IRAM_ATTR FX::readByte(){
  #ifdef USE_LITTLEFS
-  result = fle.read();
+  return(fle.read());
  #else
+  uint8_t result;
   result = pgm_read_byte(&fxdta[globalAddress]);
   globalAddress++;
- #endif
   return result;
+ #endif
 }
 
 
 
 
 void FX::begin(){ 
-#ifdef USE_LITTLEFS
+
+    EEPROM.begin(4096);
 
 #ifdef DEBUG_INFO_ON
     Serial.begin(115200);
     Serial.println();
 #endif
-    
+
+#ifdef USE_LITTLEFS    
     LittleFSConfig cfg;
     cfg.setAutoFormat(true);
     LittleFS.setConfig(cfg);
@@ -130,7 +133,7 @@ void FX::begin(){
 #endif    
     
 #ifdef USE_RLE_COMPRESSION
-    if (!fle /*|| fle.position()!=UNPACKED_FILE_SIZE*/) {
+    if (!fle || fle.position()!=UNPACKED_FILE_SIZE) {
 #else
     if (!fle) {
 #endif
@@ -146,12 +149,12 @@ void FX::begin(){
   #ifdef DEBUG_INFO_ON
       Serial.println("Decoding file from PROGMEM...");
   #endif    
-      Rle_Decode((unsigned char *)fxdta, sizeOfFxdta()/*RLE_FILE_SIZE*/);
+      Rle_Decode((unsigned char *)fxdta, RLE_FILE_SIZE);
 #endif
       fle.close();
       fle = LittleFS.open("/fxdta.bin", "r+");
     }
-    fle.seek(0,SeekSet);
+    fle.seek(0, SeekSet);
 #ifdef DEBUG_INFO_ON
      Serial.println("FX data OK");
 #endif
@@ -202,7 +205,7 @@ void FX::seekDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t 
 
 
 void FX::seekSave(uint24_t address){   
-  seekData(address);
+    globalAddressSave = address+EEPROMWRITEOFFSET;
 }
 
 
@@ -217,8 +220,9 @@ uint8_t FX::readPendingLastUInt8(){
 
 
 uint16_t FX::readPendingUInt16(){
-   return (((uint16_t)readByte() << 8) | readByte());
- }
+  return (((uint16_t)readByte() << 8) | readByte());
+}
+
 
 
 uint16_t FX::readPendingLastUInt16(){
@@ -227,7 +231,7 @@ uint16_t FX::readPendingLastUInt16(){
 
 
 uint24_t FX::readPendingUInt24(){
-   return (((uint24_t)readPendingUInt16() << 8) | readByte());
+  return (((uint24_t)readPendingUInt16() << 8) | readByte());
 }
 
 
@@ -251,9 +255,19 @@ void FX::readBytes(uint8_t* buffer, size_t length){
   #ifdef USE_LITTLEFS
     fle.readBytes((char *)buffer, length);
   #else
-    for (size_t i = 0; i < length; i++)
-      buffer[i] = readByte();
+    memcpy_P(buffer, &fxdta[globalAddress], length);
+    globalAddress+=length;
   #endif
+}
+
+
+void FX::readBytesSave(uint8_t* buffer, size_t length){
+    for(uint16_t i=0; i<length; i++){
+      if(globalAddressSave < 4092-EEPROMWRITEOFFSET){
+        buffer[i] = EEPROM.read(globalAddressSave);
+        }
+      globalAddressSave++;
+    }
 }
 
 
@@ -273,72 +287,60 @@ void FX::readDataBytes(uint24_t address, uint8_t* buffer, size_t length){
 }
 
 
-void FX::readSaveBytes(uint24_t address, uint8_t* buffer, size_t length){
+void FX::readSaveBytes(uint24_t address, uint8_t* buffer, size_t length)
+{
   seekSave(address);
-  readBytes(buffer, length);
+  readBytesSave(buffer, length);
 }
 
-uint8_t FX::loadGameState(uint8_t* gameState, size_t size) // ~54 bytes
+uint8_t FX::loadGameState(uint8_t* gameState, size_t size)
 {
+
   seekSave(0);
-  uint8_t result = 0;
-  while (readPendingUInt16() == size) // if gameState size not equal, most recent gameState has been read or there is no gameState
-  {
-    for (uint16_t i = 0; i < size; i++)
-    {
-      uint8_t data = readPendingUInt8();
-      gameState[i] = data;
-    }
-    {
-      result = 1; // signal gameState loaded
-    }
+  if (EEPROM.read(globalAddressSave++) == (uint8_t)(size&255) && 
+      EEPROM.read(globalAddressSave++) == (uint8_t)((size>>8)&255)){
+    readBytesSave(gameState, size);
+    return 1;
   }
-  readByte();
-  return result;
+  else{ 
+    return 0;
+  }
 }
+
+
 
 void FX::saveGameState(const uint8_t* gameState, size_t size) // ~152 bytes locates free space in 4K save block and saves the GamesState.
-{                                                       //            if there is not enough free space, the block is erased prior to saving
-  uint16_t addr = 0;
-  for(;;) // locate end of previous gameStates
-  {
-    seekSave(addr);
-    if (readPendingLastUInt16() != size) break; //found end of previous gameStates
-    addr += size + 2;
+{                  
+  seekSave(0);    
+  EEPROM.write(globalAddressSave++, (uint8_t)(size&255));
+  EEPROM.write(globalAddressSave++, (uint8_t)((size>>8)&255));
+  for (uint16_t i=0; i<size; i++){
+    EEPROM.write(globalAddressSave++, gameState[i]);
   }
-  if ((addr + size) > 4094) //is there enough space left? last two bytes of 4K block must always be unused (0xFF)
-  {
-    eraseSaveBlock(0); // erase save block
-    addr = 0;          // write saveState at the start of block
-  }
-
-  while (size)
-  {
-    seekData((uint24_t)(programSavePage << 8) + addr);
-    do
-    {
-      writeByte(*gameState++);
-      if (--size == 0) break;
-    }
-    while ((uint8_t)++addr); // write bytes until end of a page
-  }
+  EEPROM.commit();
 }
+
 
 
 void  FX::eraseSaveBlock(uint16_t page){
-  seekData((uint24_t)(programSavePage + page) << 8);
+  seekSave(0);                                     //            if there is not enough free space, the block is erased prior to saving
+  for (uint16_t i=0; i<4096-EEPROMWRITEOFFSET; i++){
+    EEPROM.write(globalAddressSave, 0);
+    globalAddressSave++;
+  }
+  EEPROM.commit();
 }
 
 
 void FX::writeSavePage(uint16_t page, uint8_t* buffer){
-  seekData((uint24_t)(programSavePage + page) << 8);
-  uint8_t i = 0;
-  do
-  {
-    writeByte(buffer[i]);
+  seekSave(0);                                     //            if there is not enough free space, the block is erased prior to saving
+  for (uint16_t i=0; i<256; i++){
+    EEPROM.write(globalAddressSave, buffer[i]);
+    globalAddressSave++;
   }
-  while (i++ < 255);
+  EEPROM.commit();
 }
+
 
 void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8_t mode){
   // read bitmap dimensions from flash

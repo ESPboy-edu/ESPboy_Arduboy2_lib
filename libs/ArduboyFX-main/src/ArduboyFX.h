@@ -1,6 +1,13 @@
 #ifndef ARDUBOYFX_H
 #define ARDUBOYFX_H
 
+#define EEPROMWRITEOFFSET 30
+
+
+//#define RLE_FILE_SIZE 233968 //for EXOLON
+//#define UNPACKED_FILE_SIZE 802913 //for EXOLON
+#define RLE_FILE_SIZE 317581 //PRINCE OF ARABIA
+#define UNPACKED_FILE_SIZE 671449 //PRINCE OF ARABIA
 
 //===================================================
 
@@ -30,16 +37,10 @@
 #endif
 
 
-// For uint8_t, uint16_t
+
 #include <stdint.h>
-
-// For size_t
 #include <stddef.h>
-
-// For ARDUINO_ARCH_AVR, PORTD, ...
 #include <Arduino.h>
-
-// For Arduboy2Base::sBuffer, WIDTH, HEIGHT, CS_PORT ...
 #include <Arduboy2.h>
 
 #ifdef USE_LITTLEFS
@@ -47,24 +48,6 @@
 #endif
 
 
-// progam data and save data pages(set by PC manager tool)
-constexpr uint16_t FX_VECTOR_KEY_VALUE  = 0x9518;        /* RETI instruction used as magic key */
-constexpr uint16_t FX_DATA_VECTOR_KEY_POINTER  = 0x0014; /* reserved interrupt vector 5  area */
-constexpr uint16_t FX_DATA_VECTOR_PAGE_POINTER = 0x0016;
-constexpr uint16_t FX_SAVE_VECTOR_KEY_POINTER  = 0x0018; /* reserved interrupt vector 6  area */
-constexpr uint16_t FX_SAVE_VECTOR_PAGE_POINTER = 0x001A;
-
-// Serial Flash Commands
-constexpr uint8_t SFC_JEDEC_ID          = 0x9F;
-constexpr uint8_t SFC_READSTATUS1       = 0x05;
-constexpr uint8_t SFC_READSTATUS2       = 0x35;
-constexpr uint8_t SFC_READSTATUS3       = 0x15;
-constexpr uint8_t SFC_READ              = 0x03;
-constexpr uint8_t SFC_WRITE_ENABLE      = 0x06;
-constexpr uint8_t SFC_WRITE             = 0x02;
-constexpr uint8_t SFC_ERASE             = 0x20;
-constexpr uint8_t SFC_RELEASE_POWERDOWN = 0xAB;
-constexpr uint8_t SFC_POWERDOWN         = 0xB9;
 
 // drawbitmap bit flags (used by modes below and internally)
 constexpr uint8_t dbfWhiteBlack   = 0; // bitmap is used as mask
@@ -352,6 +335,8 @@ class FX
     }
 
     static void readBytes(uint8_t* buffer, size_t length);// read a number of bytes from the current flash location
+
+    static void readBytesSave(uint8_t* buffer, size_t length);
 
     static void readBytesEnd(uint8_t* buffer, size_t length); // read a number of bytes from the current flash location and ends the read command
 
