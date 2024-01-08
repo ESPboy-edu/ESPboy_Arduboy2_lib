@@ -76,7 +76,7 @@ ArduboyTones::ArduboyTones(bool (*outEn)()){
   outputEnabled = outEn;
   toneSequence[MAX_TONES * 2] = TONES_END;
   // sets the update call interval
-  tonesTicker.attach_ms(10, checkTones);
+  tonesTicker.attach(0.01, checkTones);
 }
 
 void ArduboyTones::tone(uint16_t freq, uint16_t dur){
@@ -147,6 +147,7 @@ void ArduboyTones::nextTone(){
   freq = getNext(); // get tone frequency
   if (freq == TONES_END) { // if freq is actually an "end of sequence" marker
     noTone(); // stop playing
+    tmrcount=0;
     tonesPlaying = false; 
     return;
   }
@@ -162,7 +163,6 @@ void ArduboyTones::nextTone(){
   freq &= ~TONE_HIGH_VOLUME; // strip volume indicator from frequency
 
 	if (freq == 0) { // if tone is silent
-		noTone();
 		toneSilent = true;
 	}
 	else {
@@ -177,7 +177,6 @@ void ArduboyTones::nextTone(){
 	if (toneSilent) {
 		noTone();
 	} else {
-	    ::noTone(TONES_PIN);
 		::tone(TONES_PIN, freq);
 	}	
 
