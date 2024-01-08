@@ -1,0 +1,9 @@
+Debug/
+WolfSketch/
+*.opensdf
+*.sdf
+*.o
+Uzebox/dep/
+.vs/
+*.user
+Capture/
