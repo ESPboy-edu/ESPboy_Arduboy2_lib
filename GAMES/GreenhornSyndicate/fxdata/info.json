@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 3,
+  "title": "GreenHorn Syndicate",
+  "date": "2024-03-07",
+  "genre": "RPG",
+  "banner": "GSbanner.png",
+  "binaries": [
+    {
+      "title": "GreenHorn Syndicate",
+      "filename": "GSmain.hex",
+      "flashsave": "fxdata-save.bin",
+      "flashdata": "fxdata-data.bin",
+      "device": "ArduboyFX"
+    }
+  ]
+
+}
