@@ -1325,6 +1325,9 @@ class Arduboy2 : public Print, public Arduboy2Base
    * \see getCursorX() getCursorY()
    */
   void setCursor(int16_t x, int16_t y);
+  void setCursorX(int16_t x);  
+  void setCursorY(int16_t y);
+
 
   /** \brief
    * Get the X coordinate of the current text cursor position.

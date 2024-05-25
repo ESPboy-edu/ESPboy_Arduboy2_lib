@@ -1213,6 +1213,17 @@ void Arduboy2::setCursor(int16_t x, int16_t y){
 }
 
 
+ void Arduboy2::setCursorX(int16_t x)
+ {
+   cursor_x = x;
+ }
+  
+ void Arduboy2::setCursorY(int16_t y)
+ {
+   cursor_y = y;
+ }
+  
+
 int16_t Arduboy2::getCursorX(){
   return cursor_x;
 }
