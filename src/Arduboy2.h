@@ -196,7 +196,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see Arduboy2Audio
    */
-  Arduboy2Audio audio;
+  static Arduboy2Audio audio;
   BeepPin1 tunes;
   
   /** \brief
@@ -215,8 +215,8 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see boot()
    */
-  void start();
-  void begin();
+  static void start();
+  static void begin();
 
   /** \brief
    * Turn the RGB LED and display fully on to act as a small flashlight/torch.
@@ -244,7 +244,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see begin() boot() safeMode()
    */
-  void flashlight();
+ static void flashlight();
 
   /** \brief
    * Handle buttons held on startup for system control.
@@ -262,7 +262,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see begin() boot()
    */
-  void systemButtons();
+  static void systemButtons();
 
   /** \brief
    * Wait until all buttons have been released.
@@ -292,7 +292,7 @@ class Arduboy2Base : public Arduboy2Core
    * \see display(bool)
    */
    
-  void clearDisplay();
+  static void clearDisplay();
    
   static void clear();
 
@@ -339,7 +339,7 @@ class Arduboy2Base : public Arduboy2Core
    * specified color. The values WHITE or BLACK can be used for the color.
    * If the `color` parameter isn't included, the pixel will be set to WHITE.
    */
-  void drawPixel(int16_t x, int16_t y, uint8_t color = WHITE);
+  static void drawPixel(int16_t x, int16_t y, uint8_t color = WHITE);
 
   /** \brief
    * Returns the state of the given pixel in the screen buffer.
@@ -349,7 +349,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \return WHITE if the pixel is on or BLACK if the pixel is off.
    */
-  uint8_t getPixel(uint8_t x, uint8_t y);
+  static uint8_t getPixel(uint8_t x, uint8_t y);
 
   /** \brief
    * Draw a circle of a given radius.
@@ -359,11 +359,11 @@ class Arduboy2Base : public Arduboy2Core
    * \param r The radius of the circle in pixels.
    * \param color The circle's color (optional; defaults to WHITE).
    */
-  void drawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t color = WHITE);
+  static void drawCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t color = WHITE);
 
   // Draw one or more "corners" of a circle.
   // (Not officially part of the API)
-  void drawCircleHelper(int16_t x0, int16_t y0, uint8_t r, uint8_t corners, uint8_t color = WHITE);
+  static void drawCircleHelper(int16_t x0, int16_t y0, uint8_t r, uint8_t corners, uint8_t color = WHITE);
 
   /** \brief
    * Draw a filled-in circle of a given radius.
@@ -373,12 +373,12 @@ class Arduboy2Base : public Arduboy2Core
    * \param r The radius of the circle in pixels.
    * \param color The circle's color (optional; defaults to WHITE).
    */
-  void fillCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t color = WHITE);
+  static void fillCircle(int16_t x0, int16_t y0, uint8_t r, uint8_t color = WHITE);
 
   // Draw one or both vertical halves of a filled-in circle or
   // rounded rectangle edge.
   // (Not officially part of the API)
-  void fillCircleHelper(int16_t x0, int16_t y0, uint8_t r, uint8_t sides, int16_t delta, uint8_t color = WHITE);
+  static void fillCircleHelper(int16_t x0, int16_t y0, uint8_t r, uint8_t sides, int16_t delta, uint8_t color = WHITE);
 
   /** \brief
    * Draw a line between two specified points.
@@ -392,7 +392,7 @@ class Arduboy2Base : public Arduboy2Core
    * Bresenham's algorithm.
    * The start and end points can be at any location with respect to the other.
    */
-  void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color = WHITE);
+  static void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint8_t color = WHITE);
 
   /** \brief
    * Draw a rectangle of a specified width and height.
@@ -403,7 +403,7 @@ class Arduboy2Base : public Arduboy2Core
    * \param h The height of the rectangle.
    * \param color The color of the pixel (optional; defaults to WHITE).
    */
-  void drawRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t color = WHITE);
+  static void drawRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t color = WHITE);
 
   /** \brief
    * Draw a vertical line.
@@ -413,7 +413,7 @@ class Arduboy2Base : public Arduboy2Core
    * \param h The height of the line.
    * \param color The color of the line (optional; defaults to WHITE).
    */
-  void drawFastVLine(int16_t x, int16_t y, uint8_t h, uint8_t color = WHITE);
+  static void drawFastVLine(int16_t x, int16_t y, uint8_t h, uint8_t color = WHITE);
 
   /** \brief
    * Draw a horizontal line.
@@ -423,7 +423,7 @@ class Arduboy2Base : public Arduboy2Core
    * \param w The width of the line.
    * \param color The color of the line (optional; defaults to WHITE).
    */
-  void drawFastHLine(int16_t x, int16_t y, uint8_t w, uint8_t color = WHITE);
+  static void drawFastHLine(int16_t x, int16_t y, uint8_t w, uint8_t color = WHITE);
 
   /** \brief
    * Draw a filled-in rectangle of a specified width and height.
@@ -434,14 +434,14 @@ class Arduboy2Base : public Arduboy2Core
    * \param h The height of the rectangle.
    * \param color The color of the pixel (optional; defaults to WHITE).
    */
-  void fillRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t color = WHITE);
+  static void fillRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t color = WHITE);
 
   /** \brief
    * Fill the screen buffer with the specified color.
    *
    * \param color The fill color (optional; defaults to WHITE).
    */
-  void fillScreen(uint8_t color = WHITE);
+  static void fillScreen(uint8_t color = WHITE);
 
   /** \brief
    * Draw a rectangle with rounded corners.
@@ -453,7 +453,7 @@ class Arduboy2Base : public Arduboy2Core
    * \param r The radius of the semicircles forming the corners.
    * \param color The color of the rectangle (optional; defaults to WHITE).
    */
-  void drawRoundRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t r, uint8_t color = WHITE);
+  static void drawRoundRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t r, uint8_t color = WHITE);
 
   /** \brief
    * Draw a filled-in rectangle with rounded corners.
@@ -465,7 +465,7 @@ class Arduboy2Base : public Arduboy2Core
    * \param r The radius of the semicircles forming the corners.
    * \param color The color of the rectangle (optional; defaults to WHITE).
    */
-  void fillRoundRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t r, uint8_t color = WHITE);
+  static void fillRoundRect(int16_t x, int16_t y, uint8_t w, uint8_t h, uint8_t r, uint8_t color = WHITE);
 
   /** \brief
    * Draw a triangle given the coordinates of each corner.
@@ -478,7 +478,7 @@ class Arduboy2Base : public Arduboy2Core
    * A triangle is drawn by specifying each of the three corner locations.
    * The corners can be at any position with respect to the others.
    */
-  void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color = WHITE);
+ static void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color = WHITE);
 
   /** \brief
    * Draw a filled-in triangle given the coordinates of each corner.
@@ -491,7 +491,7 @@ class Arduboy2Base : public Arduboy2Core
    * A triangle is drawn by specifying each of the three corner locations.
    * The corners can be at any position with respect to the others.
    */
-  void fillTriangle (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color = WHITE);
+ static void fillTriangle (int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint8_t color = WHITE);
 
   /** \brief
    * Draw a bitmap from an array in program memory.
@@ -544,7 +544,7 @@ class Arduboy2Base : public Arduboy2Core
    * that allows them to be directly written to the screen. It is recommended
    * you use `drawBitmap()` when possible.
    */
-  void drawSlowXYBitmap(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color = WHITE);
+  static void drawSlowXYBitmap(int16_t x, int16_t y, const uint8_t *bitmap, uint8_t w, uint8_t h, uint8_t color = WHITE);
 
   /** \brief
    * Draw a bitmap from an array of compressed data.
@@ -587,7 +587,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see sBuffer
    */
-  uint8_t* getBuffer();
+  static uint8_t* getBuffer();
 
   /** \brief
    * Seed the random number generator with a random value.
@@ -601,10 +601,10 @@ class Arduboy2Base : public Arduboy2Core
    * such as after a user hits a button to start a game or other semi-random
    * event.
    */
-  void initRandomSeed();
+  static void initRandomSeed();
 
   // Swap the values of two int16_t variables passed by reference.
-  void swap(int16_t& a, int16_t& b);
+  static void swap(int16_t& a, int16_t& b);
 
   /** \brief
    * Set the frame rate used by the frame control functions.
@@ -775,7 +775,7 @@ class Arduboy2Base : public Arduboy2Core
    * \note
    * This function does not perform any button debouncing.
    */
-  bool pressed(uint8_t buttons);
+  static bool pressed(uint8_t buttons);
 
 /** \brief
    * Test if any of the specified buttons are pressed.
@@ -797,7 +797,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see pressed() notPressed()
    */
-  bool anyPressed(uint8_t buttons);
+  static bool anyPressed(uint8_t buttons);
 
 
   /** \brief
@@ -818,7 +818,7 @@ class Arduboy2Base : public Arduboy2Core
    * \note
    * This function does not perform any button debouncing.
    */
-  bool notPressed(uint8_t buttons);
+  static bool notPressed(uint8_t buttons);
 
   /** \brief
    * Poll the buttons and track their state over time.
@@ -875,7 +875,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see pollButtons() justReleased()
    */
-  bool justPressed(uint8_t button);
+ bool justPressed(uint8_t button);
 
   /** \brief
    * Check if a button has just been released.
@@ -903,7 +903,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see pollButtons() justPressed()
    */
-  bool justReleased(uint8_t button);
+bool justReleased(uint8_t button);
 
   /** \brief
    * Test if a point falls within a rectangle.
@@ -919,7 +919,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see Point Rect
    */
-  bool collide(Point point, Rect rect);
+  static bool collide(Point point, Rect rect);
 
   /** \brief
    * Test if a rectangle is intersecting with another rectangle.
@@ -936,7 +936,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see Rect
    */
-  bool collide(Rect rect1, Rect rect2);
+  static bool collide(Rect rect1, Rect rect2);
 
   /** \brief
    * Read the unit ID from system EEPROM.
@@ -950,7 +950,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see writeUnitID() readUnitName()
    */
-  uint16_t readUnitID();
+  static uint16_t readUnitID();
 
   /** \brief
    * Write a unit ID to system EEPROM.
@@ -964,7 +964,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see readUnitID() writeUnitName()
    */
-  void writeUnitID(uint16_t id);
+  static void writeUnitID(uint16_t id);
 
   /** \brief
    * Read the unit name from system EEPROM.
@@ -1027,7 +1027,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see readUnitName() writeUnitID() Arduboy2::bootLogoExtra()
    */
-  void writeUnitName(char* name);
+  static void writeUnitName(char* name);
 
   /** \brief
    * Read the "Show Boot Logo" flag in system EEPROM.
@@ -1175,10 +1175,10 @@ class Arduboy2Base : public Arduboy2Core
 
  protected:
   // helper function for sound enable/disable system control
-  void sysCtrlSound();
+  static void sysCtrlSound();
 
   // functions passed to bootLogoShell() to draw the logo
-  void drawLogoBitmap();
+  static void drawLogoBitmap();
   
   // For button handling
   uint8_t currentButtonState;
@@ -1362,7 +1362,7 @@ class Arduboy2 : public Print, public Arduboy2Base
    *
    * \see setTextBackground() getTextColor()
    */
-  void setTextColor(uint8_t color);
+  static void setTextColor(uint8_t color);
 
   /** \brief
    * Get the currently set text foreground color.
@@ -1630,7 +1630,7 @@ class Arduboy2 : public Print, public Arduboy2Base
  protected:
   int16_t cursor_x;
   int16_t cursor_y;
-  uint8_t textColor;
+  static uint8_t textColor;
   uint8_t textBackground;
   uint8_t textSize;
   bool textWrap;
