@@ -1362,7 +1362,7 @@ class Arduboy2 : public Print, public Arduboy2Base
    *
    * \see setTextBackground() getTextColor()
    */
-  static void setTextColor(uint8_t color);
+  void setTextColor(uint8_t color);
 
   /** \brief
    * Get the currently set text foreground color.
@@ -1630,7 +1630,7 @@ class Arduboy2 : public Print, public Arduboy2Base
  protected:
   int16_t cursor_x;
   int16_t cursor_y;
-  static uint8_t textColor;
+  uint8_t textColor;
   uint8_t textBackground;
   uint8_t textSize;
   bool textWrap;

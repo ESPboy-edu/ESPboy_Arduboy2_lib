@@ -492,10 +492,10 @@ struct ArduboyG_Common : public BASE
     ABG_NOT_SUPPORTED static void paintScreen(uint8_t const*);
     ABG_NOT_SUPPORTED static void paintScreen(uint8_t[], bool);
     ABG_NOT_SUPPORTED static void setFrameDuration(uint8_t);
-    ABG_NOT_SUPPORTED static void setFrameRate(uint8_t);
+    //ABG_NOT_SUPPORTED static void setFrameRate(uint8_t);
     ABG_NOT_SUPPORTED static void display();
     ABG_NOT_SUPPORTED static void display(bool);
-    ABG_NOT_SUPPORTED static bool nextFrame();
+    //ABG_NOT_SUPPORTED static bool nextFrame();
     ABG_NOT_SUPPORTED static bool nextFrameDEV();
 
 
@@ -654,7 +654,7 @@ struct ArduboyG_Config : public abg_detail::ArduboyG_Common<
     static void startGray()
     {
         ArduboyGBase_Config<MODE, FLAGS>::startGray();
-        Arduboy2::setTextColor(WHITE); // WHITE is 3 not 1
+        //Arduboy2::setTextColor(WHITE); // WHITE is 3 not 1
     }
     
     static void startGrey() { startGray(); }
@@ -695,9 +695,9 @@ struct ArduboyG_Config : public abg_detail::ArduboyG_Common<
 
         if ((c != '\n') || A::textRaw)
         {
-            uint8_t fullCharacterWidth = A::getCharacterWidth() + A::getCharacterSpacing();
-            drawChar(A::cursor_x, A::cursor_y, c, A::textColor, A::textBackground, A::textSize);
-            A::cursor_x += fullCharacterWidth * A::textSize;
+            //uint8_t fullCharacterWidth = A::getCharacterWidth() + A::getCharacterSpacing();
+            //drawChar(A::cursor_x, A::cursor_y, c, A::textColor, A::textBackground, A::textSize);
+            //A::cursor_x += fullCharacterWidth * A::textSize;
         }
 
         return 1;
