@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 2,
+  "title": "Sensitive",
+  "description": "Greyscale puzzle game where the aim is to remove all of the striped tiles and get to the exit.",
+  "author": "Spinal",
+  "version": "1.0",
+  "date": "2017-03-30",
+  "genre": "Puzzle",
+  "publisher": "Spinal",
+  "idea": "Spinal - Remake of C64 game",
+  "code": "Spinal",
+  "art": "Spinal",
+  "sound": "Jayenkai",
+  "url": "http://socoder.net/?blogs=58483#1490871789",
+  "sourceUrl": "http://socoder.net/?blogs=58483#1490871789",
+  "email": "spinal_cord@yahoo.com",
+  "companion": "",
+  "banner": "Banner.png",
+  "screenshots": [
+    {
+      "title": "Title Screen",
+      "filename": "screenshot00.png"
+    },
+    {
+      "title": "In Game",
+      "filename": "screenshot01.png"
+    }
+  ],
+  "binaries": [
+    {
+      "title": "Sensitive",
+      "filename": "Sensitive.hex",
+      "device": "Arduboy"
+    }
+  ],
+  "buttons": [
+    {
+      "control": "",
+      "action": ""
+    }
+  ],
+  "eeprom": {
+    "variable": false,
+    "start": 0,
+    "end": 0
+  }
+}

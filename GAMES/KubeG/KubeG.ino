@@ -111,7 +111,7 @@ void setup()
 {
   //Serial.begin(74880);
   a.begin();
-  a.setFrameRate (1);
+  a.setFrameRate (120);
   //arduboy.display();
   /*
   for (int i = 1; i < 2000; i++)  // Random dissolve for ARDUBOY title
