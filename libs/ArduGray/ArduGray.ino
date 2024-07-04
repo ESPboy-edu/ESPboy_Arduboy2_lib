@@ -1,4 +1,6 @@
 #define ABG_IMPLEMENTATION
+#define ABG_UPDATE_EVERY_N_DEFAULT 3
+
 #include "common.hpp"
 
 decltype(a) a;

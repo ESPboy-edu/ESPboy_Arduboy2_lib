@@ -1,10 +1,10 @@
 #define ABG_IMPLEMENTATION
-#define ABG_SYNC_PARK_ROW
-#define ABG_L3_CONVERT_LIGHTEN
+//#define ABG_SYNC_PARK_ROW
+//#define ABG_L3_CONVERT_LIGHTEN
 #include "ArduboyG.h"
 
 //ArduboyG a;
-ArduboyG_Config<ABG_Mode::L4_Triplane> a;
+ArduboyG_Config<ABG_Mode::L3> a;
 
 #include <Arduino.h>
 #include <Arduboy2.h>
@@ -35,7 +35,7 @@ int fadingIn = 0;
 double FADESPEED = 1.5;
 
 void renderLevel(int fn);
-static uint8_t n = 0;
+uint16_t nown = 0;
 
 // explosion
 byte expX[10], expY[10], expF[10], expU[10];
@@ -446,7 +446,7 @@ void titleScreen() {
       //if(mt!=0){
         drawTile(x,y+2, titleTiles + (mt*8));
       //}
-      if(temp++>=125){temp=0;}
+      if(temp++>=125){temp=42;}
     }
   }
 
@@ -528,8 +528,9 @@ void setup() {
 }
 
 void loop() {
-  if (gameMode == 5) a.waitForNextPlane(BLACK, 3);
-  else a.waitForNextPlane(BLACK, 2);
+  a.waitForNextPlane();
+
+  renderLevel(nown++);
   
   if(/*a.nextFrame()*/a.needsUpdate()){
     UpdatePad(arduboy.buttonsState());
@@ -538,7 +539,7 @@ void loop() {
         titleScreen();
         break;
       case 10:
-        playLevel(n);
+        playLevel(nown);
         break;
       case 11: // loading next level
         fadingOut = 60*FADESPEED;
@@ -558,8 +559,6 @@ void loop() {
         break;
     }
   }
-
-  renderLevel(n++);
   
   if(fadingOut>0){
     int t=0;

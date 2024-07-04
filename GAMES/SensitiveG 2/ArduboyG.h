@@ -1,35 +1,5 @@
 /*
 
-Optional Configuration Macros (define before including ArduboyG.h):
-
-    Frame sync method. Choices are one of:
-    - ABG_SYNC_THREE_PHASE (default)
-        Loop around an additional 8 rows to cover the park row. Reduces
-        both refresh rate and time available for rendering due to extra
-        rows driven, but allows a framebuffer height of 64.
-    - ABG_SYNC_PARK_ROW
-        Sacrifice the bottom row as the parking row. Improves rendering
-        time and refresh rate, but usable framebuffer height is 63.
-    - ABG_SYNC_SLOW_DRIVE
-        Slow down the display's row drive time as much as possible while
-        parked to allow updating GDDRAM for the park row while it's being
-        driven. Achieves the speed of ABG_SYNC_PARK_ROW without losing
-        the 64th row, at the expense of slight glitches on the park row.
-
-    Timer used for the frame ISR. Choices are one of:
-    - ABG_TIMER1
-    - ABG_TIMER3 (default)
-    - ABG_TIMER4
-
-    When using L4_Triplane, you can define one of the following macros to
-    convert to L3 while retaining the plane behavior of L4_Triplane:
-    - ABG_L3_CONVERT_LIGHTEN
-        Convert light gray to white and dark gray to gray
-    - ABG_L3_CONVERT_MIX
-        Convert both light gray and dark gray to gray
-    - ABG_L3_CONVERT_DARKEN
-        Convert light gray to gray and dark gray to black
-
 Default Template Configuration:
     
     ArduboyGBase a;
@@ -103,29 +73,13 @@ Example Usage:
 
 extern ESPboyInit myESPboy;
 
-
-#if defined(OLED_SH1106) && !defined(ABG_NO_L3_CONVERSION) && !defined(ABG_L3_CONVERT_LIGHTEN) && !defined(ABG_L3_CONVERT_MIX) && !defined(ABG_L3_CONVERT_DARKEN)
-#define ABG_L3_CONVERT_MIX
+#if !defined(ABG_UPDATE_EVERY_N_DEFAULT)
+#define ABG_UPDATE_EVERY_N_DEFAULT 1
+#endif
+#if !defined(ABG_UPDATE_EVERY_N_DENOM_DEFAULT)
+#define ABG_UPDATE_EVERY_N_DENOM_DEFAULT 1
 #endif
 
-#if defined(ABG_L3_CONVERT_LIGHTEN)
-#undef ABG_L3_CONVERT_MIX
-#undef ABG_L3_CONVERT_DARKEN
-#endif
-#if defined(ABG_L3_CONVERT_MIX)
-#undef ABG_L3_CONVERT_LIGHTEN
-#undef ABG_L3_CONVERT_DARKEN
-#endif
-#if defined(ABG_L3_CONVERT_DARKEN)
-#undef ABG_L3_CONVERT_LIGHTEN
-#undef ABG_L3_CONVERT_MIX
-#endif
-
-#if defined(ABG_L3_CONVERT_LIGHTEN) || defined(ABG_L3_CONVERT_MIX) || defined(ABG_L3_CONVERT_DARKEN)
-#define ABG_L4_TRIPLANE_PLANE_LIMIT 2
-#else
-#define ABG_L4_TRIPLANE_PLANE_LIMIT 3
-#endif
 
 #undef BLACK
 #undef WHITE
@@ -174,7 +128,11 @@ static constexpr uint8_t num_planes(ABG_Mode mode)
         1;
 }
 
+
 extern uint8_t  current_plane;
+extern uint8_t  update_counter;
+extern uint8_t  update_every_n;
+extern uint8_t  update_every_n_denom;
 
 template<
     class    BASE,
@@ -190,7 +148,15 @@ struct ArduboyG_Common : public BASE
     
     // use this method to adjust contrast when using ABGMode::L4_Contrast
     static void setContrast(uint8_t f) {}
-    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1) {}
+    
+    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){
+        update_every_n = num;
+        update_every_n_denom = denom;
+        if(update_counter >= num)
+            update_counter = 0;
+    }
+
+    
     static void setUpdateHz(uint8_t hz) {}
 
     static void drawBitmap(
@@ -471,22 +437,28 @@ struct ArduboyG_Common : public BASE
         Arduboy2Base::fillScreen(planeColor<PLANE>(color));
     }
 
-    static bool needsUpdate() { return true; }
-    static uint8_t currentPlane() { return current_plane; }
+    static bool needsUpdate(){
+        if(update_counter >= update_every_n){
+            update_counter -= update_every_n;
+            return true;
+        }
+        return false;
+    }
+
     
-    static void waitForNextPlane(uint8_t clear = BLACK, uint8_t mod = 3){
+   static uint8_t currentPlane(){
+      return current_plane;
+    }
+
     
-      static uint32_t lastTime = 0;
-      static uint32_t frameTime = 1000000/156000/num_planes(MODE);
-      while (uint32_t(micros() - lastTime) < frameTime) 
-        delayMicroseconds(1); 
-      lastTime += frameTime;
-      
+    static void waitForNextPlane(uint8_t clear = BLACK){
       current_plane++;
-      //if (current_plane >= num_planes(MODE)) 
-      if (current_plane >= mod) 
+      if (current_plane >= num_planes(MODE)){
         current_plane = 0;
-      doDisplay(clear, mod);
+        update_counter += update_every_n_denom;
+       }
+     
+      doDisplay(clear);
     }
         
         
@@ -515,7 +487,7 @@ struct ArduboyG_Common : public BASE
     
 protected:
     
-    static void doDisplay(uint8_t clear, uint8_t mod)
+    static void doDisplay(uint8_t clear)
     {
         #define VERT_OFFSET     20
         
@@ -536,8 +508,7 @@ protected:
         if (current_plane == 0) memcpy(plane0, b, 128*64/8);
         if (current_plane == 1) memcpy(plane1, b, 128*64/8);
 
-        //if (current_plane == num_planes(MODE)-1){
-        if (current_plane == mod-1){
+        if (current_plane == num_planes(MODE)-1){
 
 //// START renderPlanesToLCD 
           
@@ -561,17 +532,16 @@ protected:
           static uint16_t xPos, yPos, kPos, kkPos, addr;
           
           //                                   0!          1!             2              3!           4              5             6             7!
-         static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-         static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-
+         static uint16_t paletteL4[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
+         static uint16_t paletteL3[8] = {TFT_BLACK, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE};
          static uint16_t *palette;
-         if (mod == 3) palette = paletteL4T;
-         else palette = paletteL4C;
+         
+         if (num_planes(MODE) == 3) palette = paletteL4;
+         else palette = paletteL3;
 
          for(kPos = 0; kPos<4; kPos++){
            kkPos = kPos<<1;
-           //if (num_planes(MODE) == 3){
-           if (mod == 3){
+           if (num_planes(MODE) == 3){
              for (xPos = 0; xPos < WIDTH; xPos++) {
                 currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
@@ -601,18 +571,13 @@ protected:
             }
            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
           }
-          memset(b, clear, 128*64/8);
+          //memset(b, clear, 128*64/8);
         }
         //delay(300);
 // END OF renderPlanesToLCD 
     }
       
     
-    // clear: low byte is whether to clear, high byte is clear color
-    // pages: low byte is page count, high byte is starting page (which is unused for SSD1306)
-    static void paint(uint8_t* image, uint16_t clear, uint16_t pages, uint8_t mask){
-      }
-        
     // Plane                               0  1  2  index
     // ==================================================
     //
@@ -729,6 +694,9 @@ using ArduboyG     = ArduboyG_Config<>;
 #ifdef ABG_IMPLEMENTATION
 namespace abg_detail
 {
+uint8_t  update_counter;
+uint8_t  update_every_n = ABG_UPDATE_EVERY_N_DEFAULT;
+uint8_t  update_every_n_denom = ABG_UPDATE_EVERY_N_DENOM_DEFAULT;
 uint8_t  current_plane;
 }
 #endif
