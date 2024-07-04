@@ -590,7 +590,7 @@ protected:
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);     
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2))];
+                  oBuffer[addr] = palette[((currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1))];
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
