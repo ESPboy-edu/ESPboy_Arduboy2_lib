@@ -542,7 +542,7 @@ void playLevel(int fn) {
 
 
 void setup() {
-  //Serial.begin(74880);
+  Serial.begin(74880);
   arduboy.boot();
   screenBuffer = arduboy.getBuffer();
   
@@ -560,8 +560,10 @@ void setup() {
 }
 
 void loop() {
-
-  if(a.nextFrame()){
+  Serial.println("WFN");
+  a.waitForNextPlane();
+  
+  if(/*a.nextFrame()*/a.needsUpdate()){
     UpdatePad(arduboy.buttonsState());
     switch (gameMode) {
       case 5:
@@ -617,6 +619,4 @@ void loop() {
   // loop music?
 //  if(TIMSK4 == 0){
 //  }
-
-     a.waitForNextPlane();
 }

@@ -475,11 +475,13 @@ struct ArduboyG_Common : public BASE
     static uint8_t currentPlane() { return current_plane; }
     
     static void waitForNextPlane(uint8_t clear = BLACK){
+    /*
       static uint32_t lastTime = 0;
       static uint32_t frameTime = 1000000/156000/num_planes(MODE);
       while (uint32_t(micros() - lastTime) < frameTime) 
         delayMicroseconds(1); 
       lastTime += frameTime;
+    */  
       current_plane++;
       if (current_plane >= num_planes(MODE)) 
         current_plane = 0;
@@ -491,11 +493,11 @@ struct ArduboyG_Common : public BASE
     ABG_NOT_SUPPORTED static void paint8Pixels(uint8_t);
     ABG_NOT_SUPPORTED static void paintScreen(uint8_t const*);
     ABG_NOT_SUPPORTED static void paintScreen(uint8_t[], bool);
-    ABG_NOT_SUPPORTED static void setFrameDuration(uint8_t);
-    ABG_NOT_SUPPORTED static void setFrameRate(uint8_t);
+    //ABG_NOT_SUPPORTED static void setFrameDuration(uint8_t);
+    //ABG_NOT_SUPPORTED static void setFrameRate(uint8_t);
     ABG_NOT_SUPPORTED static void display();
     ABG_NOT_SUPPORTED static void display(bool);
-    ABG_NOT_SUPPORTED static bool nextFrame();
+    //ABG_NOT_SUPPORTED static bool nextFrame();
     ABG_NOT_SUPPORTED static bool nextFrameDEV();
 
 
@@ -532,7 +534,7 @@ protected:
         
         if (current_plane == 0) memcpy(plane0, b, 128*64/8);
         if (current_plane == 1) memcpy(plane1, b, 128*64/8);
-    
+
         if (current_plane == num_planes(MODE)-1){
 
 //// START renderPlanesToLCD 
@@ -557,15 +559,16 @@ protected:
           static uint16_t xPos, yPos, kPos, kkPos, addr;
           
           //                                   0!          1!             2              3!           4              5             6             7!
-          //static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY,    TFT_RED,      TFT_LIGHTGREY,  TFT_GREEN,    TFT_MAGENTA,    TFT_BLUE,     TFT_WHITE};
-          ///*Roman*/ static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-          /*brow1067*/ static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE};
-          //static uint16_t paletteL4T[8] = {TFT_BROWN, TFT_GOLD, TFT_NAVY, TFT_BLUE, TFT_GOLD, TFT_GOLD, TFT_BLUE, TFT_GREEN};
-          
-          static uint16_t *palette = paletteL4T;
+         static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
+         static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
 
-          for(kPos = 0; kPos<4; kPos++){
-             kkPos = kPos<<1;
+         static uint16_t *palette;
+         if (num_planes(MODE) == 3) palette = paletteL4T;
+         else palette = paletteL4C;
+
+         for(kPos = 0; kPos<4; kPos++){
+           kkPos = kPos<<1;
+           if (num_planes(MODE) == 3){
              for (xPos = 0; xPos < WIDTH; xPos++) {
                 currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
@@ -579,12 +582,25 @@ protected:
                   currentDataByte3 >>= 1;
                 }
              }
-             myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+           }
+           else{
+              for (xPos = 0; xPos < WIDTH; xPos++) {
+                currentDataAddr = xPos + kkPos * WIDTH;
+                currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
+                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);     
+                for (yPos = 0; yPos < 16; yPos++) {    
+                  addr =  yPos*WIDTH+xPos;
+                  oBuffer[addr] = palette[((currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2))];
+                  currentDataByte1 >>= 1;
+                  currentDataByte2 >>= 1;
+                }
+             }
+            }
+           myESPboy.tft.pushColors(oBuffer, WIDTH*16);
           }
           memset(b, clear, 128*64/8);
-          //delay(500);
         }
-        
+        //delay(300);
 // END OF renderPlanesToLCD 
     }
       
@@ -594,8 +610,8 @@ protected:
     static void paint(uint8_t* image, uint16_t clear, uint16_t pages, uint8_t mask){
       }
         
-    // Plane                               0  1  2
-    // ============================================
+    // Plane                               0  1  2  index
+    // ==================================================
     //
     // ABG_Mode::L4_Contrast   BLACK       .  .       0
     // ABG_Mode::L4_Contrast   DARK_GRAY   X  .       1
@@ -607,7 +623,7 @@ protected:
     // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3
     // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7
     //
-    // ABG_Mode::L3            BLACK       .  .       0 
+    // ABG_Mode::L3            BLACK       .  .       0
     // ABG_Mode::L3            GRAY        X  .       1
     // ABG_Mode::L3            WHITE       X  X .     3
 

@@ -475,11 +475,6 @@ struct ArduboyG_Common : public BASE
     static uint8_t currentPlane() { return current_plane; }
     
     static void waitForNextPlane(uint8_t clear = BLACK){
-      static uint32_t lastTime = 0;
-      static uint32_t frameTime = 1000000/156000/num_planes(MODE);
-      while (uint32_t(micros() - lastTime) < frameTime) 
-        delayMicroseconds(1); 
-      lastTime += frameTime;
       current_plane++;
       if (current_plane >= num_planes(MODE)) 
         current_plane = 0;
@@ -530,10 +525,10 @@ protected:
           
         uint8_t* b = Arduboy2Base::getBuffer();
         
-        if (current_plane == 0) memcpy(plane0, b, 128*64/8);
-        if (current_plane == 1) memcpy(plane1, b, 128*64/8);
+        if (current_plane == 0) {memcpy(plane0, b, 128*64/8);Serial.println("P1");}
+        if (current_plane == 1) {memcpy(plane1, b, 128*64/8);Serial.println("P2");}
     
-        if (current_plane == num_planes(MODE)-1){
+        if (current_plane == num_planes(MODE)){
 
 //// START renderPlanesToLCD 
           
@@ -582,7 +577,8 @@ protected:
              myESPboy.tft.pushColors(oBuffer, WIDTH*16);
           }
           memset(b, clear, 128*64/8);
-          //delay(500);
+          Serial.println("P3D");
+          delay(10);
         }
         
 // END OF renderPlanesToLCD 
