@@ -475,11 +475,6 @@ struct ArduboyG_Common : public BASE
     static uint8_t currentPlane() { return current_plane; }
     
     static void waitForNextPlane(uint8_t clear = BLACK){
-      static uint32_t lastTime = 0;
-      static uint32_t frameTime = 1000000/156000/num_planes(MODE);
-      while (uint32_t(micros() - lastTime) < frameTime) 
-        delayMicroseconds(1); 
-      lastTime += frameTime;
       current_plane++;
       if (current_plane >= num_planes(MODE)) 
         current_plane = 0;
@@ -516,27 +511,6 @@ protected:
     {
         #define VERT_OFFSET     20
         
-        static bool firstStart = false;
-        static uint8_t *plane0, *plane1;
-        static uint16_t *oBuffer;
-
-        if (firstStart != true){
-            firstStart = true;
-            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
-            plane0 =  (uint8_t *) malloc(128*64/8);
-            plane1 =  (uint8_t *) malloc(128*64/8);
-            oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-        };
-          
-        uint8_t* b = Arduboy2Base::getBuffer();
-        
-        if (current_plane == 0) memcpy(plane0, b, 128*64/8);
-        if (current_plane == 1) memcpy(plane1, b, 128*64/8);
-    
-        if (current_plane == num_planes(MODE)-1){
-
-//// START renderPlanesToLCD 
-          
           #define TFT_BLACK       0x0000
           #define TFT_LIGHTGREY   0xD69A 
           #define TFT_DARKGREY    0x7BEF
@@ -552,17 +526,36 @@ protected:
           #define TFT_GOLD        0xFEA0
           #define TFT_NAVY        0x000F
           #define TFT_DARKGREEN   0x03E0
+
+        static uint16_t PROGMEM paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
+         
+        static bool firstStart = false;
+        static uint8_t *plane0, *plane1;
+        static uint16_t *oBuffer;
+        static uint8_t* b;
+        static uint16_t *palette;
+
+        if (firstStart != true){
+            firstStart = true;
+            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+            plane0 =  (uint8_t *) malloc(128*64/8);
+            plane1 =  (uint8_t *) malloc(128*64/8);
+            oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            b = Arduboy2Base::getBuffer();
+            palette = paletteL4T;
+        };
+          
+        
+        if (current_plane == 0) memcpy(plane0, b, 128*64/8);
+        if (current_plane == 1) memcpy(plane1, b, 128*64/8);
+    
+        if (current_plane == num_planes(MODE)-1){
+
+//// START renderPlanesToLCD 
+          
           
           static uint16_t currentDataByte1, currentDataByte2, currentDataByte3, currentDataAddr;
-          static uint16_t xPos, yPos, kPos, kkPos, addr;
-          
-          //                                   0!          1!             2              3!           4              5             6             7!
-          //static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY,    TFT_RED,      TFT_LIGHTGREY,  TFT_GREEN,    TFT_MAGENTA,    TFT_BLUE,     TFT_WHITE};
-          ///*Roman*/ static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-          /*brow1067*/ static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE};
-          //static uint16_t paletteL4T[8] = {TFT_BROWN, TFT_GOLD, TFT_NAVY, TFT_BLUE, TFT_GOLD, TFT_GOLD, TFT_BLUE, TFT_GREEN};
-          
-          static uint16_t *palette = paletteL4T;
+          static uint16_t xPos, yPos, kPos, kkPos, addr;          
 
           for(kPos = 0; kPos<4; kPos++){
              kkPos = kPos<<1;
@@ -573,7 +566,7 @@ protected:
                 currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);     
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)];
+                  oBuffer[addr] = pgm_read_word(&palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;

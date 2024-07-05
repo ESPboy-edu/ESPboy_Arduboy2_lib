@@ -509,14 +509,14 @@ protected:
         #define TFT_DARKGREEN   0x03E0
 
         //                                   0!          1!             2              3!           4              5             6             7!
-       //static uint16_t paletteL4[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-        static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
-        static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_RED,        TFT_LIGHTGREY, TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
-        static uint16_t *palette;
+       //static uint16_t paletteA[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
+        PROGMEM static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+        PROGMEM static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_RED,        TFT_LIGHTGREY, TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+        PROGMEM static uint16_t *palette;
 
                  
         static bool firstStart = false;
@@ -555,7 +555,6 @@ protected:
         if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
 
         if (current_plane == num_planes(MODE)-1){
-        
 //// START renderPlanesToLCD 
           static uint16_t currentDataByte1, currentDataByte2, currentDataByte3, currentDataAddr;
           static uint16_t xPos, yPos, kPos, kkPos, addr;
@@ -569,21 +568,23 @@ protected:
                 currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)];
+                  oBuffer[addr] = pgm_read_word(&palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;
                 }
              }
           }
+          
           else{
              kkPos = kPos<<1;
              for (xPos = 0; xPos < WIDTH; xPos++) {
+                currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
-                currentDataByte2 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);   
+                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1))];
+                  oBuffer[addr] = pgm_read_word(&palette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
@@ -663,7 +664,7 @@ struct ArduboyG_Config : public abg_detail::ArduboyG_Common<
     static void startGray()
     {
         ArduboyGBase_Config<MODE, FLAGS>::startGray();
-        Arduboy2::setTextColor(WHITE); // WHITE is 3 not 1
+        //Arduboy2::setTextColor(WHITE); // WHITE is 3 not 1
     }
     
     static void startGrey() { startGray(); }
