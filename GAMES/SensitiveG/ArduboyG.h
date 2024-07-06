@@ -1,5 +1,14 @@
 /*
 
+    When using L4_Triplane, you can define one of the following macros to
+    convert to L3 while retaining the plane behavior of L4_Triplane:
+    - ABG_L3_CONVERT_LIGHTEN
+        Convert light gray to white and dark gray to gray
+    - ABG_L3_CONVERT_MIX
+        Convert both light gray and dark gray to gray
+    - ABG_L3_CONVERT_DARKEN
+        Convert light gray to gray and dark gray to black
+
 Default Template Configuration:
     
     ArduboyGBase a;
@@ -73,13 +82,6 @@ Example Usage:
 
 extern ESPboyInit myESPboy;
 
-#if !defined(ABG_UPDATE_EVERY_N_DEFAULT)
-#define ABG_UPDATE_EVERY_N_DEFAULT 1
-#endif
-#if !defined(ABG_UPDATE_EVERY_N_DENOM_DEFAULT)
-#define ABG_UPDATE_EVERY_N_DENOM_DEFAULT 1
-#endif
-
 
 #undef BLACK
 #undef WHITE
@@ -116,6 +118,11 @@ struct ABG_Flags{
 #define ABG_NOT_SUPPORTED
 #endif
 
+
+#if !defined(ABG_UPDATE_EVERY_N_DEFAULT)
+#define ABG_UPDATE_EVERY_N_DEFAULT 1
+#endif
+
 namespace abg_detail
 {
 
@@ -130,10 +137,10 @@ static constexpr uint8_t num_planes(ABG_Mode mode)
 
 
 extern uint8_t  current_plane;
-extern uint8_t  update_counter;
+extern bool  update_flag;
 extern uint8_t  update_every_n;
-extern uint8_t  update_every_n_denom;
-
+extern uint8_t  update_every_n_count;
+ 
 template<
     class    BASE,
     ABG_Mode MODE,
@@ -144,17 +151,12 @@ struct ArduboyG_Common : public BASE
 {
     
     static void startGray(){}  
-    static void startGrey() { startGray(); }
+    static void startGrey() {}
     
     // use this method to adjust contrast when using ABGMode::L4_Contrast
     static void setContrast(uint8_t f) {}
     
-    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){
-        update_every_n = num;
-        update_every_n_denom = denom;
-        if(update_counter >= num)
-            update_counter = 0;
-    }
+    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){}
 
     
     static void setUpdateHz(uint8_t hz) {}
@@ -438,8 +440,8 @@ struct ArduboyG_Common : public BASE
     }
 
     static bool needsUpdate(){
-        if(update_counter >= update_every_n){
-            update_counter -= update_every_n;
+        if(update_flag == true){
+            update_flag = false;
             return true;
         }
         return false;
@@ -455,9 +457,7 @@ struct ArduboyG_Common : public BASE
       current_plane++;
       if (current_plane >= num_planes(MODE)){
         current_plane = 0;
-        update_counter += update_every_n_denom;
-       }
-     
+       }  
       doDisplay(clear);
     }
         
@@ -491,9 +491,38 @@ protected:
     {
         #define VERT_OFFSET     20
         
+        #define TFT_BLACK       0x0000
+        #define TFT_LIGHTGREY   0xD69A 
+        #define TFT_DARKGREY    0x7BEF
+        #define TFT_WHITE       0xFFFF
+        #define TFT_GREY        0xA514
+          
+        #define TFT_RED         0xF800
+        #define TFT_BLUE        0x001F
+        #define TFT_MAGENTA     0xF81F
+        #define TFT_ORANGE      0xFDA0
+        #define TFT_GREEN       0x07E0
+        #define TFT_GREENYELLOW 0xB7E0
+        #define TFT_BROWN       0x9A60 
+        #define TFT_GOLD        0xFEA0
+        #define TFT_NAVY        0x000F
+        #define TFT_DARKGREEN   0x03E0
+
+        //                                   0!          1!             2              3!           4              5             6             7!
+       //static uint16_t paletteA[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
+        PROGMEM static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+        PROGMEM static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_RED,        TFT_LIGHTGREY, TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_GREY,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+        PROGMEM static uint16_t *palette;
+
+                 
         static bool firstStart = false;
         static uint8_t *plane0, *plane1;
         static uint16_t *oBuffer;
+        static uint8_t* b;
 
         if (firstStart != true){
             firstStart = true;
@@ -501,79 +530,76 @@ protected:
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
             oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            b = Arduboy2Base::getBuffer();
+    
+#ifdef ABG_L3_CONVERT_LIGHTEN
+            palette = paletteL4L;
+#else
+#ifdef ABG_L3_CONVERT_DARKEN
+            palette = paletteL4D;
+#else
+#ifdef ABG_L3_CONVERT_MIX
+            palette = paletteL4M;
+#else
+            if(MODE == ABG_Mode::L4_Triplane) palette = paletteL4T;
+            else
+            if(MODE == ABG_Mode::L4_Contrast) palette = paletteL4C;
+            else 
+            palette = paletteL3;
+#endif
+#endif
+#endif
         };
-          
-        uint8_t* b = Arduboy2Base::getBuffer();
         
-        if (current_plane == 0) memcpy(plane0, b, 128*64/8);
-        if (current_plane == 1) memcpy(plane1, b, 128*64/8);
+        if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
+        if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
 
         if (current_plane == num_planes(MODE)-1){
-
 //// START renderPlanesToLCD 
-          
-          #define TFT_BLACK       0x0000
-          #define TFT_LIGHTGREY   0xD69A 
-          #define TFT_DARKGREY    0x7BEF
-          #define TFT_WHITE       0xFFFF
-          
-          #define TFT_RED         0xF800
-          #define TFT_BLUE        0x001F
-          #define TFT_MAGENTA     0xF81F
-          #define TFT_ORANGE      0xFDA0
-          #define TFT_GREEN       0x07E0
-          #define TFT_GREENYELLOW 0xB7E0
-          #define TFT_BROWN       0x9A60 
-          #define TFT_GOLD        0xFEA0
-          #define TFT_NAVY        0x000F
-          #define TFT_DARKGREEN   0x03E0
-          
           static uint16_t currentDataByte1, currentDataByte2, currentDataByte3, currentDataAddr;
           static uint16_t xPos, yPos, kPos, kkPos, addr;
-          
-          //                                   0!          1!             2              3!           4              5             6             7!
-         static uint16_t paletteL4[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-         static uint16_t paletteL3[8] = {TFT_BLACK, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_LIGHTGREY, TFT_WHITE};
-         static uint16_t *palette;
-         
-         if (num_planes(MODE) == 3) palette = paletteL4;
-         else palette = paletteL3;
-
-         for(kPos = 0; kPos<4; kPos++){
-           kkPos = kPos<<1;
-           if (num_planes(MODE) == 3){
+        for(kPos = 0; kPos<4; kPos++){
+         if(MODE == ABG_Mode::L4_Triplane){
+             kkPos = kPos<<1;
              for (xPos = 0; xPos < WIDTH; xPos++) {
                 currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
-                currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);     
+                currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)];
+                  oBuffer[addr] = pgm_read_word(&palette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;
                 }
              }
-           }
-           else{
-              for (xPos = 0; xPos < WIDTH; xPos++) {
+          }
+          
+          else{
+             kkPos = kPos<<1;
+             for (xPos = 0; xPos < WIDTH; xPos++) {
                 currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
-                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);     
+                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = palette[((currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1))];
+                  oBuffer[addr] = pgm_read_word(&palette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
              }
-            }
+          }
            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
           }
-          //memset(b, clear, 128*64/8);
-        }
-        //delay(300);
+          memset(b, clear, 128*64/8);
+          update_every_n_count++;
+          if(update_every_n_count > update_every_n){
+             update_flag = true;
+             update_every_n_count = 0;
+          }
+          //delay(300);
+       }
 // END OF renderPlanesToLCD 
     }
       
@@ -586,10 +612,10 @@ protected:
     // ABG_Mode::L4_Contrast   LIGHT_GRAY  .  X .     2
     // ABG_Mode::L4_Contrast   WHITE       X  X .     3
     //
-    // ABG_Mode::L4_Triplane   BLACK       .  .  .    0
-    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1
-    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3
-    // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7
+    // ABG_Mode::L4_Triplane   BLACK       .  .  .    0 
+    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1 
+    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3 
+    // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7 
     //
     // ABG_Mode::L3            BLACK       .  .       0
     // ABG_Mode::L3            GRAY        X  .       1
@@ -694,9 +720,9 @@ using ArduboyG     = ArduboyG_Config<>;
 #ifdef ABG_IMPLEMENTATION
 namespace abg_detail
 {
-uint8_t  update_counter;
-uint8_t  update_every_n = ABG_UPDATE_EVERY_N_DEFAULT;
-uint8_t  update_every_n_denom = ABG_UPDATE_EVERY_N_DENOM_DEFAULT;
+bool  update_flag;
 uint8_t  current_plane;
+uint8_t  update_every_n = ABG_UPDATE_EVERY_N_DEFAULT;
+uint8_t  update_every_n_count = 0;
 }
 #endif

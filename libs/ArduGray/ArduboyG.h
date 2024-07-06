@@ -515,7 +515,7 @@ protected:
         PROGMEM static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
         PROGMEM static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
         PROGMEM static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_GREY,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
         PROGMEM static uint16_t *palette;
 
                  

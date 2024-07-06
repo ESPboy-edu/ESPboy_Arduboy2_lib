@@ -1,6 +1,5 @@
 #define ABG_IMPLEMENTATION
 //#define ABG_SYNC_PARK_ROW
-//#define ABG_L3_CONVERT_LIGHTEN
 #include "ArduboyG.h"
 
 //ArduboyG a;
@@ -64,18 +63,10 @@ static uint16_t timer_counter = ((F_CPU/64)/(120-1));
 
 static void send_cmds(uint8_t const* d, uint8_t n)
 {
-    Arduboy2::LCDCommandMode();
-    while(n-- != 0)
-        Arduboy2::SPItransfer(*d++);
-    Arduboy2::LCDDataMode();
 }
 
 static void send_cmds_prog(uint8_t const* d, uint8_t n)
 {
-    Arduboy2::LCDCommandMode();
-    while(n-- != 0)
-        Arduboy2::SPItransfer(pgm_read_byte(d++));
-    Arduboy2::LCDDataMode();
 }
 
 
@@ -289,6 +280,7 @@ void movePlayer() {
         //loadLevel(levelNum);
         //fadeIn();
       } else {
+        fadingIn = 0;
         gameMode = 5;
       }
     }
@@ -520,9 +512,9 @@ void setup() {
   a.setFrameRate (120);
   a.startGray();
 
+  fadingIn = 0;
   gameMode = 5; // titlescreen
   maxLevels = sizeof(levels) / 66;
-
   // This method kicks off the frame ISR that handles refreshing
   // the screen. Usually you would call this at the end of setup().
 }
@@ -532,7 +524,7 @@ void loop() {
 
   renderLevel(nown++);
   
-  if(/*a.nextFrame()*/a.needsUpdate()){
+  //if(/*a.nextFrame()*/a.needsUpdate()){
     UpdatePad(arduboy.buttonsState());
     switch (gameMode) {
       case 5:
@@ -558,7 +550,7 @@ void loop() {
         }
         break;
     }
-  }
+  //}
   
   if(fadingOut>0){
     int t=0;
