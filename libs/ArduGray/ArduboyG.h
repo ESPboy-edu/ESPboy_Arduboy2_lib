@@ -82,7 +82,6 @@ Example Usage:
 
 extern ESPboyInit myESPboy;
 
-
 #undef BLACK
 #undef WHITE
 constexpr uint8_t BLACK      = 0;
@@ -149,6 +148,14 @@ template<
 
 struct ArduboyG_Common : public BASE
 {
+
+    static uint8_t justPressedButtons() {
+        return (~Arduboy2Base::previousButtonState & Arduboy2Base::currentButtonState);
+    }
+    
+    static uint8_t pressedButtons() {
+        return Arduboy2Base::currentButtonState;
+    }
     
     static void startGray(){while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();}  
     static void startGrey() {startGray();}

@@ -20,6 +20,9 @@ ArduboySettings arduboyDefaultSettings;
 ArduboySettings arduboySaveLoadSettings;
 
 
+ uint8_t Arduboy2Base::currentButtonState = 0;
+ uint8_t Arduboy2Base::previousButtonState = 0;
+
 //========================================
 //========== class Arduboy2Base ==========
 //========================================

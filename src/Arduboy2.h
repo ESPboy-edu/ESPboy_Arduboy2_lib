@@ -1181,8 +1181,8 @@ bool justReleased(uint8_t button);
   static void drawLogoBitmap();
   
   // For button handling
-  uint8_t currentButtonState;
-  uint8_t previousButtonState;
+  static uint8_t currentButtonState;
+  static uint8_t previousButtonState;
 
   // For frame funcions
   uint32_t eachFrameMillis=1000/30;
