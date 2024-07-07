@@ -137,7 +137,7 @@ static constexpr uint8_t num_planes(ABG_Mode mode)
 
 
 extern uint8_t  current_plane;
-extern bool  update_flag;
+extern bool     update_flag;
 extern uint8_t  update_every_n;
 extern uint8_t  update_every_n_count;
  
@@ -150,13 +150,17 @@ template<
 struct ArduboyG_Common : public BASE
 {
     
-    static void startGray(){}  
-    static void startGrey() {}
+    static void startGray(){
+      while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();
+    }  
+    static void startGrey() {startGray();}
     
     // use this method to adjust contrast when using ABGMode::L4_Contrast
     static void setContrast(uint8_t f) {}
     
-    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){}
+    static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){
+      update_every_n = num;
+    }
 
     
     static void setUpdateHz(uint8_t hz) {}
@@ -498,24 +502,15 @@ protected:
         #define TFT_GREY        0xA514
           
         #define TFT_RED         0xF800
-        #define TFT_BLUE        0x001F
-        #define TFT_MAGENTA     0xF81F
-        #define TFT_ORANGE      0xFDA0
-        #define TFT_GREEN       0x07E0
-        #define TFT_GREENYELLOW 0xB7E0
-        #define TFT_BROWN       0x9A60 
-        #define TFT_GOLD        0xFEA0
-        #define TFT_NAVY        0x000F
-        #define TFT_DARKGREEN   0x03E0
 
-        //                                   0!          1!             2              3!           4              5             6             7!
-       //static uint16_t paletteA[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_LIGHTGREY, TFT_DARKGREY, TFT_DARKGREY, TFT_LIGHTGREY, TFT_WHITE};
-        PROGMEM static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
-        PROGMEM static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_RED,        TFT_LIGHTGREY, TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        PROGMEM static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        PROGMEM static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        PROGMEM static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_RED,        TFT_GREY,      TFT_RED,      TFT_RED,      TFT_RED,       TFT_WHITE};
-        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_GREY,        TFT_WHITE,     TFT_RED,      TFT_RED,      TFT_RED,       TFT_RED};
+
+        //                                         0!          1!             2              3!           4                5             6              7!
+        PROGMEM static uint16_t paletteL4C[8] = {TFT_BLACK, TFT_DARKGREY, TFT_LIGHTGREY,  TFT_WHITE,     TFT_LIGHTGREY, TFT_WHITE,    TFT_WHITE,      TFT_RED};
+        PROGMEM static uint16_t paletteL4T[8] = {TFT_BLACK, TFT_DARKGREY, TFT_DARKGREY,   TFT_LIGHTGREY, TFT_DARKGREY,  TFT_LIGHTGREY,TFT_LIGHTGREY,  TFT_WHITE};
+        PROGMEM static uint16_t paletteL4L[8] = {TFT_BLACK, TFT_GREY,     TFT_GREY,       TFT_WHITE,     TFT_GREY,      TFT_GREY,     TFT_GREY,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4D[8] = {TFT_BLACK, TFT_BLACK,    TFT_GREY,       TFT_GREY,      TFT_GREY,      TFT_GREY,     TFT_GREY,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL4M[8] = {TFT_BLACK, TFT_GREY,     TFT_GREY,       TFT_GREY,      TFT_GREY,      TFT_GREY,     TFT_GREY,       TFT_WHITE};
+        PROGMEM static uint16_t paletteL3[8]  = {TFT_BLACK, TFT_GREY,     TFT_GREY,       TFT_WHITE,     TFT_GREY,      TFT_GREY,     TFT_GREY,       TFT_GREY};
         PROGMEM static uint16_t *palette;
 
                  
@@ -529,8 +524,11 @@ protected:
             myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
+            memset(plane0, 0, 128*64/8);
+            memset(plane0, 0, 128*64/8);
             oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
             b = Arduboy2Base::getBuffer();
+            memset(b, 0, 128*64/8);
     
 #ifdef ABG_L3_CONVERT_LIGHTEN
             palette = paletteL4L;
@@ -608,17 +606,17 @@ protected:
     // ==================================================
     //
     // ABG_Mode::L4_Contrast   BLACK       .  .       0
-    // ABG_Mode::L4_Contrast   DARK_GRAY   X  .       1
-    // ABG_Mode::L4_Contrast   LIGHT_GRAY  .  X .     2
-    // ABG_Mode::L4_Contrast   WHITE       X  X .     3
+    // ABG_Mode::L4_Contrast   DARK_GRAY   X  .       1 2 4
+    // ABG_Mode::L4_Contrast   LIGHT_GRAY  .  X .     2 4 1
+    // ABG_Mode::L4_Contrast   WHITE       X  X .     3 6 5
     //
     // ABG_Mode::L4_Triplane   BLACK       .  .  .    0 
-    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1 
-    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3 
+    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1 2 4
+    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3 6 5
     // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7 
     //
     // ABG_Mode::L3            BLACK       .  .       0
-    // ABG_Mode::L3            GRAY        X  .       1
+    // ABG_Mode::L3            GRAY        X  .       1 2
     // ABG_Mode::L3            WHITE       X  X .     3
 
     template<uint8_t PLANE>
