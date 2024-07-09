@@ -1,0 +1,27 @@
+namespace Music {
+   
+    raw_t Song_MainTheme = "music/Defender.bin"
+
+    raw_t SFX_Death = "music/SFX_Death.bin"
+    raw_t SFX_Victory = "music/SFX_Victory.bin"
+    raw_t SFX_XPGain = "music/SFX_XPGain.bin"
+    raw_t SFX_Three_Inc = "music/SFX_ThreeInc.bin"
+    raw_t SFX_Three_Dec = "music/SFX_ThreeDec.bin"
+    raw_t SFX_PlayerBlip = "music/SFX_PlayerBlip.bin"
+    raw_t SFX_EnemyBlip = "music/SFX_EnemyBlip.bin"
+    raw_t SFX_Explosion = "music/SFX_Explosion.bin"
+    raw_t SFX_DoubleBeep = "music/SFX_DoubleBeep.bin"
+    
+};
+namespace_end   
+
+
+namespace Images
+
+    include "images/Images.hpp"
+
+namespace_end
+
+savesection  // Anything below here will be stored in the save block
+
+uint16_t 0xFFFF // Save state  end marker

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "DefenderFX",
+      "filename": "DefenderFX.hex",
+      "flashdata": "DefenderFX-data.bin",
+      "flashsave": "DefenderFX-save.bin",
+      "device": "ArduboyFX"
+    }
+  ]
+}

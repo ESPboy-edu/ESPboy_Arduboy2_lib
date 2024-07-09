@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "Defender",
+      "filename": "DefenderMini.hex",
+      "flashdata": "DefenderMini-data.bin",
+      "flashsave": "DefenderMini-save.bin",
+      "device": "ArduboyMini"
+    }
+  ]
+}
