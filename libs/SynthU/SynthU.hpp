@@ -30,7 +30,7 @@
 #endif
 
 #ifndef SYNTHU_ENABLE_SFX
-#define SYNTHU_ENABLE_SFX 1
+#define SYNTHU_ENABLE_SFX 0
 #endif
 
 #ifndef SYNTHU_FX_READDATABYTES_FUNC
@@ -268,7 +268,10 @@ void SynthU::setup(){
     timer1_write(80 * 1000000 / SAMPLE_RATE);
     interrupts();
     soundOn = true;
-    SynthU::setVolume(16);
+    setVolume(16);
+#if SYNTHU_ENABLE_SFX
+    setVolumeSFX(16);
+#endif
 }
 
 void SynthU::stop(){
@@ -399,7 +402,7 @@ void IRAM_ATTR SoundISR(){
         uint8_t vol = g_tick_sfx.cmd.vol;
         int16_t tsfx = 0;
         if(vol != 0)
-        {
+        { 
             uint16_t period =  g_tick_sfx.cmd.period;
             uint16_t pha = g_channel_sfx.pha;
             pha += adv;
@@ -419,7 +422,7 @@ void IRAM_ATTR SoundISR(){
 
             // SFX volume adjust
 #if SYNTHU_ENABLE_VOLUME
-            tsfx = g_volume_sfx;
+            tsfx *= g_volume_sfx;
             tsfx >>= 4;
 #else
             tsfx >>= 1;

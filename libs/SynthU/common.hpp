@@ -3,12 +3,14 @@
 #include <stdint.h>
 #include <Arduino.h>
 #include "song.h"
+#include "explosionFX.h"
 
 #define SYNTHU_NUM_CHANNELS 4
 #define SYNTHU_UPDATE_EVERY_N_FRAMES 1
 #define SOUNDS_SYNTHU 1
 #define SYNTHU_FX_READDATABYTES_FUNC platform_fx_read_data_bytes
 #define SYNTHU_IMPLEMENTATION
+#define SYNTHU_ENABLE_SFX 1
 
 #define uint24_t uint32_t
 
