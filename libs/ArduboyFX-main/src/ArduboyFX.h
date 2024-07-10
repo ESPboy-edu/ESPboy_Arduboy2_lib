@@ -6,16 +6,16 @@
 
 //#define RLE_FILE_SIZE 233968 //for EXOLON
 //#define UNPACKED_FILE_SIZE 802913 //for EXOLON
-#define RLE_FILE_SIZE 317581 //PRINCE OF ARABIA
-#define UNPACKED_FILE_SIZE 671449 //PRINCE OF ARABIA
+//#define RLE_FILE_SIZE 317581 //PRINCE OF ARABIA
+//#define UNPACKED_FILE_SIZE 671449 //PRINCE OF ARABIA
 
 //===================================================
 
 // if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
-#define USE_LITTLEFS 
+//#define USE_LITTLEFS 
 
 //if defined, then put RLE compressed data to fxdta[]
-#define USE_RLE_COMPRESSION
+//#define USE_RLE_COMPRESSION
 
 //NOTE: put the following string at the end of your ".h" file with RLE FX data array
 //size_t sizeOfFxdta(){ return sizeof(fxdta); };
