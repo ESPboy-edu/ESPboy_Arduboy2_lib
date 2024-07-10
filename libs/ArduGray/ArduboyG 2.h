@@ -501,22 +501,22 @@ protected:
     {
         #define VERT_OFFSET     20
 
-//                                                 0       1      2       3       4
-//                                               white  lightgr darkgr  black    grey
+//                                          0       1      2       3       4
+//                                        white  lightgr darkgr  black    grey
   PROGMEM const static uint16_t palette0[] =   {0xFFFF, 0xD69A, 0x7BEF, 0x0000, 0xA514}; // classic BW
   PROGMEM const static uint16_t palette1[] =   {0x7FFF, 0x3FE6, 0x0200, 0x0000, 0x0200}; // OBJ1
   PROGMEM const static uint16_t palette2[] =   {0x7FFF, 0x7EAC, 0x40C0, 0x0000, 0x40C0}; //! BG
-  PROGMEM const static uint16_t palette3[] =   {0x279D, 0x6ACE, 0xE46B, 0x0000, 0x6ACE}; // nostalgia
-  PROGMEM const static uint16_t palette4[] =   {0x5685, 0x8F9D, 0x6843, 0x6541, 0x8F9D}; // greeny
-  PROGMEM const static uint16_t palette5[] =   {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; // reddy
-  PROGMEM const static uint16_t palette6[] =   {0x79DF, 0x2D7E, 0x6D2B, 0x6308, 0x2D7E}; // retro lcd
+  PROGMEM const static uint16_t palette3[] =   {0x279D, 0x6ACE, 0xE46B, 0x0000, 0xE46B}; // nostalgia
+  PROGMEM const static uint16_t palette4[] =   {0x5685, 0x8F9D, 0x6843, 0x6541, 0x6843}; // greeny
+  PROGMEM const static uint16_t palette5[] =   {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC091}; // reddy
+  PROGMEM const static uint16_t palette6[] =   {0x79DF, 0x2D7E, 0x6D2B, 0x6308, 0x6D2B}; // retro lcd
   PROGMEM const static uint16_t palette7[] =   {0x1F87, 0x795C, 0x7C72, 0x6959, 0x7C72}; // WISH GB
   PROGMEM const static uint16_t palette8[] =   {0xDDF7, 0xB7C5, 0xCE52, 0x6308, 0xCE52}; // HOLLOW
-  PROGMEM const static uint16_t palette9[] =   {0x9B9F, 0xB705, 0xF102, 0x4A01, 0xB705}; // BLK AQU4
-  PROGMEM const static uint16_t palette10[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // GOLD GB
-  PROGMEM const static uint16_t palette11[] =  {0x719F, 0x523D, 0xEE42, 0x0629, 0x523D}; // NYMPH GB
-  PROGMEM const static uint16_t palette12[] =  {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; //! BOOTLEG BY PIXELSHIFT
-  PROGMEM const static uint16_t palette13[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // nostalgia+GOLD GB
+  PROGMEM const static uint16_t palette9[] =   {0x9B9F, 0xB705, 0xF102, 0x4A01, 0xF102}; // BLK AQU4
+  PROGMEM const static uint16_t palette10[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x0549}; // GOLD GB
+  PROGMEM const static uint16_t palette11[] =  {0x719F, 0x523D, 0xEE42, 0x0629, 0xEE42}; // NYMPH GB
+  PROGMEM const static uint16_t palette12[] =  {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC091}; //! BOOTLEG BY PIXELSHIFT
+  PROGMEM const static uint16_t palette13[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x0549}; // nostalgia+GOLD GB
 
   PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
   PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
