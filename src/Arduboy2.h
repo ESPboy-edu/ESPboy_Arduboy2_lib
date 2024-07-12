@@ -632,7 +632,7 @@ class Arduboy2Base : public Arduboy2Core
    *
    * \see nextFrame() setFrameDuration()
    */
-  void setFrameRate(uint8_t rate);
+  void setFrameRate(uint16_t rate);
 
   /** \brief
    * Set the frame rate, used by the frame control functions, by giving

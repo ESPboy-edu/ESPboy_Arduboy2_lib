@@ -166,7 +166,7 @@ void Arduboy2Base::waitNoButtons() {
 
 
 /* Frame management */
-void Arduboy2Base::setFrameRate(uint8_t rate){
+void Arduboy2Base::setFrameRate(uint16_t rate){
   eachFrameMillis = 1000 / rate;
 }
 
