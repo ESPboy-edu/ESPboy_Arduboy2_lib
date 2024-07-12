@@ -16,6 +16,8 @@ Options
 using uint24_t = uint32_t;//__uint24;
 #endif
 
+#define SFC_READ true
+
 struct SpritesU
 {
 #ifdef SPRITESU_OVERWRITE
