@@ -1,5 +1,5 @@
 #define ABG_IMPLEMENTATION
-#define ABG_UPDATE_EVERY_N_DEFAULT 2
+#define ABG_UPDATE_EVERY_N_DEFAULT 1
 
 #include "common.hpp"
 
