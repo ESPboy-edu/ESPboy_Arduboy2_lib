@@ -584,6 +584,7 @@ protected:
 #endif
           for(uint8_t i=0; i<8; i++)
             currentPalette[i] = SWPLH((paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]]);
+          delay(100);
         };
 
 
@@ -616,7 +617,7 @@ protected:
                 currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = pgm_read_word(&currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
+                  oBuffer[addr] = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;
@@ -632,7 +633,7 @@ protected:
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = pgm_read_word(&currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                  oBuffer[addr] = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
@@ -641,7 +642,7 @@ protected:
 #ifndef USE_nbSPI
            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
 #else           
-           while(nbSPI_isBusy()); 
+           while(nbSPI_isBusy());
            nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
            if (oBuffer == oBuffer1) oBuffer = oBuffer2;
            else oBuffer = oBuffer1;
@@ -653,7 +654,6 @@ protected:
              update_flag = true;
              update_every_n_count = 0;
           }
-          //delay(300);
        }
 // END OF renderPlanesToLCD 
     }
