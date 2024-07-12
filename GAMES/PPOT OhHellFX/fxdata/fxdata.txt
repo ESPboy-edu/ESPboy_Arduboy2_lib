@@ -1,0 +1,74 @@
+namespace Music {
+   
+    raw_t Song_MainTheme = "music/TheGambler.bin"
+
+    raw_t SFX_Death = "music/SFX_Death.bin"
+    raw_t SFX_Victory = "music/SFX_Victory.bin"
+    raw_t SFX_XPGain = "music/SFX_XPGain.bin"
+    raw_t SFX_Three_Inc = "music/SFX_ThreeInc.bin"
+    raw_t SFX_Three_Dec = "music/SFX_ThreeDec.bin"
+    raw_t SFX_PlayerBlip = "music/SFX_PlayerBlip.bin"
+    raw_t SFX_EnemyBlip = "music/SFX_EnemyBlip.bin"
+    raw_t SFX_Explosion = "music/SFX_Explosion.bin"
+    raw_t SFX_DoubleBeep = "music/SFX_DoubleBeep.bin"
+    raw_t SFX_DoubleBeepDown = "music/SFX_DoubleBeepDown.bin"
+    raw_t SFX_Bet1 = "music/SFX_Bet1.bin"
+    raw_t SFX_Bet2 = "music/SFX_Bet2.bin"
+    raw_t SFX_Bet3 = "music/SFX_Bet3.bin"
+    raw_t SFX_Bet4 = "music/SFX_Bet4.bin"
+    raw_t SFX_Bet5 = "music/SFX_Bet5.bin"
+    raw_t SFX_Bet6 = "music/SFX_Bet6.bin"
+    raw_t SFX_Click = "music/SFX_Click.bin"
+    raw_t SFX_SmallBlind = "music/SFX_SmallBlind.bin"
+    raw_t SFX_BigBlind = "music/SFX_BigBlind.bin"
+    
+};
+namespace_end   
+
+namespace Constants
+
+    uint16_t Starting_Bids[] = {
+        5000,
+        2000,
+        1000
+    };
+
+    uint8_t Score_Panel_XTextPos[] = {
+        46,
+        46,
+        44,
+        42,
+        42,
+        38,
+    };
+
+    uint8_t Score_Panel_XPanelPos[] = {
+        41,
+        41,
+        41,
+        39,
+        39,
+        35,
+    };
+
+    uint8_t Score_Panel_Idx[] = {
+        0,
+        0,
+        0,
+        3,
+        6,
+        9,
+    };
+
+namespace_end 
+
+namespace Images
+
+    include "images/Images.hpp"
+
+
+namespace_end
+
+savesection  // Anything below here will be stored in the save block
+
+uint16_t 0xFFFF // Save state  end marker

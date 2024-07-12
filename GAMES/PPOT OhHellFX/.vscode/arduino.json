@@ -1,0 +1,7 @@
+{
+    "configuration": "core=arduboy-core,boot=cathy3k",
+    "board": "arduboy-homemade:avr:arduboy-mini",
+    "output": "/Users/simonholmes/projects/build",
+    "sketch": "OhHellFX.ino",
+    "port": "/dev/tty.usbmodem14601"
+}

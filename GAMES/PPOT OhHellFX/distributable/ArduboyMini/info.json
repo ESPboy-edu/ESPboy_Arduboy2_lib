@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "Oh Hell Mini",
+      "filename": "OhHellMini.hex",
+      "flashdata": "OhHellMini-data.bin",
+      "flashsave": "OhHellMini-save.bin",
+      "device": "ArduboyMini"
+    }
+  ]
+}

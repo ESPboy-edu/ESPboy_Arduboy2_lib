@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "OhHellFX",
+      "filename": "OhHellFX.hex",
+      "flashdata": "OhHellFX-data.bin",
+      "flashsave": "OhHellFX-save.bin",
+      "device": "ArduboyFX"
+    }
+  ]
+}
