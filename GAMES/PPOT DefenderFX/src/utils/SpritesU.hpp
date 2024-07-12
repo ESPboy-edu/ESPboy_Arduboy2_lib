@@ -334,7 +334,7 @@ void SpritesU::drawBasicNoChecks(
 #endif
 #ifdef SPRITESU_FX
     {
-        uint8_t sfc_read = 0;//= SFC_READ;
+        uint8_t sfc_read = 0;//SFC_READ;
         uint8_t* bufn;
         uint8_t reseek;
         

@@ -34,6 +34,7 @@ class Camera {
         }
 
         bool update(SQ15x16 playerVelocityIdxX) {
-          return 1;   
+            
+        return false;
         }
 };

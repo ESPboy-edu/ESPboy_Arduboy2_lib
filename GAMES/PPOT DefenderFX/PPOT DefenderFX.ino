@@ -64,6 +64,7 @@ void setup() {
     a.boot();
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
     a.startGray();
+    a.setFrameRate(180);
     
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
@@ -75,8 +76,8 @@ void setup() {
 
 
 void loop() {
-
-    FX::enableOLED();
+    if(!a.nextFrame()) return;
+    //FX::enableOLED();
 
     if ((world.getZapFlash() / 3) % 2 == 0) {
         a.waitForNextPlane(BLACK);
@@ -85,7 +86,7 @@ void loop() {
         a.waitForNextPlane(WHITE);
     }
 
-    FX::disableOLED();
+    //FX::disableOLED();
 
     switch (gameState) {
 

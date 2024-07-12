@@ -52,7 +52,6 @@ class World {
             this->backgroundX = this->backgroundX + (static_cast<SQ15x16>(Constants::Velocity_X[this->sceneryVelocityIdxX]) / 32);
             this->foregroundX = this->foregroundX - (static_cast<SQ15x16>(Constants::Velocity_X[this->sceneryVelocityIdxX]) / 32);
             
-         return 1;
+        return false;
         }
-       
 };

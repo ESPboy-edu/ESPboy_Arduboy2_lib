@@ -260,6 +260,7 @@ void SynthU::setVolumeSFX(uint8_t vol){
 void SynthU::setup(){
     stop();
     //check sigma-delta info for ESP8266 here https://github.com/esp8266/Arduino/blob/master/cores/esp8266/sigma_delta.h
+    noInterrupts();
     sigmaDeltaSetup(0, SAMPLE_RATE);
     sigmaDeltaAttachPin(SOUNDPIN);
     sigmaDeltaEnable();
@@ -357,6 +358,8 @@ void IRAM_ATTR SoundISR(){
         return;
     }
 
+noInterrupts();
+
     uint16_t adv=128;
     int16_t t = 0;
     
@@ -443,6 +446,8 @@ void IRAM_ATTR SoundISR(){
     if (soundOn)
       sigmaDeltaWrite(0, tc);
     else sigmaDeltaWrite(0, 0);
+    
+    interrupts();
 }
 
 #endif

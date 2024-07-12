@@ -1,3 +1,5 @@
+#define USE_nbSPI //accelerates gfx but less compatibility
+
 /*
 
     When using L4_Triplane, you can define one of the following macros to
@@ -79,6 +81,12 @@ Example Usage:
 #pragma once
 
 #include <Arduboy2.h>
+//#include "nbSPI.h"
+
+#ifdef USE_nbSPI
+extern bool nbSPI_isBusy();
+extern void nbSPI_writeBytes(uint8_t *data, uint16_t size);
+#endif
 
 extern ESPboyInit myESPboy;
 
@@ -497,9 +505,15 @@ struct ArduboyG_Common : public BASE
     
 protected:
     
-    static void doDisplay(uint8_t clear)
+    ICACHE_RAM_ATTR static void doDisplay(uint8_t clear)
     {
         #define VERT_OFFSET     20
+#ifdef USE_nbSPI
+        #define SWPLH(x) ((x>>8)|(x<<8))
+#else
+        #define SWPLH(x) x
+#endif
+
 
 //                                                 0       1      2       3       4
 //                                               white  lightgr darkgr  black    grey
@@ -529,22 +543,25 @@ protected:
   const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
   
   static uint16_t currentPalette[8];
-  static int8_t paletteIndex=0;
+  static int8_t paletteIndex=9;
   static int8_t paletteDecodeTableIndex=0;
 
         static bool firstStart = false;
         static uint8_t *plane0, *plane1;
-        static uint16_t *oBuffer;
+        static uint16_t *oBuffer1, *oBuffer2, *oBuffer;
         static uint8_t* b;
 
         if (firstStart != true){
             firstStart = true;
+            myESPboy.tft.fillScreen(0);
             myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
             memset(plane0, 0, 128*64/8);
-            oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer = oBuffer1;
             b = Arduboy2Base::getBuffer();
             memset(b, 0, 128*64/8);
     
@@ -566,7 +583,7 @@ protected:
 #endif
 #endif
           for(uint8_t i=0; i<8; i++)
-            currentPalette[i] = (paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]];
+            currentPalette[i] = SWPLH((paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]]);
         };
 
 
@@ -577,7 +594,7 @@ protected:
            if (paletteIndex<0) paletteIndex = 13;
            if (paletteIndex>13) paletteIndex = 0;
            for(uint8_t i=0; i<8; i++)
-             currentPalette[i] = (paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]];
+             currentPalette[i] = SWPLH((paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]]);
            while (myESPboy.getKeys()) delay(10);
         }
 
@@ -621,7 +638,14 @@ protected:
                 }
              }
           }
+#ifndef USE_nbSPI
            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+#else           
+           while(nbSPI_isBusy()); 
+           nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
+           if (oBuffer == oBuffer1) oBuffer = oBuffer2;
+           else oBuffer = oBuffer1;
+#endif            
           }
           memset(b, clear, 128*64/8);
           update_every_n_count++;
