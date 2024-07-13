@@ -1,4 +1,5 @@
-#define USE_nbSPI //accelerates gfx but less compatibility
+#define USE_nbSPI //accelerates gfx but less hardware compatibility
+
 
 /*
 
@@ -89,6 +90,10 @@ extern void nbSPI_writeBytes(uint8_t *data, uint16_t size);
 #endif
 
 extern ESPboyInit myESPboy;
+
+#ifndef DEFAULT_PALETTE
+ #define DEFAULT_PALETTE 0 //check list of palettes in "palettesCollection.h"
+#endif
 
 #undef BLACK
 #undef WHITE
@@ -517,21 +522,9 @@ protected:
 
 //                                                 0       1      2       3       4
 //                                               white  lightgr darkgr  black    grey
-  PROGMEM const static uint16_t palette0[] =   {0xFFFF, 0xD69A, 0x7BEF, 0x0000, 0xA514}; // classic BW
-  PROGMEM const static uint16_t palette1[] =   {0x7FFF, 0x3FE6, 0x0200, 0x0000, 0x0200}; // OBJ1
-  PROGMEM const static uint16_t palette2[] =   {0x7FFF, 0x7EAC, 0x40C0, 0x0000, 0x40C0}; //! BG
-  PROGMEM const static uint16_t palette3[] =   {0x279D, 0x6ACE, 0xE46B, 0x0000, 0x6ACE}; // nostalgia
-  PROGMEM const static uint16_t palette4[] =   {0x5685, 0x8F9D, 0x6843, 0x6541, 0x8F9D}; // greeny
-  PROGMEM const static uint16_t palette5[] =   {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; // reddy
-  PROGMEM const static uint16_t palette6[] =   {0x79DF, 0x2D7E, 0x6D2B, 0x6308, 0x2D7E}; // retro lcd
-  PROGMEM const static uint16_t palette7[] =   {0x1F87, 0x795C, 0x7C72, 0x6959, 0x7C72}; // WISH GB
-  PROGMEM const static uint16_t palette8[] =   {0xDDF7, 0xB7C5, 0xCE52, 0x6308, 0xCE52}; // HOLLOW
-  PROGMEM const static uint16_t palette9[] =   {0x9B9F, 0xB705, 0xF102, 0x4A01, 0xB705}; // BLK AQU4
-  PROGMEM const static uint16_t palette10[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // GOLD GB
-  PROGMEM const static uint16_t palette11[] =  {0x719F, 0x523D, 0xEE42, 0x0629, 0x523D}; // NYMPH GB
-  PROGMEM const static uint16_t palette12[] =  {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; //! BOOTLEG BY PIXELSHIFT
-  PROGMEM const static uint16_t palette13[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // nostalgia+GOLD GB
+  //PROGMEM const static uint16_t palette0[] =   {0xFFFF, 0xD69A, 0x7BEF, 0x0000, 0xA514}; // classic BW
 
+  #include "palettesCollection.h"
   PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
   PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
   PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
@@ -539,17 +532,16 @@ protected:
   PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
   PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
 
-  const static uint16_t *paletteColors[] = {palette0, palette1, palette2, palette3, palette4, palette5, palette6, palette7, palette8, palette9, palette10, palette11, palette12, palette13};
-  const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
+const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
   
   static uint16_t currentPalette[8];
-  static int8_t paletteIndex=9;
+  static int8_t paletteIndex = DEFAULT_PALETTE;
   static int8_t paletteDecodeTableIndex=0;
 
         static bool firstStart = false;
         static uint8_t *plane0, *plane1;
         static uint16_t *oBuffer1, *oBuffer2, *oBuffer;
-        static uint8_t* b;
+        static uint8_t *b;
 
         if (firstStart != true){
             firstStart = true;
@@ -583,7 +575,11 @@ protected:
 #endif
 #endif
           for(uint8_t i=0; i<8; i++)
-            currentPalette[i] = SWPLH((paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]]);
+            currentPalette[i] = SWPLH(
+                                  myESPboy.tft.color24to16(
+                                    palettesCollection[paletteIndex][(paletteDecodeTable[paletteDecodeTableIndex])[i]]
+                                  )
+                                );
           delay(100);
         };
 
@@ -592,10 +588,14 @@ protected:
         if (keys&PAD_RGT || keys&PAD_LFT) {
            if (keys&0x40/*PAD_LFT*/) {paletteIndex--;}
            if (keys&0x80/*PAD_RGT*/) {paletteIndex++;}
-           if (paletteIndex<0) paletteIndex = 13;
-           if (paletteIndex>13) paletteIndex = 0;
+           if (paletteIndex<0) paletteIndex = 35;
+           if (paletteIndex>35) paletteIndex = 0;
            for(uint8_t i=0; i<8; i++)
-             currentPalette[i] = SWPLH((paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]]);
+                         currentPalette[i] = SWPLH(
+                                  myESPboy.tft.color24to16(
+                                    palettesCollection[paletteIndex][(paletteDecodeTable[paletteDecodeTableIndex])[i]]
+                                  )
+                                );
            while (myESPboy.getKeys()) delay(10);
         }
 
