@@ -27,7 +27,7 @@ decltype(a) a;
 #define SOUNDS_SYNTHU
 #define SYNTHU_IMPLEMENTATION
 #define SYNTHU_NUM_CHANNELS 6
-#define SYNTHU_UPDATE_EVERY_N_FRAMES 3
+#define SYNTHU_UPDATE_EVERY_N_FRAMES 6
 #define SYNTHU_ENABLE_SFX 1
 #define SYNTHU_FX_READDATABYTES_FUNC FX::readDataBytes
 #include "src/utils/SynthU.hpp"
@@ -60,7 +60,6 @@ void setup() {
     a.boot();
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
     a.startGray();
-    a.setFrameRate(350);
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     //FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
     FX::loadGameState(cookie);
@@ -74,9 +73,6 @@ void setup() {
 }
 
 void loop() {
-   static uint32_t soundtmr;
-    if (millis() - soundtmr > 1000/250 ) { audioUpdate(); soundtmr=millis();}
-    if(!a.nextFrame()) return;
 
     //FX::enableOLED();
     a.waitForNextPlane(BLACK);
@@ -116,7 +112,7 @@ void loop() {
     }
 
     #ifndef DEBUG_SOUND
-    //audioUpdate();
+    audioUpdate();
     #endif
 
 }
