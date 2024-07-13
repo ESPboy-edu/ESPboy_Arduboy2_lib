@@ -64,7 +64,7 @@ void setup() {
     a.boot();
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
     a.startGray();
-    a.setFrameRate(180);
+    a.setFrameRate(350);
     
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
@@ -76,6 +76,8 @@ void setup() {
 
 
 void loop() {
+    static uint32_t soundtmr;
+    if (millis() - soundtmr > 1000/220 ) { audioUpdate(); soundtmr=millis();}
     if(!a.nextFrame()) return;
     //FX::enableOLED();
 
@@ -111,9 +113,7 @@ void loop() {
             break;
 
     }
-
-    audioUpdate();
-
+ 
     world.decZapFlash();
 
 }

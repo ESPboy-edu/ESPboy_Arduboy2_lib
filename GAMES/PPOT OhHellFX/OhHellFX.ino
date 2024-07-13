@@ -56,11 +56,11 @@ uint16_t seed = 72;
 
 
 void setup() {
-    //Serial.begin(74880);
+    Serial.begin(74880);
     a.boot();
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
     a.startGray();
-    a.setFrameRate(255);
+    a.setFrameRate(350);
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     //FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
     FX::loadGameState(cookie);
@@ -74,8 +74,10 @@ void setup() {
 }
 
 void loop() {
+   static uint32_t soundtmr;
+    if (millis() - soundtmr > 1000/250 ) { audioUpdate(); soundtmr=millis();}
     if(!a.nextFrame()) return;
-    //Serial.println(ESP.getFreeHeap());
+
     //FX::enableOLED();
     a.waitForNextPlane(BLACK);
     //FX::disableOLED();
@@ -114,7 +116,7 @@ void loop() {
     }
 
     #ifndef DEBUG_SOUND
-    audioUpdate();
+    //audioUpdate();
     #endif
 
 }
