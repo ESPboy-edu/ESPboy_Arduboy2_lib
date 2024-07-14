@@ -259,6 +259,7 @@ void FX::readBytes(uint8_t* buffer, size_t length){
 
 
 void FX::readBytesSave(uint8_t* buffer, size_t length){
+  noInterrupts();
     for(uint16_t i=0; i<length; i++){
       if(globalAddressSave < 4092-EEPROMWRITEOFFSET){
         buffer[i] = EEPROM.read(globalAddressSave);
@@ -271,6 +272,7 @@ void FX::readBytesSave(uint8_t* buffer, size_t length){
 #ifdef DEBUG_INFO_ON
     Serial.println();
 #endif   
+  interrupts();
 }
 
 
@@ -298,6 +300,7 @@ void FX::readSaveBytes(uint24_t address, uint8_t* buffer, size_t length)
 
 uint8_t FX::loadGameState(uint8_t* gameState, size_t size)
 {
+noInterrupts();
 #ifdef DEBUG_INFO_ON
   Serial.println("Load game state");
   Serial.print("size "); Serial.println(size); 
@@ -306,9 +309,11 @@ uint8_t FX::loadGameState(uint8_t* gameState, size_t size)
   if (EEPROM.read(globalAddressSave++) == (uint8_t)(size&255) && 
       EEPROM.read(globalAddressSave++) == (uint8_t)((size>>8)&255)){
     readBytesSave(gameState, size);
+    interrupts();
     return 1;
   }
-  else{ 
+  else{
+    interrupts(); 
     return 0;
   }
 }
@@ -317,6 +322,7 @@ uint8_t FX::loadGameState(uint8_t* gameState, size_t size)
 
 void FX::saveGameState(const uint8_t* gameState, size_t size) // ~152 bytes locates free space in 4K save block and saves the GamesState.
 { 
+noInterrupts();
 #ifdef DEBUG_INFO_ON
   Serial.println("Save game state");
   Serial.print("size "); Serial.println(size); 
@@ -334,27 +340,33 @@ void FX::saveGameState(const uint8_t* gameState, size_t size) // ~152 bytes loca
   Serial.println();
 #endif
   EEPROM.commit();
+interrupts();
 }
 
 
 
 void  FX::eraseSaveBlock(uint16_t page){
-  seekSave(0);                                     //            if there is not enough free space, the block is erased prior to saving
+  noInterrupts(); 
+  seekSave(0);                 
+  //            if there is not enough free space, the block is erased prior to saving
   for (uint16_t i=0; i<4096-EEPROMWRITEOFFSET; i++){
     EEPROM.write(globalAddressSave, 0);
     globalAddressSave++;
   }
   EEPROM.commit();
+  interrupts();
 }
 
 
 void FX::writeSavePage(uint16_t page, uint8_t* buffer){
+  noInterrupts(); 
   seekSave(0);                                     //            if there is not enough free space, the block is erased prior to saving
   for (uint16_t i=0; i<256; i++){
     EEPROM.write(globalAddressSave, buffer[i]);
     globalAddressSave++;
   }
   EEPROM.commit();
+  interrupts(); 
 }
 
 

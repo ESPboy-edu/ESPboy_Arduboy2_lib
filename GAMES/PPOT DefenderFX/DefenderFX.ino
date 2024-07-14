@@ -63,11 +63,12 @@ void setup() {
     
     a.boot();
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
-    a.startGray();
 
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
-
+    delay(100);
+    
+    a.startGray();
     audioInit();
     setAudioOn();
 

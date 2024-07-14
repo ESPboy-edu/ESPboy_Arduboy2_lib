@@ -1,5 +1,6 @@
 #define USE_nbSPI //accelerates gfx but less hardware compatibility
-
+#define MAX_PALETTES 37
+#define DEFAULT_PALETTE 9
 
 /*
 
@@ -83,6 +84,7 @@ Example Usage:
 
 #include <Arduboy2.h>
 //#include "nbSPI.h"
+#include "palettesCollection.h"
 
 #ifdef USE_nbSPI
 extern bool nbSPI_isBusy();
@@ -91,9 +93,35 @@ extern void nbSPI_writeBytes(uint8_t *data, uint16_t size);
 
 extern ESPboyInit myESPboy;
 
+#define VERT_OFFSET     20
+
+#ifdef USE_nbSPI
+        #define SWPLH(x) ((x>>8)|(x<<8))
+#else
+        #define SWPLH(x) x
+#endif
+
 #ifndef DEFAULT_PALETTE
  #define DEFAULT_PALETTE 0 //check list of palettes in "palettesCollection.h"
 #endif
+
+  PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
+  PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
+  PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL4D[8] = {3, 3, 4, 4, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
+
+  PROGMEM const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
+
+  static uint16_t currentPalette[8] __attribute__((aligned(32)));
+  static uint8_t paletteDecodeTableIndex __attribute__((aligned(32))) = 0;
+  static int16_t paletteIndex __attribute__((aligned(32))) = DEFAULT_PALETTE;
+  
+  static uint8_t *plane0 __attribute__((aligned(32))), *plane1 __attribute__((aligned(32)));;
+  static uint16_t *oBuffer1 __attribute__((aligned(32))), *oBuffer2 __attribute__((aligned(32))), *oBuffer __attribute__((aligned(32)));
+  static uint8_t *b;
+
 
 #undef BLACK
 #undef WHITE
@@ -171,11 +199,55 @@ struct ArduboyG_Common : public BASE
         return Arduboy2Base::currentButtonState;
     }
     
-    static void startGray(){while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();}  
+    static void startGray(){
+            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+            plane0 =  (uint8_t *) malloc(128*64/8);
+            plane1 =  (uint8_t *) malloc(128*64/8);
+            memset(plane0, 0, 128*64/8);
+            memset(plane0, 0, 128*64/8);
+            oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer = oBuffer1;
+            b = Arduboy2Base::getBuffer();
+            memset(b, 0, 128*64/8);
+    
+#ifdef ABG_L3_CONVERT_LIGHTEN
+            paletteDecodeTableIndex = 2;
+#else
+#ifdef ABG_L3_CONVERT_DARKEN
+            paletteDecodeTableIndex = 3;
+#else
+#ifdef ABG_L3_CONVERT_MIX
+            paletteDecodeTableIndex = 4;
+#else
+            if(MODE == ABG_Mode::L4_Triplane) paletteDecodeTableIndex = 1;
+            else
+            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 1;
+            else 
+            paletteDecodeTableIndex = 5;
+#endif
+#endif
+#endif
+          for(uint8_t i=0; i<8; i++)
+                         currentPalette[i] = SWPLH(
+                                  myESPboy.tft.color24to16(
+                                    pgm_read_dword(&
+                                      palettesCollection[paletteIndex][pgm_read_byte(&(paletteDecodeTable[paletteDecodeTableIndex])[i])]
+                                  )
+                                    )
+                                );
+       
+      while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();
+      
+    }  
+    
+    
     static void startGrey() {startGray();}
     
     // use this method to adjust contrast when using ABGMode::L4_Contrast
-    static void setContrast(uint8_t f) {}
+    static void setContrast(uint8_t f) {
+      
+      }
     
     static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){
       update_every_n = num;
@@ -507,94 +579,23 @@ struct ArduboyG_Common : public BASE
     // color conversion method
     static uint8_t color (uint8_t c) { return planeColor(current_plane, c); }
     static uint8_t colour(uint8_t c) { return planeColor(current_plane, c); }
+
     
-protected:
-    
-    ICACHE_RAM_ATTR static void doDisplay(uint8_t clear)
-    {
-        #define VERT_OFFSET     20
-#ifdef USE_nbSPI
-        #define SWPLH(x) ((x>>8)|(x<<8))
-#else
-        #define SWPLH(x) x
-#endif
-
-
-//                                                 0       1      2       3       4
-//                                               white  lightgr darkgr  black    grey
-  //PROGMEM const static uint16_t palette0[] =   {0xFFFF, 0xD69A, 0x7BEF, 0x0000, 0xA514}; // classic BW
-
-  #include "palettesCollection.h"
-  PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
-  PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
-  PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4D[8] = {3, 3, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
-
-const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
-  
-  static uint16_t currentPalette[8];
-  static int8_t paletteIndex = DEFAULT_PALETTE;
-  static int8_t paletteDecodeTableIndex=0;
-
-        static bool firstStart = false;
-        static uint8_t *plane0, *plane1;
-        static uint16_t *oBuffer1, *oBuffer2, *oBuffer;
-        static uint8_t *b;
-
-        if (firstStart != true){
-            firstStart = true;
-            myESPboy.tft.fillScreen(0);
-            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
-            plane0 =  (uint8_t *) malloc(128*64/8);
-            plane1 =  (uint8_t *) malloc(128*64/8);
-            memset(plane0, 0, 128*64/8);
-            memset(plane0, 0, 128*64/8);
-            oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-            oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-            oBuffer = oBuffer1;
-            b = Arduboy2Base::getBuffer();
-            memset(b, 0, 128*64/8);
-    
-#ifdef ABG_L3_CONVERT_LIGHTEN
-            paletteDecodeTableIndex = 2;
-#else
-#ifdef ABG_L3_CONVERT_DARKEN
-            paletteDecodeTableIndex = 3;
-#else
-#ifdef ABG_L3_CONVERT_MIX
-            paletteDecodeTableIndex = 4;
-#else
-            if(MODE == ABG_Mode::L4_Triplane) paletteDecodeTableIndex = 1;
-            else
-            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 1;
-            else 
-            paletteDecodeTableIndex = 5;
-#endif
-#endif
-#endif
-          for(uint8_t i=0; i<8; i++)
-            currentPalette[i] = SWPLH(
-                                  myESPboy.tft.color24to16(
-                                    palettesCollection[paletteIndex][(paletteDecodeTable[paletteDecodeTableIndex])[i]]
-                                  )
-                                );
-          delay(100);
-        };
-
-
+protected:    
+    ICACHE_RAM_ATTR static void doDisplay(uint8_t clear){
         uint8_t keys = myESPboy.getKeys();
         if (keys&PAD_RGT || keys&PAD_LFT) {
            if (keys&0x40/*PAD_LFT*/) {paletteIndex--;}
            if (keys&0x80/*PAD_RGT*/) {paletteIndex++;}
-           if (paletteIndex<0) paletteIndex = 35;
-           if (paletteIndex>35) paletteIndex = 0;
+           if (paletteIndex<0) paletteIndex = MAX_PALETTES;
+           if (paletteIndex>MAX_PALETTES) paletteIndex = 0;
            for(uint8_t i=0; i<8; i++)
                          currentPalette[i] = SWPLH(
                                   myESPboy.tft.color24to16(
-                                    palettesCollection[paletteIndex][(paletteDecodeTable[paletteDecodeTableIndex])[i]]
+                                    pgm_read_dword(&
+                                      palettesCollection[paletteIndex][pgm_read_byte(&(paletteDecodeTable[paletteDecodeTableIndex])[i])]
                                   )
+                                    )
                                 );
            while (myESPboy.getKeys()) delay(10);
         }

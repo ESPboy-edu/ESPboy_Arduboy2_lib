@@ -3,7 +3,13 @@
 #include "ArduboyG.h"
 
 //ArduboyG a;
+
+//ABG_L3_CONVERT_DARKEN
+// ABG_L3_CONVERT_MIX
+// ABG_L3_CONVERT_DARKEN
+
 ArduboyG_Config<ABG_Mode::L3> a;
+
 
 #include <Arduino.h>
 #include <Arduboy2.h>
@@ -509,7 +515,7 @@ void setup() {
   
   arduboy.audio.on();
   //a.begin();
-  a.setFrameRate (120);
+  a.setFrameRate (300);
   a.startGray();
 
   fadingIn = 0;
@@ -520,6 +526,7 @@ void setup() {
 }
 
 void loop() {
+  if(!a.nextFrame()) return;
   a.waitForNextPlane();
 
   renderLevel(nown++);

@@ -1,3 +1,7 @@
+#define USE_nbSPI //accelerates gfx but less hardware compatibility
+#define MAX_PALETTES 37
+#define DEFAULT_PALETTE 9
+
 /*
 
     When using L4_Triplane, you can define one of the following macros to
@@ -79,8 +83,45 @@ Example Usage:
 #pragma once
 
 #include <Arduboy2.h>
+//#include "nbSPI.h"
+#include "palettesCollection.h"
+
+#ifdef USE_nbSPI
+extern bool nbSPI_isBusy();
+extern void nbSPI_writeBytes(uint8_t *data, uint16_t size);
+#endif
 
 extern ESPboyInit myESPboy;
+
+#define VERT_OFFSET     20
+
+#ifdef USE_nbSPI
+        #define SWPLH(x) ((x>>8)|(x<<8))
+#else
+        #define SWPLH(x) x
+#endif
+
+#ifndef DEFAULT_PALETTE
+ #define DEFAULT_PALETTE 0 //check list of palettes in "palettesCollection.h"
+#endif
+
+  PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
+  PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
+  PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL4D[8] = {3, 3, 4, 4, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
+  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
+
+  PROGMEM const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
+
+  static uint16_t currentPalette[8] __attribute__((aligned(32)));
+  static uint8_t paletteDecodeTableIndex __attribute__((aligned(32))) = 0;
+  static int16_t paletteIndex __attribute__((aligned(32))) = DEFAULT_PALETTE;
+  
+  static uint8_t *plane0 __attribute__((aligned(32))), *plane1 __attribute__((aligned(32)));;
+  static uint16_t *oBuffer1 __attribute__((aligned(32))), *oBuffer2 __attribute__((aligned(32))), *oBuffer __attribute__((aligned(32)));
+  static uint8_t *b;
+
 
 #undef BLACK
 #undef WHITE
@@ -158,11 +199,55 @@ struct ArduboyG_Common : public BASE
         return Arduboy2Base::currentButtonState;
     }
     
-    static void startGray(){while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();}  
+    static void startGray(){
+            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+            plane0 =  (uint8_t *) malloc(128*64/8);
+            plane1 =  (uint8_t *) malloc(128*64/8);
+            memset(plane0, 0, 128*64/8);
+            memset(plane0, 0, 128*64/8);
+            oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+            oBuffer = oBuffer1;
+            b = Arduboy2Base::getBuffer();
+            memset(b, 0, 128*64/8);
+    
+#ifdef ABG_L3_CONVERT_LIGHTEN
+            paletteDecodeTableIndex = 2;
+#else
+#ifdef ABG_L3_CONVERT_DARKEN
+            paletteDecodeTableIndex = 3;
+#else
+#ifdef ABG_L3_CONVERT_MIX
+            paletteDecodeTableIndex = 4;
+#else
+            if(MODE == ABG_Mode::L4_Triplane) paletteDecodeTableIndex = 1;
+            else
+            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 1;
+            else 
+            paletteDecodeTableIndex = 5;
+#endif
+#endif
+#endif
+          for(uint8_t i=0; i<8; i++)
+                         currentPalette[i] = SWPLH(
+                                  myESPboy.tft.color24to16(
+                                    pgm_read_dword(&
+                                      palettesCollection[paletteIndex][pgm_read_byte(&(paletteDecodeTable[paletteDecodeTableIndex])[i])]
+                                  )
+                                    )
+                                );
+       
+      while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();
+      
+    }  
+    
+    
     static void startGrey() {startGray();}
     
     // use this method to adjust contrast when using ABGMode::L4_Contrast
-    static void setContrast(uint8_t f) {}
+    static void setContrast(uint8_t f) {
+      
+      }
     
     static void setUpdateEveryN(uint8_t num, uint8_t denom = 1){
       update_every_n = num;
@@ -494,90 +579,24 @@ struct ArduboyG_Common : public BASE
     // color conversion method
     static uint8_t color (uint8_t c) { return planeColor(current_plane, c); }
     static uint8_t colour(uint8_t c) { return planeColor(current_plane, c); }
+
     
-protected:
-    
-    static void doDisplay(uint8_t clear)
-    {
-        #define VERT_OFFSET     20
-
-//                                                 0       1      2       3       4
-//                                               white  lightgr darkgr  black    grey
-  PROGMEM const static uint16_t palette0[] =   {0xFFFF, 0xD69A, 0x7BEF, 0x0000, 0xA514}; // classic BW
-  PROGMEM const static uint16_t palette1[] =   {0x7FFF, 0x3FE6, 0x0200, 0x0000, 0x0200}; // OBJ1
-  PROGMEM const static uint16_t palette2[] =   {0x7FFF, 0x7EAC, 0x40C0, 0x0000, 0x40C0}; //! BG
-  PROGMEM const static uint16_t palette3[] =   {0x279D, 0x6ACE, 0xE46B, 0x0000, 0x6ACE}; // nostalgia
-  PROGMEM const static uint16_t palette4[] =   {0x5685, 0x8F9D, 0x6843, 0x6541, 0x8F9D}; // greeny
-  PROGMEM const static uint16_t palette5[] =   {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; // reddy
-  PROGMEM const static uint16_t palette6[] =   {0x79DF, 0x2D7E, 0x6D2B, 0x6308, 0x2D7E}; // retro lcd
-  PROGMEM const static uint16_t palette7[] =   {0x1F87, 0x795C, 0x7C72, 0x6959, 0x7C72}; // WISH GB
-  PROGMEM const static uint16_t palette8[] =   {0xDDF7, 0xB7C5, 0xCE52, 0x6308, 0xCE52}; // HOLLOW
-  PROGMEM const static uint16_t palette9[] =   {0x9B9F, 0xB705, 0xF102, 0x4A01, 0xB705}; // BLK AQU4
-  PROGMEM const static uint16_t palette10[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // GOLD GB
-  PROGMEM const static uint16_t palette11[] =  {0x719F, 0x523D, 0xEE42, 0x0629, 0x523D}; // NYMPH GB
-  PROGMEM const static uint16_t palette12[] =  {0x16F6, 0xC9D3, 0xC091, 0x8041, 0xC9D3}; //! BOOTLEG BY PIXELSHIFT
-  PROGMEM const static uint16_t palette13[] =  {0x49CD, 0x099B, 0x0549, 0x4320, 0x099B}; // nostalgia+GOLD GB
-
-  PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
-  PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
-  PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4D[8] = {3, 3, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
-
-  const static uint16_t *paletteColors[] = {palette0, palette1, palette2, palette3, palette4, palette5, palette6, palette7, palette8, palette9, palette10, palette11, palette12, palette13};
-  const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
-  
-  static uint16_t currentPalette[8];
-  static int8_t paletteIndex=0;
-  static int8_t paletteDecodeTableIndex=0;
-
-        static bool firstStart = false;
-        static uint8_t *plane0, *plane1;
-        static uint16_t *oBuffer;
-        static uint8_t* b;
-
-        if (firstStart != true){
-            firstStart = true;
-            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
-            plane0 =  (uint8_t *) malloc(128*64/8);
-            plane1 =  (uint8_t *) malloc(128*64/8);
-            memset(plane0, 0, 128*64/8);
-            memset(plane0, 0, 128*64/8);
-            oBuffer = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-            b = Arduboy2Base::getBuffer();
-            memset(b, 0, 128*64/8);
-    
-#ifdef ABG_L3_CONVERT_LIGHTEN
-            paletteDecodeTableIndex = 2;
-#else
-#ifdef ABG_L3_CONVERT_DARKEN
-            paletteDecodeTableIndex = 3;
-#else
-#ifdef ABG_L3_CONVERT_MIX
-            paletteDecodeTableIndex = 4;
-#else
-            if(MODE == ABG_Mode::L4_Triplane) paletteDecodeTableIndex = 1;
-            else
-            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 1;
-            else 
-            paletteDecodeTableIndex = 5;
-#endif
-#endif
-#endif
-          for(uint8_t i=0; i<8; i++)
-            currentPalette[i] = (paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]];
-        };
-
-
+protected:    
+    ICACHE_RAM_ATTR static void doDisplay(uint8_t clear){
         uint8_t keys = myESPboy.getKeys();
         if (keys&PAD_RGT || keys&PAD_LFT) {
            if (keys&0x40/*PAD_LFT*/) {paletteIndex--;}
            if (keys&0x80/*PAD_RGT*/) {paletteIndex++;}
-           if (paletteIndex<0) paletteIndex = 13;
-           if (paletteIndex>13) paletteIndex = 0;
+           if (paletteIndex<0) paletteIndex = MAX_PALETTES;
+           if (paletteIndex>MAX_PALETTES) paletteIndex = 0;
            for(uint8_t i=0; i<8; i++)
-             currentPalette[i] = (paletteColors[paletteIndex])[(paletteDecodeTable[paletteDecodeTableIndex])[i]];
+                         currentPalette[i] = SWPLH(
+                                  myESPboy.tft.color24to16(
+                                    pgm_read_dword(&
+                                      palettesCollection[paletteIndex][pgm_read_byte(&(paletteDecodeTable[paletteDecodeTableIndex])[i])]
+                                  )
+                                    )
+                                );
            while (myESPboy.getKeys()) delay(10);
         }
 
@@ -599,7 +618,7 @@ protected:
                 currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = pgm_read_word(&currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
+                  oBuffer[addr] = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;
@@ -615,13 +634,20 @@ protected:
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
                 for (yPos = 0; yPos < 16; yPos++) {    
                   addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = pgm_read_word(&currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                  oBuffer[addr] = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
              }
           }
+#ifndef USE_nbSPI
            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+#else           
+           while(nbSPI_isBusy());
+           nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
+           if (oBuffer == oBuffer1) oBuffer = oBuffer2;
+           else oBuffer = oBuffer1;
+#endif            
           }
           memset(b, clear, 128*64/8);
           update_every_n_count++;
@@ -629,7 +655,6 @@ protected:
              update_flag = true;
              update_every_n_count = 0;
           }
-          //delay(300);
        }
 // END OF renderPlanesToLCD 
     }

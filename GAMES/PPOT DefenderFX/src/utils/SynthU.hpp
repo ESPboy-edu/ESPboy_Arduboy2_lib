@@ -346,6 +346,7 @@ bool SynthU::update(){
 
 
 void IRAM_ATTR SoundISR(){
+noInterrupts();
     if(!SYNTHU_AUDIO_ENABLED_FUNC() ||
         !g_playing &&
 #if SYNTHU_ENABLE_SFX
@@ -355,6 +356,7 @@ void IRAM_ATTR SoundISR(){
 #endif
         )
     {
+        interrupts();
         return;
     }
 
