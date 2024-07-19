@@ -49,7 +49,7 @@
  * \endcode
  */
 #define ARDUBOY_LIB_VER 50100
-#define ARDUBOY_ID 0xFAEC
+#define ARDUBOY_ID 0xFAEF
 #define EEPROM_STORAGE_SPACE_START_SETTINGS 1
 #define EEPROM_STORAGE_SPACE_START 20
 
@@ -62,6 +62,7 @@ struct ArduboySettings{
  bool arduboyAudioOnOff = 1; 
  bool arboyLogo = 0;
  bool arduboyLeds = 0;
+ bool arduboyYscale = 0;
 };
 
 

@@ -97,6 +97,7 @@ void Arduboy2Base::systemButtons(){
     if (keys&PAD_UP) {arduboySaveLoadSettings.arduboyAudioOnOff = !arduboySaveLoadSettings.arduboyAudioOnOff;}
     if (keys&PAD_DOWN) {arduboySaveLoadSettings.arboyLogo = !arduboySaveLoadSettings.arboyLogo;}
     if (keys&PAD_LEFT) {arduboySaveLoadSettings.arduboyLeds = !arduboySaveLoadSettings.arduboyLeds;}
+    if (keys&PAD_RIGHT) {arduboySaveLoadSettings.arduboyYscale = !arduboySaveLoadSettings.arduboyYscale;}
     if (keys&PAD_RGT) {arduboySaveLoadSettings.arduboyBackground++; if(arduboySaveLoadSettings.arduboyBackground>18)arduboySaveLoadSettings.arduboyBackground=0;}
     if (keys&PAD_LFT) {arduboySaveLoadSettings.arduboyForeground++; if(arduboySaveLoadSettings.arduboyForeground>18)arduboySaveLoadSettings.arduboyForeground=0;}
     if (keys&PAD_ACT) flashlight();
@@ -104,17 +105,20 @@ void Arduboy2Base::systemButtons(){
     
     myESPboy.tft.setTextColor(TFT_GREEN, TFT_BLACK);  
     myESPboy.tft.fillScreen(TFT_BLACK);
-    if (arduboySaveLoadSettings.arduboyAudioOnOff) myESPboy.tft.drawString(F("SOUND ON"),40,20);
-    else myESPboy.tft.drawString(F("SOUND OFF"),36,20);
-    if(arduboySaveLoadSettings.arboyLogo)myESPboy.tft.drawString(F("SHOW LOGO ON"),28,30);
-    else myESPboy.tft.drawString(F("SHOW LOGO OFF"),24,30);
-    if(arduboySaveLoadSettings.arduboyLeds)myESPboy.tft.drawString(F("SHOW LED ON"),31,40);
-    else myESPboy.tft.drawString(F("SHOW LED OFF"),28,40);
+    if (arduboySaveLoadSettings.arduboyYscale) myESPboy.tft.drawString(F("SCALE ON"),40,2);
+    else myESPboy.tft.drawString(F("SCALE OFF"),36,2);
+    if (arduboySaveLoadSettings.arduboyAudioOnOff) myESPboy.tft.drawString(F("SOUND ON"),40,12);
+    else myESPboy.tft.drawString(F("SOUND OFF"),36,12);
+    if(arduboySaveLoadSettings.arboyLogo)myESPboy.tft.drawString(F("SHOW LOGO ON"),28,22);
+    else myESPboy.tft.drawString(F("SHOW LOGO OFF"),24,22);
+    if(arduboySaveLoadSettings.arduboyLeds)myESPboy.tft.drawString(F("SHOW LED ON"),31,32);
+    else myESPboy.tft.drawString(F("SHOW LED OFF"),28,32);
     
     myESPboy.tft.setTextColor(Arduboy2Core::colors[arduboySaveLoadSettings.arduboyForeground], Arduboy2Core::colors[arduboySaveLoadSettings.arduboyBackground]);
-    myESPboy.tft.drawString(F("FOREGRND / BACKGRND"), 6, 50);
+    myESPboy.tft.drawString(F("FOREGRND / BACKGRND"), 6, 42);
       
     myESPboy.tft.setTextColor(TFT_YELLOW, TFT_BLACK);  
+    myESPboy.tft.drawString(F("RIGHT for scale"),19,60);
     myESPboy.tft.drawString(F("UP for sound"),28,70);
     myESPboy.tft.drawString(F("DOWN for logo"),24,80);
     myESPboy.tft.drawString(F("LEFT for LEDs"),25,90);
@@ -928,12 +932,15 @@ if (!displayoff_flag){
    
    if(mallocFlag==false){
      mallocFlag=true;
-     oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-     oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+     oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t)*2);
+     oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t)*2);
      oBuffer = oBuffer1;
    }
    
-   myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+   if(!arduboySaveLoadSettings.arduboyYscale)
+     myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+   else 
+     myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);
    
   if(!invert_flag){
     foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
@@ -952,14 +959,36 @@ if(!allpixelson_flag){
             currentDataByte = sBuffer[currentDataAddr] + (sBuffer[currentDataAddr+128]<<8);
       for (yPos = 0; yPos < 16; yPos++) {		
 		    //if (!(yPos % 8)) currentDataByte = sBuffer[xPos + ((yPos>>3)+kkPos) * WIDTH];
-		    addr = 	yPos*WIDTH+xPos;
-            if (currentDataByte & 0x01) oBuffer[addr] = foregroundColor;
-            else oBuffer[addr] = backgroundColor;
+		    if(!arduboySaveLoadSettings.arduboyYscale)
+		       addr = 	yPos*WIDTH+xPos;
+		    else
+		       addr = 	yPos*2*WIDTH+xPos;
+            if (currentDataByte & 0x01){ 
+              if(!arduboySaveLoadSettings.arduboyYscale)
+                oBuffer[addr] = foregroundColor;
+              else{
+                oBuffer[addr] = foregroundColor;
+                oBuffer[addr+WIDTH] = foregroundColor;
+              }
+            }
+            else {
+              if(!arduboySaveLoadSettings.arduboyYscale){
+                oBuffer[addr] = backgroundColor;
+              }
+              else{
+                oBuffer[addr] = backgroundColor;
+                oBuffer[addr+WIDTH] = backgroundColor;
+              }
+            }
+			
 			currentDataByte = currentDataByte >> 1;
 	  }
     }
     while(nbSPI_isBusy()); 
-    nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);  
+    if(!arduboySaveLoadSettings.arduboyYscale)
+      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);  
+    else
+      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2*2);
     flipBuf = !flipBuf;
     oBuffer = flipBuf?oBuffer1:oBuffer2;
     //myESPboy.tft.pushColors(oBuffer, WIDTH*16);
@@ -967,7 +996,10 @@ if(!allpixelson_flag){
 }
 else {
   while(nbSPI_isBusy()); 
-  myESPboy.tft.fillRect(0, VERT_OFFSET, WIDTH, HEIGHT,foregroundColor);
+  if(!arduboySaveLoadSettings.arduboyYscale)
+    myESPboy.tft.fillRect(0, VERT_OFFSET, WIDTH, HEIGHT,foregroundColor);
+  else
+    myESPboy.tft.fillRect(0, 0, WIDTH, HEIGHT*2,foregroundColor);
   }
 }
 else {
