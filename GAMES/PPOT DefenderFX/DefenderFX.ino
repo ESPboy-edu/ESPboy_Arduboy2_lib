@@ -30,7 +30,7 @@ decltype(a) a;
 
 #define SYNTHU_IMPLEMENTATION
 #define SYNTHU_NUM_CHANNELS 4
-#define SYNTHU_UPDATE_EVERY_N_FRAMES 6
+#define SYNTHU_UPDATE_EVERY_N_FRAMES 5
 #define SYNTHU_ENABLE_SFX 1
 #define SYNTHU_FX_READDATABYTES_FUNC FX::readDataBytes
 #include "src/utils/SynthU.hpp"

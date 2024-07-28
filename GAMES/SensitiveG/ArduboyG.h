@@ -121,6 +121,7 @@ extern ESPboyInit myESPboy;
   static uint8_t *plane0 __attribute__((aligned(32))), *plane1 __attribute__((aligned(32)));;
   static uint16_t *oBuffer1 __attribute__((aligned(32))), *oBuffer2 __attribute__((aligned(32))), *oBuffer __attribute__((aligned(32)));
   static uint8_t *b;
+  static bool arduboyYscaleFlag = 0;
 
 
 #undef BLACK
@@ -200,13 +201,16 @@ struct ArduboyG_Common : public BASE
     }
     
     static void startGray(){
-            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+        if(!arduboyYscaleFlag){          
+            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);}
+        else{
+            myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);}
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
             memset(plane0, 0, 128*64/8);
-            oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-            oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
+		    oBuffer1 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
+            oBuffer2 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
             oBuffer = oBuffer1;
             b = Arduboy2Base::getBuffer();
             memset(b, 0, 128*64/8);
@@ -585,10 +589,25 @@ protected:
     ICACHE_RAM_ATTR static void doDisplay(uint8_t clear){
         uint8_t keys = myESPboy.getKeys();
         if (keys&PAD_RGT || keys&PAD_LFT) {
+           while(nbSPI_isBusy());
+           noInterrupts();
+           delay(50);
+           keys = myESPboy.getKeys();
+           if ((keys&0x40)/*PAD_LFT*/ && (keys&0x80)/*PAD_RGT*/) {arduboyYscaleFlag =! arduboyYscaleFlag;}
+           else
            if (keys&0x40/*PAD_LFT*/) {paletteIndex--;}
+           else
            if (keys&0x80/*PAD_RGT*/) {paletteIndex++;}
+           
            if (paletteIndex<0) paletteIndex = MAX_PALETTES;
            if (paletteIndex>MAX_PALETTES) paletteIndex = 0;
+           
+           if(!arduboyYscaleFlag){
+             myESPboy.tft.fillScreen(0);
+             myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);}
+           else{
+             myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);}
+           
            for(uint8_t i=0; i<8; i++)
                          currentPalette[i] = SWPLH(
                                   myESPboy.tft.color24to16(
@@ -598,6 +617,7 @@ protected:
                                     )
                                 );
            while (myESPboy.getKeys()) delay(10);
+           interrupts();
         }
 
         
@@ -616,9 +636,26 @@ protected:
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
                 currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
-                for (yPos = 0; yPos < 16; yPos++) {    
-                  addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
+                for (yPos = 0; yPos < 16; yPos++) {
+                  if(!arduboyYscaleFlag)
+                  {   
+                     addr =  yPos*WIDTH+xPos;
+                  }
+                  else
+                  {
+				     addr =  yPos*WIDTH*2+xPos;
+				  }
+
+                  if(!arduboyYscaleFlag)
+                  {
+                    oBuffer[addr] = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
+                  }
+                  else
+                  {
+                    uint16_t selectedPixelColor = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);          
+                    oBuffer[addr] = selectedPixelColor;
+                    oBuffer[addr+WIDTH] = selectedPixelColor;                
+                  }
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                   currentDataByte3 >>= 1;
@@ -632,19 +669,50 @@ protected:
                 currentDataAddr = xPos + kkPos * WIDTH;
                 currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
                 currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
-                for (yPos = 0; yPos < 16; yPos++) {    
-                  addr =  yPos*WIDTH+xPos;
-                  oBuffer[addr] = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                for (yPos = 0; yPos < 16; yPos++) {   
+                  if(!arduboyYscaleFlag)
+                  {
+                    addr =  yPos*WIDTH+xPos;
+                  }
+                  else
+                  {
+				    addr =  yPos*WIDTH*2+xPos;
+				  }
+
+                  if(!arduboyYscaleFlag)
+                  {  
+                    oBuffer[addr] = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                  }
+                  else
+                  {
+                    uint16_t selectedPixelColor = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                    oBuffer[addr] = selectedPixelColor;
+                    oBuffer[addr+WIDTH] = selectedPixelColor; 
+                  }
                   currentDataByte1 >>= 1;
                   currentDataByte2 >>= 1;
                 }
              }
           }
 #ifndef USE_nbSPI
-           myESPboy.tft.pushColors(oBuffer, WIDTH*16);
-#else           
+          if(!arduboyYscaleFlag)
+          {
+            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
+          }
+          else
+          {
+            myESPboy.tft.pushColors(oBuffer, WIDTH*32); 
+          }
+#else          
            while(nbSPI_isBusy());
-           nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
+           if(!arduboyYscaleFlag)
+           {
+             nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
+           }
+           else
+           {
+		     nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*4);
+           }
            if (oBuffer == oBuffer1) oBuffer = oBuffer2;
            else oBuffer = oBuffer1;
 #endif            
