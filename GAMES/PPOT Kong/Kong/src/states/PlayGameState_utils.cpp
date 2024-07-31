@@ -190,7 +190,7 @@ uint8_t PlayGameState::drawScenery(StateMachine & machine, uint8_t paintMode) {
     }
 
   }
-
+return 0;
 }
 
 

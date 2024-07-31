@@ -548,6 +548,7 @@ FishType Player::getFishThatBit(bool isDeepWater) {
         }
         currentPoints += fishDiceRoll[fr].points;
     }
+    return FishType::UNSET;
 }
 
 void Player::renderCast(uint8_t frame) {

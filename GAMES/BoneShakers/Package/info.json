@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 2,
+  "title": "Bone Shakers",
+  "description": "Skeletons racing on unicycles! Made for the unofficial Arduboy game jam September 2018",
+  "author": "James Howard",
+  "version": "1.0",
+  "date": "2018-09-09",
+  "genre": "Racing",
+  "publisher": "",
+  "idea": "",
+  "code": "",
+  "art": "",
+  "sound": "",
+  "url": "https://github.com/jhhoward/BoneShakers",
+  "sourceUrl": "https://github.com/jhhoward/BoneShakers",
+  "email": "",
+  "companion": "",
+  "banner": "banner.png",
+  "screenshots": [
+    {
+      "title": "",
+      "filename": "screen1.png"
+    },
+  ],
+  "binaries": [
+    {
+      "title": "BoneShakers",
+      "filename": "BoneShakers.hex",
+      "device": "Arduboy"
+    }
+  ],
+  "buttons": [
+    {
+      "control": "",
+      "action": ""
+    }
+  ],
+  "eeprom": {
+    "variable": false,
+    "start": 16,
+    "end": 1023
+  }
+}

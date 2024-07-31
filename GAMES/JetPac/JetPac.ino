@@ -14,6 +14,8 @@ by Mike McRoberts (a.k.a. TheArduinoGuy)
 //#include <avr/pgmspace.h>
 //#include <EEPROM.h>
 
+#define abs(x) ((x)<0 ? (-x) : (x))
+
 Arduboy2 arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 
@@ -107,13 +109,13 @@ byte laserIndex = 0;
 void setup()
 {
         //Serial.begin(115200);
-        WiFi.mode(WIFI_OFF); //disable wifi to save some battery power
-        EEPROM.begin(200);
-        arduboy.boot(); // raw hardware
-        arduboy.blank(); // blank the display
+        //WiFi.mode(WIFI_OFF); //disable wifi to save some battery power
+        //EEPROM.begin(200);
+        arduboy.begin(); // raw hardware
+        //arduboy.blank(); // blank the display
         //arduboy.flashlight(); // light the RGB LED and screen if UP button is being held.
-        arduboy.systemButtons();
-        arduboy.bootLogo();
+        //arduboy.systemButtons();
+        //arduboy.bootLogo();
         arduboy.audio.on();
         arduboy.clear();
         //arduboy.begin();

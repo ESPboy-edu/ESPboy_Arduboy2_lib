@@ -951,6 +951,7 @@ Rect getEntityRect(byte i) {
   } else if (entities[i].Type == HOT_SAUCE_ENTITY) {
     return {.x = (entities[i].point.x >> 3), .y = entities[i].point.y, .width = 8, .height = 8};
   }
+ return {0, 0, 8, 8};
 }
 
 
@@ -1257,4 +1258,5 @@ bool Save() {
     }   
     return true;
   }
+return false;
 }

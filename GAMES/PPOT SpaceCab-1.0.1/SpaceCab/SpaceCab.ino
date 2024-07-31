@@ -54,11 +54,12 @@ Level level;
 //------------------------------------------------------------------------------
 
 void setup() {
-  WiFi.mode(WIFI_OFF);
-  arduboy.boot();
-  arduboy.display();
-  arduboy.flashlight();
-  arduboy.systemButtons();
+  arduboy.begin();
+  //WiFi.mode(WIFI_OFF);
+  //arduboy.boot();
+  //arduboy.display();
+  //arduboy.flashlight();
+  //arduboy.systemButtons();
   arduboy.audio.begin();
   arduboy.clear();
   arduboy.setFrameRate(60);

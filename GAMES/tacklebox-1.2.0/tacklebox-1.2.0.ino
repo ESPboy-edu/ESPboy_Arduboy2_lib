@@ -13,8 +13,9 @@ Renderer renderer(arduboy);
 Game game;
 
 void setup() {
-    Serial.begin(9600);
-    arduboy.boot();
+    //Serial.begin(9600);
+    arduboy.begin();
+    arduboy.setFrameRate(40);
     arduboy.audio.begin();
     BeepPin1::begin();
     randomSeed(analogRead(0));

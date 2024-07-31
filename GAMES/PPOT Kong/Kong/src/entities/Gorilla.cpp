@@ -102,7 +102,7 @@ GorillaStance Gorilla::getStance() {
       }
 
   }
-
+return GorillaStance::Normal;
 }
 
 void Gorilla::move() {
@@ -157,7 +157,6 @@ void Gorilla::move() {
         if (!sound.playing()) sound.tones(Sounds::drop_barrel);
 #endif
       }
-
     }
 
 

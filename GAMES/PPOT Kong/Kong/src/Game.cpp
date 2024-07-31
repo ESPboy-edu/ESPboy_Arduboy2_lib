@@ -26,10 +26,11 @@ void Game::setup(void) {
 
 	auto & arduboy = this->context.arduboy;
 
-	arduboy.boot();
-	arduboy.flashlight();
-	arduboy.systemButtons();
-	arduboy.audio.begin();
+    arduboy.begin();
+	//arduboy.boot();
+	//arduboy.flashlight();
+	//arduboy.systemButtons();
+	//arduboy.audio.begin();
 	arduboy.initRandomSeed();
 	arduboy.setFrameRate(70);
 

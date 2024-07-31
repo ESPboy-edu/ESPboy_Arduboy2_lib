@@ -289,6 +289,7 @@ byte titleMenuLeftButton(byte selectedItem) {
 
     default: break;
   }
+return 0;
 }
 
 // Handle clicks on right button to navigate title screen items.
@@ -310,6 +311,7 @@ byte titleMenuRightButton(byte selectedItem) {
 
     default: break;
   }
+return 0;
 }
 
 // Display the high score screen (used in attract loop and after game over).

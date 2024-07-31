@@ -1421,13 +1421,14 @@ uint32_t game_timer=0;
 bool video_out = false;
 
 void setup() {
-  WiFi.mode(WIFI_OFF);
-  arduboy.boot(); // raw hardware
-  arduboy.blank(); // blank the display
-  arduboy.flashlight(); // light the RGB LED and screen if UP button is being held.  
-  arduboy.systemButtons();// check for and handle buttons held during start up for system control
+  arduboy.begin();
+  //WiFi.mode(WIFI_OFF);
+  //arduboy.boot(); // raw hardware
+  //arduboy.blank(); // blank the display
+  //arduboy.flashlight(); // light the RGB LED and screen if UP button is being held.  
+  //arduboy.systemButtons();// check for and handle buttons held during start up for system control
   arduboy.audio.begin();
-  arduboy.bootLogoSpritesSelfMasked();  
+  //arduboy.bootLogoSpritesSelfMasked();  
   do {// wait for all buttons to be released
     arduboy.delayShort(50);
   } while (arduboy.buttonsState());
@@ -2425,6 +2426,7 @@ Rect getEntityRect(byte i){
   }else if(entities[i].Type==26){//karame energy blast
       return {.x=entities[i].point.x+1, .y=entities[i].point.y+1, 6, 6};
   }
+return {0, 0, 6, 6};
 }
 
 void tickEntities(){
@@ -2828,6 +2830,7 @@ int8_t getTile(uint8_t TempX, uint8_t TempY, uint8_t map_id){
        return (pgm_read_byte(&MapData[mapDataStart+TempY*(pgm_read_byte(&MapData[mapDataStart+0])/4)+TempX/4+6]) & 0b11);
      }
   //}
+return 0;
 }
 
 int8_t TileCollision(Rect rect, int8_t RX, int8_t RY, int8_t map_id){

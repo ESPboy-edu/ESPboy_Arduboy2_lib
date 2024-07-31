@@ -81,7 +81,7 @@ void setup()
 #ifdef DEBUG
     Serial.begin(115200);
 #endif
-    arduboy.beginNoLogo();
+    arduboy.begin();
     arduboy.setFrameRate(60);
     pTunes.initChannel(0);
     moduleTable[LOGO_MODE].initFunc();

@@ -108,10 +108,11 @@ uint8_t* GetPowerGrid()
 
 void setup()
 {
-  arduboy.boot();
-  arduboy.flashlight();
-  arduboy.systemButtons();
-  arduboy.bootLogo();
+  arduboy.begin();
+  //arduboy.boot();
+  //arduboy.flashlight();
+  //arduboy.systemButtons();
+  //arduboy.bootLogo();
   arduboy.setFrameRate(25);
 
   InitGame();

@@ -1570,6 +1570,7 @@ signed char spawn(signed char object, unsigned char x, unsigned char y) {
 		}
 		i++;
 	}
+return 0;
 }
 
 //Level Generation Functions

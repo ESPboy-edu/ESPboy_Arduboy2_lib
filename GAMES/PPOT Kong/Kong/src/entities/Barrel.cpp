@@ -154,7 +154,6 @@ Rect Barrel::getRect(uint8_t yOffset, GameMode mode) {
 
     case GameMode::Hard:
       return Rect{barrelData.x + 1, barrelData.y - yOffset + 1, 7, 7 };
-
   }
-
+  return Rect{barrelData.x + 1, barrelData.y - yOffset + 1, 7, 7 };
 }
