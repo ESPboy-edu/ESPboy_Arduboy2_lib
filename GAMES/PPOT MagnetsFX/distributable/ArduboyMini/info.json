@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "Magnets Mini",
+      "filename": "MagnetsMini.hex",
+      "flashdata": "MagnetsMini-data.bin",
+      "flashsave": "MagnetsMini-save.bin",
+      "device": "ArduboyMini"
+    }
+  ]
+}

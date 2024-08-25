@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "MagnetsFX",
+      "filename": "MagnetsFX.hex",
+      "flashdata": "MagnetsFX-data.bin",
+      "flashsave": "MagnetsFX-save.bin",
+      "device": "ArduboyFX"
+    }
+  ]
+}
