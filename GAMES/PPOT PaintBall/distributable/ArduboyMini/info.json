@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "PaintBall",
+      "filename": "PaintBallMini.hex",
+      "flashdata": "PaintBallMini-data.bin",
+      "flashsave": "PaintBallMini-save.bin",
+      "device": "ArduboyMini"
+    }
+  ]
+}
