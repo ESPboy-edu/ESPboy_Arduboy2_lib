@@ -78,6 +78,18 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **Paintball FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/paint-ball-v1-0)
+- **Oh Hell! FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/a-summer-as-hot-as-hell)
+- **Magnets FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/magnets-fx)
+- **Shroom Knight** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/shroom-knight)
+- **Bone Shakers** (GPLv3) by [James Howard](https://community.arduboy.com/t/bone-shakers-unofficial-game-jam-4)
+- **Defender FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/defender-fx-v1-0)
+- **Sensitive G** (unknown) [spinal](https://community.arduboy.com/t/game-sensitive)
+- **KUBE G** (GPL-3.0) [Onebit Matt](https://community.arduboy.com/t/kube-isometric-grayscale-game)
+- **Greenhorn Syndicate FX** (unknown) [Atom_Y](https://community.arduboy.com/t/fx-greenhorn-syndicate)
+- **Wolfenduino 3D FX** [James Howard](https://community.arduboy.com/t/wolfenduino-3d-fx/11597)
+- **Octopus** (unknown) [Roby](https://community.arduboy.com/t/octopus-game-watch)
+- **Arduban** (MIT) [Rob Prouse](https://community.arduboy.com/t/arduban-a-port-of-the-popular-sokoban-puzzle-game)
 - **Prince of Arabia FX** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/prince-of-arabia-fx/10926)
 - **Piracy - Avast Ye Landlubbers!** (MIT license) by [Prototype (Bert Veer)](https://community.arduboy.com/t/piracy-avast-ye-landlubbers/10692)
 - **Choplifter** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/choplifter-v1-1-1/4867)
