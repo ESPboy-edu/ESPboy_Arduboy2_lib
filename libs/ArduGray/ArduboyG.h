@@ -1,6 +1,6 @@
 #define USE_nbSPI //accelerates gfx but less hardware compatibility
 #define MAX_PALETTES 37
-#define DEFAULT_PALETTE 8
+#define DEFAULT_PALETTE 12
 
 /*
 
