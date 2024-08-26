@@ -10,14 +10,14 @@ This port of following Arduboy dev libraries (check "libs" folder):
 
 and separate Arduboy libs
 1. Arduboy playtune -> [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune)
-2. Arduboy ATNlib -> [ATMlib](https://github.com/ESPboy-edu/ESPboy_ATMlib)
+2. Arduboy ATMlib -> [ATMlib](https://github.com/ESPboy-edu/ESPboy_ATMlib)
 
 from [Arduboy project ](https://arduboy.com/ "Arduboy project ") intended to run on[ ESPboy project](https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun " ESPboy project").
 
-It supports ESPboy buttons, LED, sound (thanks to ported **"Arduboy PlayTones" library**) and TFT display.
+It supports ESPboy buttons, LED, sound and TFT display with y-axis scaling.
 
 This port compiles for ESP8266 ESPboy, existing Arduboy2-compatible games and apps. 
-Some of them can use it as a drop-in replacement for the original **"Arduboy2" library**, other games will run after the slight modifications.
+Some of them can use it as a drop-in replacement for the original **"Arduboy2" library**, other games will run after the slight source code modifications.
 
 # Setting up Arduino IDE
 1. Clone/download this repo somewhere on your computer.
