@@ -1,10 +1,24 @@
 # ESPboy (ESP8266 gadget) port of the Arduboy2 library
-This port of **"Arduboy2"** and **"Arduboy PlayTones"** libraries from [Arduboy project ](https://arduboy.com/ "Arduboy project ") intended to run on[ ESPboy project](https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun " ESPboy project").
 
-It supports ESPboy buttons, LED, sound (thanks to ported **"Arduboy PlayTones" library**) and TFT display.
+This port of following Arduboy dev libraries (check "libs" folder):
+1. Arduboy2
+2. Arduboy Tones
+3. Arduboy FX
+4. Arduboy Tones FX
+5. Arduboy Grayscale lib (Arduboy G)
+6. Arduboy SynthU
+7. FixedPointsArduino
+
+and separate Arduboy libs
+1. Arduboy playtune -> [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune)
+2. Arduboy ATMlib -> [ATMlib](https://github.com/ESPboy-edu/ESPboy_ATMlib)
+
+from [Arduboy project ](https://arduboy.com/ "Arduboy project ") intended to run on[ ESPboy project](https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun " ESPboy project").
+
+It supports ESPboy buttons, LED, sound and TFT display with y-axis scaling.
 
 This port compiles for ESP8266 ESPboy, existing Arduboy2-compatible games and apps. 
-Some of them can use it as a drop-in replacement for the original **"Arduboy2" library**, other games will run after the slight modifications.
+Some of them can use it as a drop-in replacement for the original **"Arduboy2" library**, other games will run after the slight source code modifications.
 
 # Setting up Arduino IDE
 1. Clone/download this repo somewhere on your computer.
@@ -15,12 +29,16 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 5. From within this new Arudboy2 folder, goto libs folder and remove "_master" from both directories.
     - ArduboyTones-master --> ArduboyTones
     - FixedPointsArduino-master --> FixedPointsArduino
-6. Copy the newly renamed "ArduboyTones" & "FixedPointsArduino" folder into the main Arduino\libraries folder.
+    - ArduboyFX-main --> ArduboyFX
+    - ArduboyTonesFX-master --> ArduboyTonesFX
+6. Copy the newly renamed libs into the main Arduino\libraries folder.
 7. Clone/download the [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune) and [ATMlib](https://github.com/ESPboy-edu/ESPboy_ATMlib)repo somewhere on your computer.
 8. Copy "ESPboy_Playtune" and "ATMlib" folders into Arduino\libraries folder.
     - If you had downloaded the code as zip file instead of git clone, then you will have ESPboy_Playtune_master folder instead of ESPboy_Playtune.
-9. Goto Arduino\libraries\Arudboy2\GAMES folder and try to compile any main .ino file to check if everything is working fine; example Karateka\Karateka.ino.
+9. If game uses ArduboyG.h or SynthU.hpp, rewrite them with the same files from this repo "libs..." folder
+11. Goto Arduino\libraries\Arudboy2\GAMES folder and try to compile any main .ino file to check if everything is working fine; example Karateka\Karateka.ino.
     - Note: the name of the game folder directory should be exactly same as the main .ino file; please rename the game folder directory as required, example "PPOT RoadTrip" --> "RoadTrip"
+12. FX-lib using is more complicated and i have to write it later :) ask me to force me to do this :)
 
 # Migrating the game from Arduboy to ESPboy
 1. replace the **"Arduboy2" library** and **"Arduboy tones" library** in your Arduino Studio libraries folder with these versions.
@@ -32,13 +50,13 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 - - add EEPROM.commit() after the last EEPROM.put(), EEPORM.write() of each blocks of code.
 - For **"ArduboyPlaytune"** use [ESPboy ported verstion](https://github.com/ESPboy-edu/ESPboy_Playtune) and be sure you don't use "tone();" function anywhere (standard "tone();" function catches an interrupt which is ArduboyPlaytune also uses causing a reset)
 - For **"ATMlib"** use [ESPboy ported version](https://github.com/ESPboy-edu/ESPboy_ATMlib) and be sure to rename the folder from "ESPboy_ATMlib" to "ATMlib"
-- you have to put delay(0); in all loops like while(1) {...}. EPS8266 needs time to process WiFi stack and other internal SDK interrupts and can do it during the pauses like delay(0). Otherwise it watchdog resets.
+- you have to put ESP.wdtFeed(); in all loops like while(1) {...}. EPS8266 needs time to process WiFi stack and other internal SDK interrupts and can do it during the pauses like delay(0). Otherwise it watchdog resets.
 - games that directly control the SPI or I2C bus to write to OLED display need much more work to port instead of the simple steps above.
 - font() array is used in TFT_eSPI display library so you have to change all "font" to "font_"
-- there is a problem with a "char" data (signed/unsigned problem). By default Arduino AVR "char" is signed and ESP "char" is unsigned. So you have to change all "char" to "signed char".
+- there is a problem with a "char" data (signed/unsigned problem). By default Arduino AVR "char" is signed and ESP "char" is unsigned. So you have to change all (where the variable is used not as char, but as int8_t) "char" to "signed char".
 - it's also better to change all "short" to "int16_t", "unsigned shot" to "uint16_t", "byte" to "uint8_t", "int" to "int16_t", "unsigned int" to "uint16_t", "long" to "int32_t", "unsigned long" to "uint32_t" 
 - in AVR compiler "bool function();" returns FALSE in case of function out without "return(value);", but in ESP8266 compiler it returns TRUE
-- abs(); function does not work properly with type "float" and "double". It rounds number to integer, so you have to implement your own "abs_();
+- abs(); function does not work properly with type "float" and "double". It rounds number to integer, so you have to implement your own "abs_();" function as "#define abs(x) ((x)<0 ? -(x) : (x))"
 - "%" operator. "a%b" with "b==0" will lead to different results on AVR and ESP architecture. AVR returns "a" and ESP will reset with Error code "Illegal instruction" because a%b uses devision and devision by 0 forbidden.
 
 # Advantages of ESPboy (ESP8266)
@@ -84,11 +102,11 @@ If authors against posting the code in this repository for the purpose of learni
 - **Shroom Knight** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/shroom-knight)
 - **Bone Shakers** (GPLv3) by [James Howard](https://community.arduboy.com/t/bone-shakers-unofficial-game-jam-4)
 - **Defender FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/defender-fx-v1-0)
-- **Sensitive G** (unknown) [spinal](https://community.arduboy.com/t/game-sensitive)
+- **Sensitive G** (???) [spinal](https://community.arduboy.com/t/game-sensitive)
 - **KUBE G** (GPL-3.0) [Onebit Matt](https://community.arduboy.com/t/kube-isometric-grayscale-game)
-- **Greenhorn Syndicate FX** (unknown) [Atom_Y](https://community.arduboy.com/t/fx-greenhorn-syndicate)
+- **Greenhorn Syndicate FX** (???) [Atom_Y](https://community.arduboy.com/t/fx-greenhorn-syndicate)
 - **Wolfenduino 3D FX** [James Howard](https://community.arduboy.com/t/wolfenduino-3d-fx/11597)
-- **Octopus** (unknown) [Roby](https://community.arduboy.com/t/octopus-game-watch)
+- **Octopus** (???) [Roby](https://community.arduboy.com/t/octopus-game-watch)
 - **Arduban** (MIT) [Rob Prouse](https://community.arduboy.com/t/arduban-a-port-of-the-popular-sokoban-puzzle-game)
 - **Prince of Arabia FX** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/prince-of-arabia-fx/10926)
 - **Piracy - Avast Ye Landlubbers!** (MIT license) by [Prototype (Bert Veer)](https://community.arduboy.com/t/piracy-avast-ye-landlubbers/10692)
@@ -96,7 +114,6 @@ If authors against posting the code in this repository for the purpose of learni
 - **1943: The Battle of Midway** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/1943-the-battle-of-midway/4070)
 - **ArduGolf - 18-Hole Mini Golf** (MPL-2.0 license) by [brow1067](https://community.arduboy.com/t/ardugolf-18-hole-mini-golf/10462)
 - **OBS - OneButtonShoter** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/obs-one-button-shooter/10445)
-- **CyberHack** (BSD-3-Clause) by [PPOT)](https://community.arduboy.com/t/cyberhack-v1-0/9639)
 - **ArduRogue** (MPL-2.0) by [tiberiusbrown](https://github.com/tiberiusbrown/ardurogue)
 - **Ardulem** (Open source)[Alban Nanty](https://github.com/Lswbanban/Ardulem)
 - **RickArdurous** (Open source) [Alban Nanty](https://github.com/Lswbanban/RickArdurous)
@@ -107,8 +124,8 @@ If authors against posting the code in this repository for the purpose of learni
 - **A-maze** (MIT) by [Alojz Jakob](https://community.arduboy.com/t/a-maze-a-game-of-random-generated-mazes/5856)
 - **Long Cat** (MIT) by [jaguile6, Dreamer2345](https://community.arduboy.com/t/longcat-puzzle-game/10331)
 - **Trials of Astarok** (Unknonw) by [press play on tape](https://github.com/Press-Play-On-Tape/TrialsOfAstarok)
-- **Number Puzzle** (Unknown) by [t-iwasaki](https://github.com/t-iwasaki/arduboy-NumberPuzzle)
-- **Horde and LATE** (Unknown) by [justcallmekoko](https://github.com/justcallmekoko/ArduboyTheHorde/releases/tag/v0.3)
+- **Number Puzzle** (???) by [t-iwasaki](https://github.com/t-iwasaki/arduboy-NumberPuzzle)
+- **Horde and LATE** (???) by [justcallmekoko](https://github.com/justcallmekoko/ArduboyTheHorde/releases/tag/v0.3)
 - **Onychophora** (MIT) by [renato-grottesi](https://community.arduboy.com/t/onychophora/8352)
 - **Cooties attack!** (???) by [Diego Tarragona](https://github.com/graziel666/Cooties-Attack)
 - **Crates 3D** (MIT) by [Brian](https://github.com/briansm-github/Crates3D)
@@ -117,7 +134,6 @@ If authors against posting the code in this repository for the purpose of learni
 - **Ardubrain** (Proprietary) by [renato-grottesi](https://github.com/renato-grottesi/arduboy/tree/master/ardubrain)
 - **Arduminer** (Proprietary) by [Bergasms](http://www.bergasms.com/arduboy/Arduminer.html)
 - **Asteroid Belt** (???) by [Xhaku Hans](https://gist.github.com/Gitonym/30718996c12ea4b918b0daf47d0409b3)
-- **Cascade Path** (???) by [arduboychris](https://github.com/arduboychris/CascadePath)
 - **Diamonds** (MIT) by [redbug - Miguel Vanhove](https://community.arduboy.com/t/diamonds-a-breakout-puzzle-game-1st-kyuran-game/3368)
 - **Crates** (MIT) by [jessemillar](https://community.arduboy.com/t/crates-pedal-to-the-metal-car-crime/6744)
 - **CascadePath** (???) by [Chris](https://community.arduboy.com/t/cascade-path-wagon-train/1258) 
