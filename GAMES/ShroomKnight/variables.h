@@ -89,12 +89,12 @@ int offsetY = 0;
 
 //////
 
-uint8_t playerDeathCountdown;
-uint8_t playerWinCountdown;
-uint8_t playerAttackCountdown;
-uint8_t screenChangeCountdown;
+uint16_t playerDeathCountdown;
+uint16_t playerWinCountdown;
+uint16_t playerAttackCountdown;
+uint16_t screenChangeCountdown;
 
-uint8_t shakeScreenCountdown;
+uint16_t shakeScreenCountdown;
 int screenPushX = 0;
 int screenPushY = 0;
 
@@ -152,9 +152,10 @@ int arrowScreenY[3];
 // General Variables
 
 bool startGame = false;
-uint8_t anim3 = 1;
-uint8_t animSlow3 = 1;
-uint8_t counter = 1;
+uint16_t anim3 = 1;
+uint16_t animSlow3 = 1;
+uint16_t animVerySlow3 = 1;
+uint16_t counter = 1;
 
 // Enemy Variables
 
@@ -184,7 +185,7 @@ int bossScreenY;
 
 // Bits
 
-uint8_t spawnBitCountdown;
+uint16_t spawnBitCountdown;
 uint8_t bitNumber = 5;
 bool bitLand;
 bool bitHit;
@@ -197,4 +198,3 @@ int bitX[6];
 int bitY[6];
 int bitScreenX[6];
 int bitScreenY[6];
-
