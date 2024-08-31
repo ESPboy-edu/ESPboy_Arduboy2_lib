@@ -58,7 +58,7 @@ int portalYvelo = 0; // speed of transition
 
 // Player Variables
 
-uint8_t lives = 3;
+uint16_t lives = 9;
 
 //int playerLocateX = 1840; // change when player actually moves 1920 - 80
 int playerLocateX; // change when player actually moves 1920 - 80

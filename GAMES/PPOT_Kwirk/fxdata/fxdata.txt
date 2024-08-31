@@ -1,0 +1,164 @@
+include "levels/levels.hpp"
+
+uint24_t Levels[] = {
+    Level_00,
+    Level_01,
+    Level_02,
+    Level_03,
+    Level_04,
+    Level_05,
+    Level_06,
+    Level_07,
+    Level_08,
+    Level_09,
+    Level_10,
+    Level_11,
+    Level_12,
+    Level_13,
+    Level_14,
+    Level_15,
+    Level_16,
+    Level_17,
+    Level_18,
+    Level_19,
+    Level_20,
+    Level_21,
+    Level_22,
+    Level_23,
+    Level_24,
+    Level_25,
+    Level_26,    
+    Level_27,    
+    Level_28,    
+    Level_29,    
+};
+
+namespace Music {
+   
+    raw_t Song_MainTheme = "music/Kwirk.bin"
+    raw_t SFX_Three_Inc = "music/SFX_ThreeInc.bin"
+    raw_t SFX_Three_Dec = "music/SFX_ThreeDec.bin"
+    raw_t SFX_Death = "music/SFX_Death.bin"
+    raw_t SFX_Victory = "music/SFX_Victory.bin"
+    raw_t SFX_XPGain = "music/SFX_XPGain.bin"
+    
+};
+namespace_end   
+
+namespace Images
+
+    include "images/Images.hpp"
+
+    uint24_t Rotator_1[] = {
+        Rotator_1_00,
+        Rotator_1_01,
+        Rotator_1_02,
+        Rotator_1_03,
+        Rotator_1_04,
+        Rotator_1_05,
+        Rotator_1_06,
+        Rotator_1_07,
+    };
+
+    uint24_t Rotator_2_MK[] = {
+        Rotator_2_00_MK,
+        Rotator_2_01_MK,
+        Rotator_2_02_MK,
+        Rotator_2_03_MK,
+        Rotator_2_04_MK,
+        Rotator_2_05_MK,
+        Rotator_2_06_MK,
+        Rotator_2_07_MK,
+    };
+
+    uint24_t Rotator_2_OW[] = {
+        Rotator_2_00_OW,
+        0,
+        Rotator_2_02_OW,
+        0,
+        Rotator_2_04_OW,
+        0,
+        Rotator_2_06_OW,
+        0,
+    };
+
+    uint24_t Rotator_3_MK[] = {
+        Rotator_3_00_MK,
+        Rotator_3_01_MK,
+        Rotator_3_02_MK,
+        Rotator_3_03_MK,
+        0,
+        Rotator_3_05_MK,
+        Rotator_3_06_MK,
+        Rotator_3_07_MK,
+    };
+
+    uint24_t Rotator_3_OW[] = {
+        Rotator_3_00_OW,
+        0,
+        Rotator_3_02_OW,
+        0,
+        Rotator_3_04_OW,
+        0,
+        Rotator_3_06_OW,
+        0,
+    };
+
+    uint24_t Rotator_5_OW[] = {
+        Rotator_5_00_OW,
+        0,
+        Rotator_5_02_OW,
+        0,
+        Rotator_5_04_OW,
+        0,
+        Rotator_5_06_OW,
+        0,
+    };
+
+    uint24_t Rotator_5_MK[] = {
+        0,
+        Rotator_5_01_MK,
+        0,
+        Rotator_5_03_MK,
+        0,
+        Rotator_5_05_MK,
+        0,
+        Rotator_5_07_MK,
+    };
+
+    uint24_t Tile_04[] = {
+//        Tile_04_01,
+        Tile_04_02,
+        Tile_04_03,
+        Tile_04_04,
+        Tile_04_05,
+    };
+
+    uint24_t Tile_05[] = {
+//        Tile_05_01,
+        Tile_05_02,
+        Tile_05_03,
+        Tile_05_04,
+        Tile_05_05,
+    };
+
+    uint24_t Tile_10[] = {
+//        Tile_10_01,
+        Tile_10_02,
+        Tile_10_03,
+        Tile_10_04,
+        Tile_10_05,
+    };
+
+    uint24_t Blocks_XX_01[] = {
+        Block_02_01,
+        Block_03_01,
+        Block_04_01,
+        Block_05_01,
+    };
+
+namespace_end
+
+savesection  // Anything below here will be stored in the save block
+
+uint16_t 0xFFFF // Save state  end marker
