@@ -58,6 +58,17 @@ Some of them can use it as a drop-in replacement for the original **"Arduboy2" l
 - in AVR compiler "bool function();" returns FALSE in case of function out without "return(value);", but in ESP8266 compiler it returns TRUE
 - abs(); function does not work properly with type "float" and "double". It rounds number to integer, so you have to implement your own "abs_();" function as "#define abs(x) ((x)<0 ? -(x) : (x))"
 - "%" operator. "a%b" with "b==0" will lead to different results on AVR and ESP architecture. AVR returns "a" and ESP will reset with Error code "Illegal instruction" because a%b uses devision and devision by 0 forbidden.
+- AVR allows ‘return’ in ‘void’ functions and absence of ‘return’ in non-void functions. ESP compiler does not allow this.
+- AVR compiler Arduino IDE allows division by 0. i.e. the expression 
+```cpp
+uint8_t a, b, c;
+a = 4; 
+b = 0;
+c = a / b;
+```
+will be compiled and will work without errors.
+ESP compiler Arduino IDE will also compile such code, but ESP will reboot with the error ‘Devision by zero exception’ so it's a good way to avoid these situations
+
 
 # Advantages of ESPboy (ESP8266)
 - 8 keys
