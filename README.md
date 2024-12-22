@@ -107,6 +107,7 @@ ESP compiler Arduino IDE will also compile such code, but ESP will reboot with t
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **Factor 9** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/factor-9)
 - **Big wave Dave G** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/big-wave-dave)
 - **Rhombus FX G** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/rhombus-grayscale-fx)
 - **Paintball FX G** (BSD-3-Clause) by [PPOT](https://community.arduboy.com/t/paint-ball-v1-0)
