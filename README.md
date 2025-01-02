@@ -107,6 +107,13 @@ ESP compiler Arduino IDE will also compile such code, but ESP will reboot with t
 
 If authors against posting the code in this repository for the purpose of learning programming and fun, please let me know, I'll remove it.
 
+- **Suit Shooter** (Unknown) by [crait](https://community.arduboy.com/t/suit-shooter-a-falling-block-shooter)
+- **Train Dodge** (Unknown) by [crait](https://community.arduboy.com/t/train-dodge-single-button-reflex-game)
+- **Roo Run** (Unknown) by [crait](https://community.arduboy.com/t/roo-run-a-kangaroo-escape-story)
+- **KPA qiest** (Unknown) by [crait](https://community.arduboy.com/t/kpa-quest-a-new-mini-puzzle-game)
+- **Insane Skulls** (Unknown) by [crait](https://community.arduboy.com/t/insane-skulls-game-jam-5)
+- **ChickenLauncher** (Unknown) by [crait]
+- **Rogue boy** (Unknown) by [Dreamer2345](https://community.arduboy.com/t/earlyrelease-rogueboy)
 - **UAPs-Must-DIE** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/isometric-shooter-uaps-must-die)
 - **Factor 9** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/factor-9)
 - **Big wave Dave G** (GPL-3.0)  by [Onebit Matt](https://community.arduboy.com/t/big-wave-dave)
