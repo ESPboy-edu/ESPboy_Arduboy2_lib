@@ -1,0 +1,7 @@
+namespace Constants {
+
+    int8_t Stance_XYOffsetsFX[] = {;
+
+    };
+
+namespace_end

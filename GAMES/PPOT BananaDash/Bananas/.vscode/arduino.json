@@ -1,0 +1,7 @@
+{
+    "board": "arduboy-homemade:avr:arduboy-fx",
+    "sketch": "Bananas.ino",
+    "port": "/dev/cu.usbmodem14301",
+    "output": "../../build",
+    "configuration": "core=arduboy-core,boot=cathy3k"
+}

@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "__node_handle": "cpp",
+        "algorithm": "cpp",
+        "bitset": "cpp",
+        "memory": "cpp",
+        "optional": "cpp",
+        "initializer_list": "cpp",
+        "iterator": "cpp",
+        "__locale": "cpp",
+        "ios": "cpp"
+    }
+}

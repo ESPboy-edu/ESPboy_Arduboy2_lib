@@ -1,0 +1,27 @@
+namespace Music {
+   
+    raw_t Song_MainTheme = "music/MainTheme.bin"
+
+    raw_t SFX_Death = "music/SFX_Death.bin"
+    raw_t SFX_Victory = "music/SFX_Victory.bin"
+    raw_t SFX_LandHard = "music/SFX_LandHard.bin"
+    raw_t SFX_PlayerBlip = "music/SFX_PlayerBlip.bin"
+    raw_t SFX_EnemyBlip = "music/SFX_EnemyBlip.bin"
+    raw_t SFX_PickUpItem = "music/SFX_PickUpItem.bin"
+    raw_t SFX_XPGain = "music/SFX_XPGain.bin"
+    raw_t SFX_Glint = "music/SFX_Glint.bin"
+
+    uint24_t Songs[] = { Song_MainTheme };
+
+    uint24_t SFXs[] =  { SFX_Death, 
+                         SFX_Victory,
+                         SFX_LandHard,
+                         SFX_PlayerBlip,
+                         SFX_EnemyBlip,
+                         SFX_PickUpItem,
+                         SFX_XPGain,
+                         SFX_Glint,
+                       };
+
+
+namespace_end  

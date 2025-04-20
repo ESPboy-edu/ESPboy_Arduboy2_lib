@@ -1,0 +1,6 @@
+{
+    "board": "arduboy-homemade:avr:8bitcadexlup",
+    "sketch": "Kong/KongII.ino",
+    "output": "../build",
+    "configuration": "core=arduboy-core,boot=cathy3k,contrast=normal"
+}

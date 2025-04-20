@@ -1,0 +1,10 @@
+namespace Images {
+
+    // PPoT Splash Screen ..
+
+    //image_t PPOT                    = "../images/PPOT.png"
+    include "images/Images.hpp"
+
+}
+
+namespace_end
