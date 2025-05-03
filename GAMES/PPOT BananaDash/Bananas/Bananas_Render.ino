@@ -5,9 +5,9 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
 
     Player &player = world.getPlayer();
 
-    SpritesU::drawOverwriteFX((world.getBackground() / 2) - 128 + world.getXOffset(), 0, 128, 32, Images::Background, currentPlane);
-    SpritesU::drawOverwriteFX((world.getBackground() / 2) + world.getXOffset(), 0, 128, 32, Images::Background, currentPlane);
-    SpritesU::drawOverwriteFX((world.getBackground() / 2) + 128 + world.getXOffset(), 0, 128, 32, Images::Background, currentPlane);
+    SpritesU::drawOverwriteFX((world.getBackground() / 2) - 128, 0, 128, 32, Images::Background, currentPlane);
+    SpritesU::drawOverwriteFX((world.getBackground() / 2), 0, 128, 32, Images::Background, currentPlane);
+    SpritesU::drawOverwriteFX((world.getBackground() / 2) + 128, 0, 128, 32, Images::Background, currentPlane);
 
 
 
@@ -18,7 +18,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
     for (uint8_t i = 4; i < 8; i++) {    
 
         uint24_t treeIdx = FX::readIndexedUInt24(Images::TreeImages, i);
-        SpritesU::drawPlusMaskFX(world.getTree(i) + world.getXOffset(), 15, treeIdx, currentPlane);
+        SpritesU::drawPlusMaskFX(world.getTree(i), 15, treeIdx, currentPlane);
 
     }
 
@@ -26,7 +26,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
     for (uint8_t i = 0; i < 4; i++) {    
 
         uint24_t treeIdx = FX::readIndexedUInt24(Images::TreeImages, i);
-        SpritesU::drawPlusMaskFX(world.getTree(i) + world.getXOffset(), 14, treeIdx, currentPlane);
+        SpritesU::drawPlusMaskFX(world.getTree(i), 14, treeIdx, currentPlane);
 
     }
 
@@ -36,7 +36,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
     //
     // Render level ..
     
-    int16_t xMin = (- 55 - world.getForeground() - world.getXOffset()) / 16;
+    int16_t xMin = (- 55 - world.getForeground()) / 16;
     int16_t xMax = xMin + 9;
 
     #ifdef DEBUG_RENDER
@@ -47,21 +47,20 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
 
     for (int16_t i = xMin - 1; i < xMax; i++) {    
 
-        // uint8_t levelIdx = FX::readIndexedUInt8(Level::Level, i);
         uint8_t levelIdx = getTile_ByIdx(i);
 
         switch (levelIdx) {
         
             case 0 ... 19:
-                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground() + world.getXOffset(), 34, 16, 24, Images::LowerOnly, (levelIdx * 3) + currentPlane);
+                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground(), 34, 16, 24, Images::LowerOnly, (levelIdx * 3) + currentPlane);
                 break;
 
             case 20 ... 59:
-                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground() + world.getXOffset(), 18, 16, 40, Images::Both, ((levelIdx - 20) * 3) + currentPlane);
+                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground(), 18, 16, 40, Images::Both, ((levelIdx - 20) * 3) + currentPlane);
                 break;
 
             case 60 ... 79:
-                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground() + world.getXOffset(), 10, 16, 48, Images::UpperOnly, ((levelIdx - 60) * 3) + currentPlane);
+                SpritesU::drawPlusMaskFX(55 + (i * 16) + world.getForeground(), 10, 16, 48, Images::UpperOnly, ((levelIdx - 60) * 3) + currentPlane);
                 break;
 
         }
@@ -75,30 +74,48 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
 
     if (getReadyCount == -1) {
         
-        for (uint8_t i = 0; i < Constants::Item_Count; i++) {    
+        for (uint8_t i = 2; i < Constants::Item_Count; i++) {    
 
             Item &item = world.getItem(i);
 
-            int16_t x = 55 + item.getX() + world.getForeground() + world.getXOffset();
+            int16_t x = 55 + item.getX() + world.getForeground();
             if (x < -32 || x > 128) continue;
 
 
             if (item.getItemType() == ItemType::Banana) {
 
-                SpritesU::drawPlusMaskFX(55 + item.getX() + world.getForeground() + world.getXOffset(), item.getY(), 16, 16, Images::Banana, currentPlane);
+                SpritesU::drawPlusMaskFX(55 + item.getX() + world.getForeground(), item.getY(), 16, 16, Images::Banana, currentPlane);
 
             }
 
             if (item.getItemType() == ItemType::Heart) {
 
-                SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground() + world.getXOffset(), item.getY(), 9, 8, Images::Heart, currentPlane);
+                SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground(), item.getY(), 9, 8, Images::Heart, currentPlane);
 
             }
 
             if (item.getItemType() == ItemType::Fire) {
 
                 uint8_t frame = (frameCount / 4) % 6;
-                SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground() + world.getXOffset(), item.getY(), 16, 16, Images::Fire, (frame * 3) + currentPlane);
+                SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground(), item.getY(), 16, 16, Images::Fire, (frame * 3) + currentPlane);
+
+            }
+
+            if (item.getItemType() == ItemType::Fruit) {
+
+                uint8_t frame = item.getData();
+                SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground(), item.getY(), 16, 16, Images::Fruits, (frame * 3) + currentPlane);
+
+            }
+
+            if (item.getItemType() >= ItemType::Bananarang_0 && item.getItemType() <= ItemType::Bananarang_3) {
+
+                if (item.getY() > -16 && item.getY() < 64) {
+
+                    uint8_t frame = item.getData();
+                    SpritesU::drawPlusMaskFX(58 + item.getX() + world.getForeground(), item.getY(), 16, 16, Images::SpinningBananas, (frame * 3) + currentPlane);
+
+                }
 
             }
 
@@ -113,7 +130,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
 
             Enemy &enemy = world.getEnemy(i);
 
-            int16_t x = 55 + enemy.getX() + world.getForeground() + world.getXOffset();
+            int16_t x = 55 + enemy.getX() + world.getForeground();
 
             if (x < -32 || x > 128) continue;
 
@@ -123,7 +140,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
 
                 if (enemy.getCounter() == 0 || ((enemy.getCounter() / 8) % 2) == 0) { 
                     SpritesU::drawPlusMaskFX(x, enemy.getY(), 16, 16, Images::Barrel, (imageIdx * 3) + currentPlane);
-                    // gEnemyRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                    // gEnemyRect = enemy.getRect(world.getForeground());
                 }
 
             }
@@ -133,7 +150,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
                 uint24_t imageIdx = getStanceImg(enemy.getStance());
                 SpritesU::drawPlusMaskFX(x, enemy.getY(), 14, 16, Images::Bird, (imageIdx * 3) + currentPlane);
 
-                // gEnemyRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                // gEnemyRect = enemy.getRect(world.getForeground());
 
                 // if (gEnemyRect.x != 0 && currentPlane == 2) DEBUG_BREAK
 
@@ -144,7 +161,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
                 uint24_t imageIdx = getStanceImg(enemy.getStance());
                 SpritesU::drawPlusMaskFX(x, enemy.getY(), 16, 16, Images::Spider, (imageIdx * 3) + currentPlane);
 
-                // gEnemyRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                // gEnemyRect = enemy.getRect(world.getForeground());
                 // if (gEnemyRect.x != 0 && currentPlane == 2) DEBUG_BREAK
 
             }
@@ -165,7 +182,7 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
         if (healthFlash == false || (healthCounter / 64) % 2 == 0) {
 
             SpritesU::drawPlusMaskFX(1, 1, 35, 8, Images::HUD_Health, (player.getHealth() * 3) + currentPlane);
-            SpritesU::drawPlusMaskFX(54 + world.getXOffset(), player.getY(), 16, 16, Images::Player, (player.getImageIdx() * 3) + currentPlane);
+            SpritesU::drawPlusMaskFX(54, player.getY(), 16, 16, Images::Player, (player.getImageIdx() * 3) + currentPlane);
 
         }
         else {
@@ -177,11 +194,10 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
     }
     else {
 
-        SpritesU::drawPlusMaskFX(54 + world.getXOffset(), player.getY(), 16, 16, Images::Player, (player.getImageIdx() * 3) + currentPlane);
+        SpritesU::drawPlusMaskFX(54, player.getY(), 16, 16, Images::Player, (player.getImageIdx() * 3) + currentPlane);
         SpritesU::drawPlusMaskFX(1, 1, 35, 8, Images::HUD_Banana, (world.getBananas() * 3) + currentPlane);
 
     }
-
 
     if (timeCounter > 0) {
 
@@ -215,7 +231,17 @@ void playGame_Render(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t curr
     if (item.getFrame() < Constants::Puff_Max) {
 
         uint8_t frame = (item.getFrame() / 8) + item.getData();
-        SpritesU::drawPlusMaskFX(55 + item.getX() + world.getForeground() + world.getXOffset(), item.getY(), Images::Puff, (frame * 3) +  currentPlane);
+        SpritesU::drawPlusMaskFX(55 + item.getX() + world.getForeground(), item.getY(), Images::Puff, (frame * 3) +  currentPlane);
+
+    }
+
+
+    Item &item1 = world.getItem(1);
+
+    if (item1.getFrame() < Constants::Puff_Max) {
+
+        uint8_t frame = (item1.getFrame() / 8) + item.getData();
+        SpritesU::drawPlusMaskFX(55 + item1.getX() + world.getForeground(), item1.getY(), Images::Puff, (frame * 3) +  currentPlane);
 
     }
 

@@ -46,6 +46,7 @@ void playGame_Init() {
     world.setGameState(GameState::PlayGame);
     world.setTime(99 * 16);
     world.setBananas(0);
+    world.setForeground(-64);
 
     gameOverCount = -1;
     timesUpCount = -1;
@@ -64,57 +65,74 @@ void playGame_Init() {
     }
 
 
-
-
     world.getItem(0).setItemType(ItemType::Puff);
     world.getItem(0).setY(16);
     world.getItem(0).setX(-800);
 
-    launchBanana(world.getItem(1));
+    world.getItem(1).setItemType(ItemType::Puff);
+    world.getItem(1).setY(16);
+    world.getItem(1).setX(-800);
+
     launchBanana(world.getItem(2));
     launchBanana(world.getItem(3));
     launchBanana(world.getItem(4));
     launchBanana(world.getItem(5));
     launchBanana(world.getItem(6));
+    launchBanana(world.getItem(7));
 
-    launchHeart(world.getItem(10));
     launchHeart(world.getItem(11));
-
-    world.getItem(7).setItemType(ItemType::Fire);
-    world.getItem(7).setY(42);
-    world.getItem(7).setX(208);
+    launchHeart(world.getItem(12));
 
     world.getItem(8).setItemType(ItemType::Fire);
     world.getItem(8).setY(42);
-    world.getItem(8).setX(1008);
+    world.getItem(8).setX(208);
 
     world.getItem(9).setItemType(ItemType::Fire);
     world.getItem(9).setY(42);
-    world.getItem(9).setX(1264);
+    world.getItem(9).setX(1008);
 
     world.getItem(10).setItemType(ItemType::Fire);
     world.getItem(10).setY(42);
-    world.getItem(10).setX(1600);
+    world.getItem(10).setX(1264);
 
     world.getItem(11).setItemType(ItemType::Fire);
     world.getItem(11).setY(42);
-    world.getItem(11).setX(1712);
+    world.getItem(11).setX(1600);
 
     world.getItem(12).setItemType(ItemType::Fire);
     world.getItem(12).setY(42);
-    world.getItem(12).setX(1800);
+    world.getItem(12).setX(1712);
 
     world.getItem(13).setItemType(ItemType::Fire);
     world.getItem(13).setY(42);
-    world.getItem(13).setX(2032);
+    world.getItem(13).setX(1792);
 
     world.getItem(14).setItemType(ItemType::Fire);
     world.getItem(14).setY(42);
-    world.getItem(14).setX(2224);
+    world.getItem(14).setX(2032);
 
-    launchHeart(world.getItem(15));
+    world.getItem(15).setItemType(ItemType::Fire);
+    world.getItem(15).setY(42);
+    world.getItem(15).setX(2224);
+
     launchHeart(world.getItem(16));
+    launchHeart(world.getItem(17));
+    launchFruit(world.getItem(18));
 
+    // world.getItem(18).setItemType(ItemType::Fruit);
+    // world.getItem(18).setY(44);
+    // world.getItem(18).setX(96);
+    // world.getItem(18).setCounter(0);
+    // world.getItem(18).setData(a.randomLFSR(0,4));
+
+    world.getItem(19).setItemType(ItemType::Bananarang_0);
+    world.getItem(19).setY(-20);
+    world.getItem(20).setItemType(ItemType::Bananarang_1);
+    world.getItem(20).setY(-20);
+    world.getItem(21).setItemType(ItemType::Bananarang_2);
+    world.getItem(21).setY(80);
+    world.getItem(22).setItemType(ItemType::Bananarang_3);
+    world.getItem(22).setY(80);
 
     launchBarrel(world.getEnemy(0));
     launchBarrel(world.getEnemy(1));
@@ -154,8 +172,6 @@ void playGame_Init() {
     world.getEnemy(i).pushSequence(Stance::Enemy_Flying_RH_00, Stance::Enemy_Flying_RH_19);
     world.getEnemy(i).setCounter(0);
 
-
-    world.setForeground(-64);
     updateDirectionCounter(-1);
     frameCount = 0;
 
@@ -167,7 +183,7 @@ void updateDirectionCounter(int16_t delay) {
     directionCounter_Left = 0;
     directionCounter_Right = 0;
     
-    for (uint8_t i = 0; i < Constants::Item_Count; i++) {
+    for (uint8_t i = 2; i < Constants::Item_Count - 4; i++) {
     
         Item &item = world.getItem(i);
 
@@ -204,7 +220,27 @@ void playGame_Update() {
     uint8_t tileR = getTile(1);
     uint8_t tileR2 = getTile(2);
 
+
+
     if (frameCount % 3 == 0 && getReadyCount == -1) {
+
+
+        // Update spinning bananas ..
+
+        if (gameOverCount < 0 && timesUpCount < 0) {
+
+            for (uint8_t i = Constants::Item_Count - 4; i < Constants::Item_Count; i++) {
+
+                Item &item = world.getItem(i);
+                ItemType itemType = item.getItemType();
+                item.update();
+
+            }
+
+        }
+
+
+        // Handle player controls ..
 
         if (player.isEmpty()) {
 
@@ -573,23 +609,23 @@ void playGame_Update() {
         }
 
 
+
+        world.update();
+
+
         // Has the player collided with an item?
 
-        Rect playerRect = player.getRect(world.getXOffset());
-        gPlayerRect = playerRect;
+        Rect playerRect = player.getRect();
 
-        for (uint8_t i = 0; i < Constants::Item_Count; i++) {
+        for (uint8_t i = 2; i < Constants::Item_Count - 4; i++) {
         
             Item &item = world.getItem(i);
-
-            
-            // Can we skip this one?
 
             switch (item.getItemType()) {
             
                 case ItemType::Banana:
                     {
-                        Rect bananaRect = item.getRect(item.getX() + world.getForeground() + world.getXOffset());
+                        Rect bananaRect = item.getRect(item.getX() + world.getForeground());
 
                         if (item.getCounter() == 0 && collide(playerRect, bananaRect)) {
 
@@ -602,15 +638,12 @@ void playGame_Update() {
 
                         }
 
-                        // gPlayerRect = playerRect;
-                        // gBananaRect = bananaRect;
-
                     }
                     break;
 
                 case ItemType::Heart:
                     {
-                        Rect heartRect = item.getRect(item.getX() + world.getForeground() + world.getXOffset());
+                        Rect heartRect = item.getRect(item.getX() + world.getForeground());
 
                         if (item.getCounter() == 0 && collide(playerRect, heartRect)) {
 
@@ -624,9 +657,6 @@ void playGame_Update() {
 
                         }
 
-                        // gPlayerRect = playerRect;
-                        // gEnemyRect = heartRect;
-
                     }
                     break;
 
@@ -635,7 +665,7 @@ void playGame_Update() {
                     {
                         if (healthCounter == 0) {
                             
-                            Rect fireRect = item.getRect(item.getX() + world.getForeground() + world.getXOffset());
+                            Rect fireRect = item.getRect(item.getX() + world.getForeground());
 
                             if (collide(playerRect, fireRect)) {
 
@@ -648,14 +678,128 @@ void playGame_Update() {
 
                             }
 
-                            // gPlayerRect = playerRect;
-                            // gEnemyRect = fireRect;
+                        }
+
+                    }
+                    break;
+
+                case ItemType::Fruit:
+                    {
+                        Rect fruitRect = item.getRect(item.getX() + world.getForeground());
+
+                        if (item.getCounter() == 0 && collide(playerRect, fruitRect)) {
+
+                            item.setCounter(5);
+                            launchPuff(PuffType::Fruit, item);
+                            playSFX(MusicSFX::SFX_XPGain);
+                            
+                            Item &item1 = world.getItem(Constants::Item_Count - 4);
+                            item1.setX(item.getX());
+                            item1.setY(item.getY());
+                            item1.setData(a.randomLFSR(0, 8));
+                            
+                            Item &item2 = world.getItem(Constants::Item_Count - 3);
+                            item2.setX(item.getX());
+                            item2.setY(item.getY());
+                            item2.setData(a.randomLFSR(0, 8));
+                            
+                            Item &item3 = world.getItem(Constants::Item_Count - 2);
+                            item3.setX(item.getX());
+                            item3.setY(item.getY());
+                            item3.setData(a.randomLFSR(0, 8));
+                            
+                            Item &item4 = world.getItem(Constants::Item_Count - 1);
+                            item4.setX(item.getX());
+                            item4.setY(item.getY());
+                            item4.setData(a.randomLFSR(0, 8));
 
                         }
 
                     }
                     break;
 
+            }
+
+        }
+
+
+        // Has a spinning banana hit anything?
+
+        for (uint8_t i = Constants::Item_Count - 4; i < Constants::Item_Count; i++) {
+ 
+            Item &item = world.getItem(i);
+
+            if (item.getY() >= -16 && item.getY() < 64) {
+
+                Rect spiningBananaRect = item.getRect(item.getX() + world.getForeground());
+
+                for (uint8_t j = 0; j < Constants::Enemy_Count; j++) {
+
+                    Enemy &enemy = world.getEnemy(j);
+                    Rect enemyRect = enemy.getRect(world.getForeground());
+
+                    if (collide(enemyRect, spiningBananaRect)) {
+
+                        #ifdef DEBUG_SPINNING_BANANAS
+                        DEBUG_PRINT((uint8_t)enemy.getEntityType());
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(spiningBananaRect.x);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(spiningBananaRect.y);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(spiningBananaRect.width);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(spiningBananaRect.height);
+                        DEBUG_PRINT(" - ");
+                        DEBUG_PRINT(enemyRect.x);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(enemyRect.y);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINT(enemyRect.width);
+                        DEBUG_PRINT(" ");
+                        DEBUG_PRINTLN(enemyRect.height);
+                        DEBUG_BREAK;
+                        #endif 
+                        
+                        launchPuff(PuffType::Enemy, enemy);
+
+                        switch (enemy.getEntityType()) {
+                        
+                            case EntityType::Barrel:
+
+                                launchBarrel(enemy);
+                                break;
+                        
+                            case EntityType::Bird:
+
+                                switch (enemy.getStance()) {
+
+                                    case Stance::Enemy_Flying_LH_00 ... Stance::Enemy_Flying_LH_19:
+
+                                        launchBird_LH(enemy, true);                                    
+                                        break;
+
+                                    case Stance::Enemy_Flying_RH_00 ... Stance::Enemy_Flying_RH_19:
+
+                                        launchBird_RH(enemy, true);   
+                                        break;
+
+                                }
+
+                                break;
+                        
+                            case EntityType::Spider:
+
+                                launchSpider(enemy);
+                                break;
+
+
+                        }
+
+                    }
+
+                }
+            
             }
 
         }
@@ -675,7 +819,7 @@ void playGame_Update() {
                         
                         if (healthCounter == 0) {
 
-                            Rect barrelRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                            Rect barrelRect = enemy.getRect(world.getForeground());
 
                             if (collide(playerRect, barrelRect)) {
 
@@ -687,9 +831,6 @@ void playGame_Update() {
 
                             }
 
-                            // gPlayerRect = playerRect;
-                            // gBananaRect = bananaRect;
-
                         }
                         break;
 
@@ -697,7 +838,7 @@ void playGame_Update() {
                         
                         if (healthCounter == 0) {
 
-                            Rect birdRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                            Rect birdRect = enemy.getRect(world.getForeground());
 
                             if (collide(playerRect, birdRect)) {
 
@@ -709,9 +850,6 @@ void playGame_Update() {
 
                             }
 
-                            // gPlayerRect = playerRect;
-                            // gBananaRect = bananaRect;
-
                         }
                         break;
                 
@@ -719,7 +857,7 @@ void playGame_Update() {
 
                         if (healthCounter == 0) {
 
-                            Rect spiderRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                            Rect spiderRect = enemy.getRect(world.getForeground());
 
                             if (enemy.getStance() < Stance::Enemy_Spider_Die_00 && collide(playerRect, spiderRect)) {
 
@@ -747,9 +885,6 @@ void playGame_Update() {
                                         break;
 
                                 }
-        
-                                gPlayerRect = playerRect;
-                                gEnemyRect = spiderRect;
 
                             }
 
@@ -774,7 +909,7 @@ void playGame_Update() {
 
     if (gameOverCount < 0 && timesUpCount < 0) {
 
-        for (uint8_t i = 0; i < Constants::Item_Count; i++) {
+        for (uint8_t i = 0; i < Constants::Item_Count - 4; i++) {
 
             Item &item = world.getItem(i);
             ItemType itemType = item.getItemType();
@@ -786,20 +921,20 @@ void playGame_Update() {
             switch (itemUpdate) {
             
                 case ItemUpdate::LaunchBanana:
-                    {
 
-                        launchBanana(item);
-                        updateDirectionCounter(340);
+                    launchBanana(item);
+                    updateDirectionCounter(340);
 
-                    }
+                    break;
+            
+                case ItemUpdate::LaunchFruit:
 
+                    launchFruit(item);
                     break;
 
             }
 
         }
-
-        world.update();
 
     }
 

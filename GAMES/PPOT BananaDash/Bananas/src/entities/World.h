@@ -22,7 +22,6 @@ struct World {
         int16_t middleground = 0;
         int16_t foreground = 0;
         int16_t tree[8];
-        int8_t xOffset = 0;
         uint16_t time;
         uint16_t bananas;
 
@@ -38,7 +37,6 @@ struct World {
         int16_t getBackground()                         { return this->background; }
         int16_t getMiddleground()                       { return this->middleground; }
         int16_t getForeground()                         { return this->foreground; }
-        int8_t getXOffset()                             { return 0; } //this->xOffset; }
 
         void setGameState(GameState val)                { this->gameState = val; }
         void setPrevGameState(GameState val)            { this->prevGameState = val; }
@@ -47,7 +45,6 @@ struct World {
         void setBackground(int16_t val)                 { this->background = val; }
         void setMiddleground(int16_t val)               { this->middleground = val; }
         void setForeground(int16_t val)                 { this->foreground = val; }
-        void setXOffset(int16_t val)                    { this->xOffset = val; }
 
 
         int16_t getTree(uint8_t idx) { return this->tree[idx]; }
@@ -77,7 +74,7 @@ struct World {
         void incForeground(int8_t val) {
             
             this->foreground = this->foreground + val;
-            this->player.setVelocityX(val);
+            this->player.incVelocityX(val);
             
         }
         
@@ -136,11 +133,6 @@ struct World {
 
         bool incMiddleground(int8_t val) {
 
-            // if (this->middleground + val <= -496) {
-            //     this->middleground = -496;
-            //     return false;
-            // }
-
             for (uint8_t i = 0; i <= 3; i++) {
                 this->incTree(i, val);
             }
@@ -150,61 +142,7 @@ struct World {
 
         }
 
-        void update() {
-
-            switch (this->player.getVelocityX()) {
-
-                case -999 ... -1:
-
-                    switch (this->xOffset) {
-
-                        case -31 ... 0:
-                            this->xOffset--;
-                            break;
-
-                        case 1 ... 31:
-                            this->xOffset++;
-                            break;
-
-                    }
-
-                    break;
-
-                case 0:
-
-                    switch (this->xOffset) {
-
-                        case -32 ... -1:
-                            this->xOffset++;
-                            break;
-
-                        case 1 ... 32:
-                            this->xOffset--;
-                            break;
-
-                    }
-
-                    break;
-
-                case 1 ... 999:
-
-                    switch (this->xOffset) {
-
-                        case -32 ... 0:
-                            this->xOffset++;
-                            break;
-
-                        case 1 ... 32:
-                            this->xOffset--;
-                            break;
-
-                    }
-
-                    break;
-
-            }
-
-        }
+        void update() { }
 
 
         bool canClimbUp(uint8_t tile) {

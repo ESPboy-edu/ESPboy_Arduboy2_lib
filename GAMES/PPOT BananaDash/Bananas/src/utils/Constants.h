@@ -15,7 +15,7 @@ namespace Constants {
 	constexpr uint8_t StackSize_Player = 20;
 	constexpr uint8_t StackSize_Enemy = 20;
 	
-	constexpr uint8_t Item_Count = 18;
+	constexpr uint8_t Item_Count = 23;
 	constexpr uint8_t Enemy_Count = 8;
 	constexpr uint16_t Health_Counter_Max = 640;
 	constexpr uint16_t Time_Counter_Max = 320;

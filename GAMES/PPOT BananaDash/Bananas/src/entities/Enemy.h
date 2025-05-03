@@ -87,8 +87,8 @@ class Enemy {
 
                             rect.x = this->getX() + 61 + worldOffset;
                             rect.y = this->getY() + 6;
-                            rect.width = 5;
-                            rect.height = 4;
+                            rect.width = 6;
+                            rect.height = 5;
 
                             break;
 
@@ -96,8 +96,8 @@ class Enemy {
 
                             rect.x = this->getX() + 57 + worldOffset;
                             rect.y = this->getY() + 6;
-                            rect.width = 5;
-                            rect.height = 4;
+                            rect.width = 6;
+                            rect.height = 5;
 
                             break;
 

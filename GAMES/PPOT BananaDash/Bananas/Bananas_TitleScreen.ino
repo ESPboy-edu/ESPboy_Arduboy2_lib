@@ -1,6 +1,4 @@
 #include <Arduboy2.h>
-#include "src/utils/SynthU.hpp"
-
 
 void titleScreen_Init() {
 

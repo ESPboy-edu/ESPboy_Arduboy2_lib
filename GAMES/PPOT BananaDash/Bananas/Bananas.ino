@@ -14,7 +14,6 @@
 #include "src/entities/Entities.h"
 #include "src/utils/Stack.h"
 
-
 #define SPRITESU_OVERWRITE
 #define SPRITESU_PLUSMASK
 #define SPRITESU_RECT
@@ -49,8 +48,8 @@ int8_t gameOverCount = -1;
 int8_t timesUpCount = -1;
 int8_t getReadyCount = -1;
 
-Rect gPlayerRect;
-Rect gEnemyRect;
+// Rect gPlayerRect;
+// Rect gEnemyRect;
 
 void setup(void) {
 

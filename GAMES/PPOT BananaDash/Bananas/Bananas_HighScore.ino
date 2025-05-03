@@ -6,7 +6,6 @@ uint8_t highScore_Char = 0;
 
 void highScore_Init() {
 
-world.setBananas(12);
     world.setGameState(GameState::HighScore_Edit);
 
     highScore_Entry = 0;
@@ -118,20 +117,20 @@ void highScore_Update() {
 void highScore_RenderScore(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t y) {
 
     uint16_t score = cookie.highScore_Values[y];
-    SpritesU::drawOverwriteFX(107, 19 + (y * 9), Images::Font_Numbers, ((score / 100) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(107, 19 + (y * 9), Images::Font_Numbers, ((score / 100) * 3) + currentPlane);
     score = score % 100;
-    SpritesU::drawOverwriteFX(113, 19 + (y * 9), Images::Font_Numbers, ((score / 10) * 3) + currentPlane);
-    SpritesU::drawOverwriteFX(119, 19 + (y * 9), Images::Font_Numbers, ((score % 10) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(113, 19 + (y * 9), Images::Font_Numbers, ((score / 10) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(119, 19 + (y * 9), Images::Font_Numbers, ((score % 10) * 3) + currentPlane);
 
 }
 
 void highScore_RenderScore_Grey(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, uint8_t y) {
 
     uint16_t score = cookie.highScore_Values[y];
-    SpritesU::drawOverwriteFX(107, 19 + (y * 9), Images::Font_Numbers, (((score / 100) + 10) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(107, 19 + (y * 9), Images::Font_Numbers, (((score / 100) + 10) * 3) + currentPlane);
     score = score % 100;
-    SpritesU::drawOverwriteFX(113, 19 + (y * 9), Images::Font_Numbers, (((score / 10) + 10) * 3) + currentPlane);
-    SpritesU::drawOverwriteFX(119, 19 + (y * 9), Images::Font_Numbers, (((score % 10) + 10) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(113, 19 + (y * 9), Images::Font_Numbers, (((score / 10) + 10) * 3) + currentPlane);
+    SpritesU::drawPlusMaskFX(119, 19 + (y * 9), Images::Font_Numbers, (((score % 10) + 10) * 3) + currentPlane);
 
 }
 

@@ -11,14 +11,44 @@ void launchPuff(PuffType puffType, Item &item) {
 
     Item &puff = world.getItem(0);
 
-    puff.setX(item.getX());
-    puff.setY(item.getY() - (puffType == PuffType::Heart ? 3 : 0));
+    switch (puffType) {
+        
+        case PuffType::Heart:
+            puff.setX(item.getX());
+            puff.setY(item.getY() - 3);
+            puff.setData(7);
+            break;
+
+        default:
+            puff.setX(item.getX());
+            puff.setY(item.getY());
+            puff.setData(0);
+            break;
+    
+    }
+
     puff.setFrame(0);
-    puff.setData(puffType == PuffType::Heart ? 7 : 0);
     item.setCounter(3);
 
 }
 
+void launchPuff(PuffType puffType, Enemy &enemy) {
+
+    Item &puff = world.getItem(1);
+
+    switch (puffType) {
+    
+        case PuffType::Enemy:
+            puff.setX(enemy.getX() + 3);
+            puff.setY(enemy.getY());
+            break;
+        
+    }
+
+    puff.setFrame(0);
+    puff.setData(0);
+
+}
 
 bool isAlignedWithTile() {
 

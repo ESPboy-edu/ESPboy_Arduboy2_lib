@@ -1,7 +1,6 @@
 #include "src/utils/ArduboyG.h"
 #include "src/utils/SynthU.hpp"
 
-
 static MusicSong current_song;
 
 void audioUpdate() {
@@ -115,3 +114,4 @@ void playMusic() {
     playSong(current_song);
 
 }
+

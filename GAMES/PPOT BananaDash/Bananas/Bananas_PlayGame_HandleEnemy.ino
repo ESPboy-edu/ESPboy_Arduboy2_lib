@@ -62,7 +62,7 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
                         }
 
 
-                        Rect barrelRect = enemy.getRect(world.getForeground() + world.getXOffset());
+                        Rect barrelRect = enemy.getRect(world.getForeground());
 
                         for (uint8_t j = 0; j < Constants::Enemy_Count; j++) {
                         
@@ -70,7 +70,7 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
 
                             if (spider.getEntityType() == EntityType::Spider) {
                             
-                                Rect spiderRect = spider.getRect(world.getForeground() + world.getXOffset());
+                                Rect spiderRect = spider.getRect(world.getForeground());
 
                                 if (gameState == GameState::PlayGame && collide(spiderRect, barrelRect)) {
 
@@ -126,16 +126,7 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
                                     DEBUG_PRINTLN(-world.getForeground() - enemy.getX());
                                     #endif
 
-                                    if (-world.getForeground() - enemy.getX() > 100) {
-
-                                        if (gameState == GameState::PlayGame) {
-
-                                            enemy.setX(-world.getForeground() + 160 + (a.randomLFSR(0, 10) * 16));
-
-                                        }
-                                    
-                                    }
-                                    
+                                    launchBird_LH(enemy, false);                                    
                                     enemy.pushSequence(Stance::Enemy_Flying_LH_00, Stance::Enemy_Flying_LH_19);
                                     break;
 
@@ -150,16 +141,7 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
                                     DEBUG_PRINTLN(-world.getForeground() - enemy.getX());
                                     #endif
 
-                                    if (-world.getForeground() - enemy.getX() < -100) {
-
-                                        if (gameState == GameState::PlayGame) {
-
-                                            enemy.setX(-world.getForeground() - 160 - (a.randomLFSR(0, 10) * 16));
-
-                                        }
-                                    
-                                    }
-                                    
+                                    launchBird_RH(enemy, false);   
                                     enemy.pushSequence(Stance::Enemy_Flying_RH_00, Stance::Enemy_Flying_RH_19);
                                     break;
 
@@ -353,29 +335,7 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
 
                 case EntityType::Spider:
 
-                    if (enemy.getStance() == Stance::Enemy_Spider_Die_05) {
-
-                        enemy.setY(46);
-
-                        if (a.randomLFSR(0, 2)) { 
-
-                            enemy.setX(-world.getForeground() + 100);
-                            enemy.setStance(Stance::Enemy_Spider_L1_00);
-                            enemy.pushSequence(Stance::Enemy_Spider_L1_00, Stance::Enemy_Spider_L1_15);
-                            enemy.setCounter(0);
-
-                        }
-                        else {
-
-                            enemy.setX(-world.getForeground() - 100);
-                            enemy.setStance(Stance::Enemy_Spider_R1_00);
-                            enemy.pushSequence(Stance::Enemy_Spider_R1_00, Stance::Enemy_Spider_R1_15);
-                            enemy.setCounter(0);
-                        
-                        }
-
-                    }
-
+                    launchSpider(enemy);
                     break;
 
 
@@ -387,6 +347,61 @@ void playGame_HandleEnemies(ArduboyGBase_Config<ABG_Mode::L4_Triplane> &a, GameS
 
     }
 
+}
+
+void launchBird_LH(Enemy &enemy, bool forceMovement) {
+
+    if (forceMovement || -world.getForeground() - enemy.getX() > 100) {
+
+        if (world.getGameState() == GameState::PlayGame) {
+
+            enemy.setX(-world.getForeground() + 160 + (a.randomLFSR(0, 10) * 16));
+
+        }
+    
+    }
+                                    
+}
+
+void launchBird_RH(Enemy &enemy, bool forceMovement) {
+
+    if (forceMovement || -world.getForeground() - enemy.getX() < -100) {
+
+        if (world.getGameState() == GameState::PlayGame) {
+
+            enemy.setX(-world.getForeground() - 160 - (a.randomLFSR(0, 10) * 16));
+
+        }
+    
+    }
+    
+}
+
+void launchSpider(Enemy &enemy) {
+
+    if (enemy.getStance() == Stance::Enemy_Spider_Die_05) {
+
+        enemy.setY(46);
+
+        if (a.randomLFSR(0, 2)) { 
+
+            enemy.setX(-world.getForeground() + 100);
+            enemy.setStance(Stance::Enemy_Spider_L1_00);
+            enemy.pushSequence(Stance::Enemy_Spider_L1_00, Stance::Enemy_Spider_L1_15);
+            enemy.setCounter(0);
+
+        }
+        else {
+
+            enemy.setX(-world.getForeground() - 100);
+            enemy.setStance(Stance::Enemy_Spider_R1_00);
+            enemy.pushSequence(Stance::Enemy_Spider_R1_00, Stance::Enemy_Spider_R1_15);
+            enemy.setCounter(0);
+        
+        }
+
+    }
+    
 }
 
 void launchBarrel(Enemy &enemy) {
@@ -407,7 +422,7 @@ void launchBarrel(Enemy &enemy) {
             case 36 ... 38:
             case 40 ... 41:
 
-                if (!doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
+                if (!doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
                 
                     enemy.setEntityType(EntityType::Barrel);
                     enemy.setY(-6);
@@ -437,7 +452,7 @@ void launchBanana(Item &bananaToLaunch) {
 
     while (contTile) {
 
-        uint16_t r = a.randomLFSR(0, Constants::Tile_Count);
+        uint16_t r = a.randomLFSR(worldRepeat == 0 ? 1 : 0, Constants::Tile_Count);
         uint16_t h = a.randomLFSR(0, 3);
         
         if (abs(world.getForeground() + (r * 16) + (worldRepeat * Constants::Tile_Count * 16)) < 100) continue;
@@ -449,7 +464,7 @@ void launchBanana(Item &bananaToLaunch) {
         
             case 0:
 
-                if ((flags & 1) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 47)) {
+                if ((flags & 1) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 47)) {
 
                     bananaToLaunch.setItemType(ItemType::Banana);
                     bananaToLaunch.setY(47);
@@ -462,7 +477,7 @@ void launchBanana(Item &bananaToLaunch) {
         
             case 1:
 
-                if ((flags & 2) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 31)) {
+                if ((flags & 2) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 31)) {
 
                     bananaToLaunch.setItemType(ItemType::Banana);
                     bananaToLaunch.setY(31);
@@ -475,7 +490,7 @@ void launchBanana(Item &bananaToLaunch) {
         
             case 2:
 
-                if ((flags & 4) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
+                if ((flags & 4) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
 
                     bananaToLaunch.setItemType(ItemType::Banana);
                     bananaToLaunch.setY(15);
@@ -493,7 +508,7 @@ void launchBanana(Item &bananaToLaunch) {
 }
 
 
-void launchHeart(Item &bananaToLaunch) {
+void launchHeart(Item &heartToLaunch) {
 
     bool contTile = true;
     uint8_t worldRepeat = abs(world.getForeground()) / (Constants::Tile_Count * 16);
@@ -513,12 +528,12 @@ void launchHeart(Item &bananaToLaunch) {
         
             case 0:
 
-                if ((flags & 1) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 47)) {
+                if ((flags & 1) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 47)) {
 
-                    bananaToLaunch.setItemType(ItemType::Heart);
-                    bananaToLaunch.setY(50);
-                    bananaToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
-                    bananaToLaunch.setCounter(0);
+                    heartToLaunch.setItemType(ItemType::Heart);
+                    heartToLaunch.setY(50);
+                    heartToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    heartToLaunch.setCounter(0);
                     contTile = false;
                 
                 }
@@ -527,12 +542,12 @@ void launchHeart(Item &bananaToLaunch) {
         
             case 1:
 
-                if ((flags & 2) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 31)) {
+                if ((flags & 2) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 31)) {
 
-                    bananaToLaunch.setItemType(ItemType::Heart);
-                    bananaToLaunch.setY(34);
-                    bananaToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
-                    bananaToLaunch.setCounter(0);
+                    heartToLaunch.setItemType(ItemType::Heart);
+                    heartToLaunch.setY(34);
+                    heartToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    heartToLaunch.setCounter(0);
                     contTile = false;
                 
                 }
@@ -541,12 +556,12 @@ void launchHeart(Item &bananaToLaunch) {
         
             case 2:
 
-                if ((flags & 4) && !doesBananaOrFiteOrHeartExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
+                if ((flags & 4) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
 
-                    bananaToLaunch.setItemType(ItemType::Heart);
-                    bananaToLaunch.setY(18);
-                    bananaToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
-                    bananaToLaunch.setCounter(0);
+                    heartToLaunch.setItemType(ItemType::Heart);
+                    heartToLaunch.setY(18);
+                    heartToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    heartToLaunch.setCounter(0);
                     contTile = false;
                 
                 }
@@ -559,29 +574,106 @@ void launchHeart(Item &bananaToLaunch) {
 
 }
 
-bool doesBananaOrFiteOrHeartExistHere(int16_t x, uint8_t y) {
+
+
+void launchFruit(Item &fruitToLaunch) {
+
+    bool contTile = true;
+    uint8_t worldRepeat = abs(world.getForeground()) / (Constants::Tile_Count * 16);
+    if (worldRepeat == Constants::World_Repeat) worldRepeat = worldRepeat - 1;
+
+    while (contTile) {
+
+        uint16_t r = a.randomLFSR(0, Constants::Tile_Count);
+        uint16_t h = a.randomLFSR(0, 3);
+
+        uint8_t idx = Level::Level[r];
+        uint8_t flags = FX::readIndexedUInt8(Constants::BananaLaunch, idx);
+        
+        if (abs(world.getForeground() + (r * 16) + (worldRepeat * Constants::Tile_Count * 16)) < 80) continue;
+
+        switch (h) {
+        
+            case 0:
+
+                if ((flags & 1) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 47)) {
+
+                    fruitToLaunch.setItemType(ItemType::Fruit);
+                    fruitToLaunch.setY(44);
+                    fruitToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    fruitToLaunch.setCounter(0);
+                    fruitToLaunch.setData(a.randomLFSR(0,4));
+                    contTile = false;
+                
+                }
+
+                break;
+        
+            case 1:
+
+                if ((flags & 2) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 31)) {
+
+                    fruitToLaunch.setItemType(ItemType::Fruit);
+                    fruitToLaunch.setY(28);
+                    fruitToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    fruitToLaunch.setCounter(0);
+                    fruitToLaunch.setData(a.randomLFSR(0,4));
+                    contTile = false;
+                
+                }
+
+                break;
+        
+            case 2:
+
+                if ((flags & 4) && !doesBananaOrFireOrHeartOrFruitExistHere((r * 16) + (worldRepeat * Constants::Tile_Count * 16), 15)) {
+
+                    fruitToLaunch.setItemType(ItemType::Fruit);
+                    fruitToLaunch.setY(12);
+                    fruitToLaunch.setX((r * 16) + (worldRepeat * Constants::Tile_Count * 16));
+                    fruitToLaunch.setCounter(0);
+                    fruitToLaunch.setData(a.randomLFSR(0,4));
+                    contTile = false;
+                
+                }
+
+                break;
+
+        }
+
+    }
+
+}
+
+bool doesBananaOrFireOrHeartOrFruitExistHere(int16_t x, uint8_t y) {
 
     // Make sure there is not an existing banana in the same location ..
 
-    for (uint8_t i = 1; i < Constants::Item_Count; i++) {
+    for (uint8_t i = 2; i < Constants::Item_Count - 4; i++) {
     
         Item item = world.getItem(i);
 
         if (item.getItemType() == ItemType::Banana && 
-            abs(item.getY() - y) < 8 && 
-            item.getX() == x) {
+            abs(item.getY() - y) <=8 && 
+            abs(item.getX() - x) <= 8) {
             return true;
         }
 
         if (item.getItemType() == ItemType::Fire && 
-            abs(item.getY() - y) < 8 && 
-            item.getX() == x) {
+            abs(item.getY() - y) <= 8 && 
+            abs(item.getX() - x) <= 8) {
             return true;
         }
 
         if (item.getItemType() == ItemType::Heart && 
-            abs(item.getY() - y) < 8 && 
-            item.getX() == x) {
+            abs(item.getY() - y) <= 8 && 
+            abs(item.getX() - x) <= 8) {
+            return true;
+        }
+
+        if (item.getItemType() == ItemType::Fruit && 
+            abs(item.getY() - y) <= 8 && 
+            abs(item.getX() - x) <= 8) {
             return true;
         }
 

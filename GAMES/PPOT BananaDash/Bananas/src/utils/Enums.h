@@ -58,6 +58,7 @@ struct StanceDetails {
 enum class ItemUpdate : uint8_t {
     None,
     LaunchBanana,
+    LaunchFruit,
 };
 
 enum class EntityType : uint8_t {
@@ -75,6 +76,13 @@ enum class ItemType : uint8_t {
     Heart,
     Heart_Hidden,
     Fire,
+    Fire_Hidden,
+    Fruit,
+    Fruit_Hidden,
+    Bananarang_0,
+    Bananarang_1,
+    Bananarang_2,
+    Bananarang_3,
     Puff,
 };
 
@@ -82,6 +90,8 @@ enum class PuffType : uint8_t {
     None,
     Banana,
     Heart,
+    Fruit,
+    Enemy,
 };
 
 enum class GameState : uint8_t {
