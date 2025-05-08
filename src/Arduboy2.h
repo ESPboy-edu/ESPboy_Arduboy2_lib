@@ -1173,6 +1173,9 @@ bool justReleased(uint8_t button);
    * \see getBuffer()
    */
    
+  // For button handling
+  static uint8_t currentButtonState;
+  static uint8_t previousButtonState;
 
  protected:
   // helper function for sound enable/disable system control
@@ -1180,10 +1183,7 @@ bool justReleased(uint8_t button);
 
   // functions passed to bootLogoShell() to draw the logo
   static void drawLogoBitmap();
-  
-  // For button handling
-  static uint8_t currentButtonState;
-  static uint8_t previousButtonState;
+
 
   // For frame funcions
   uint32_t eachFrameMillis=1000/30;
