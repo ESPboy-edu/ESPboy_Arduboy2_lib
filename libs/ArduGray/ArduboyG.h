@@ -201,15 +201,19 @@ struct ArduboyG_Common : public BASE
     }
     
     static void startGray(){
+      
         if(!arduboyYscaleFlag){          
-            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);}
+            myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
+            }
         else{
-            myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);}
+            myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);
+            }
+            
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
             memset(plane0, 0, 128*64/8);
-		    oBuffer1 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
+		        oBuffer1 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
             oBuffer2 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
             oBuffer = oBuffer1;
             b = Arduboy2Base::getBuffer();
@@ -625,74 +629,78 @@ protected:
         if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
 
         if (current_plane == num_planes(MODE)-1){
-//// START renderPlanesToLCD 
-          static uint16_t currentDataByte1, currentDataByte2, currentDataByte3, currentDataAddr;
-          static uint16_t xPos, yPos, kPos, kkPos, addr;
-        for(kPos = 0; kPos<4; kPos++){
-         if(MODE == ABG_Mode::L4_Triplane){
-             kkPos = kPos<<1;
-             for (xPos = 0; xPos < WIDTH; xPos++) {
-                currentDataAddr = xPos + kkPos * WIDTH;
-                currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
-                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
-                currentDataByte3 = b[currentDataAddr] + (b[currentDataAddr+128]<<8);
-                for (yPos = 0; yPos < 16; yPos++) {
-                  if(!arduboyYscaleFlag)
-                  {   
-                     addr =  yPos*WIDTH+xPos;
-                  }
-                  else
-                  {
-				     addr =  yPos*WIDTH*2+xPos;
-				  }
 
-                  if(!arduboyYscaleFlag)
-                  {
-                    oBuffer[addr] = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);
+//// START renderPlanesToLCD 
+        union currentDBT {
+         struct {
+           uint8_t l;
+           uint8_t h;} bit;
+         uint16_t byte;
+        };
+          
+        static currentDBT currentDataByte1, currentDataByte2, currentDataByte3;
+        static uint16_t xPos, yPos, kPos, addr;
+        static uint16_t currentDataAddr;
+          
+        for(kPos = 0; kPos<4; kPos++){
+         currentDataAddr = kPos * WIDTH * 2;
+         if(MODE == ABG_Mode::L4_Triplane){
+             for (xPos = 0; xPos < WIDTH; xPos++) {
+                currentDataByte1.bit.l = plane0[currentDataAddr];
+                currentDataByte2.bit.l = plane1[currentDataAddr];
+                currentDataByte3.bit.l = b[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte1.bit.h = plane0[currentDataAddr];
+                currentDataByte2.bit.h = plane1[currentDataAddr];
+                currentDataByte3.bit.h = b[currentDataAddr];
+                currentDataAddr -= 127;
+                addr = xPos;
+                for (yPos = 0; yPos < 16; yPos++) {
+                  if(!arduboyYscaleFlag){
+                    oBuffer[addr] = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);
+                    addr+=WIDTH;
                   }
-                  else
-                  {
-                    uint16_t selectedPixelColor = (currentPalette[((currentDataByte3 & 0x01)<<1) | (currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<2)]);          
+                  else{
+                    uint16_t selectedPixelColor = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);          
                     oBuffer[addr] = selectedPixelColor;
-                    oBuffer[addr+WIDTH] = selectedPixelColor;                
+                    addr+=WIDTH;
+                    oBuffer[addr] = selectedPixelColor; 
+                    addr+=WIDTH;               
                   }
-                  currentDataByte1 >>= 1;
-                  currentDataByte2 >>= 1;
-                  currentDataByte3 >>= 1;
+                  currentDataByte1.byte >>= 1;
+                  currentDataByte2.byte >>= 1;
+                  currentDataByte3.byte >>= 1;
                 }
              }
           }
           
           else{
-             kkPos = kPos<<1;
              for (xPos = 0; xPos < WIDTH; xPos++) {
-                currentDataAddr = xPos + kkPos * WIDTH;
-                currentDataByte1 = plane0[currentDataAddr] + (plane0[currentDataAddr+128]<<8);
-                currentDataByte2 = plane1[currentDataAddr] + (plane1[currentDataAddr+128]<<8);
+                currentDataByte1.bit.l = plane0[currentDataAddr];
+                currentDataByte2.bit.l = plane1[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte1.bit.h = plane0[currentDataAddr];         
+                currentDataByte2.bit.h = plane1[currentDataAddr];
+                currentDataAddr -= 127;
+                addr = xPos;
                 for (yPos = 0; yPos < 16; yPos++) {   
                   if(!arduboyYscaleFlag)
-                  {
-                    addr =  yPos*WIDTH+xPos;
+                  {       
+                    oBuffer[addr] = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);
+                    addr+=WIDTH;
                   }
                   else
                   {
-				    addr =  yPos*WIDTH*2+xPos;
-				  }
-
-                  if(!arduboyYscaleFlag)
-                  {  
-                    oBuffer[addr] = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
-                  }
-                  else
-                  {
-                    uint16_t selectedPixelColor = (currentPalette[(currentDataByte2 & 0x01) | ((currentDataByte1 & 0x01)<<1)]);
+                    uint16_t selectedPixelColor = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);
                     oBuffer[addr] = selectedPixelColor;
-                    oBuffer[addr+WIDTH] = selectedPixelColor; 
+                    addr+=WIDTH;
+                    oBuffer[addr] = selectedPixelColor; 
+                    addr+=WIDTH;
                   }
-                  currentDataByte1 >>= 1;
-                  currentDataByte2 >>= 1;
+                  currentDataByte1.byte >>= 1;
+                  currentDataByte2.byte >>= 1;
                 }
-             }
+             }           
           }
 #ifndef USE_nbSPI
           if(!arduboyYscaleFlag)
@@ -711,8 +719,9 @@ protected:
            }
            else
            {
-		     nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*4);
+		         nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*4);
            }
+           
            if (oBuffer == oBuffer1) oBuffer = oBuffer2;
            else oBuffer = oBuffer1;
 #endif            
