@@ -171,67 +171,71 @@ static uint16_t calcCheckSum()
     return checkSum;
 }
 
-static void eepSeek(int addr)
+void eepSeek(int addr)
 {
     eepAddr = max(addr, EEPROM_STORAGE_SPACE_START);
 }
 
-static uint8_t eepRead8(void)
+uint8_t eepRead8(void)
 {
-    //eeprom_busy_wait();
-   //return eeprom_read_byte((const uint8_t *) eepAddr++);
-return 0;
-}
-
-static uint16_t eepRead16(void)
-{
-    //eeprom_busy_wait();
-//    uint16_t ret = eeprom_read_word((const uint16_t *)eepAddr);
-    eepAddr += 2;
-//    return ret;
-return 0;
-}
-
-static uint32_t eepRead32(void)
-{
-    //eeprom_busy_wait();
-//    uint32_t ret = eeprom_read_dword((const uint32_t *) eepAddr);
-    eepAddr += 4;
-//    return ret;
-return 0;
-}
-
-static void eepReadBlock(void *p, size_t n)
-{
-    //eeprom_busy_wait();
-//    eeprom_read_block(p, (const void *) eepAddr, n);
-    eepAddr += n;
-}
-
-static void eepWrite8(uint8_t val)
-{
-    //eeprom_busy_wait();
-//    eeprom_write_byte((uint8_t *) eepAddr, val);
+    uint8_t dta;
+    EEPROM.get(eepAddr,dta);
     eepAddr++;
+    return dta;
 }
 
-static void eepWrite16(uint16_t val)
+uint16_t eepRead16(void)
 {
-    //eeprom_busy_wait();
-//    eeprom_write_word((uint16_t *)eepAddr, val);
+    uint16_t dta;
+    EEPROM.get(eepAddr,dta);
     eepAddr += 2;
+    return dta;
 }
 
-static void eepWrite32(uint32_t val)
+uint32_t eepRead32(void)
 {
-    //eeprom_busy_wait();
-//    eeprom_write_dword((uint32_t *)eepAddr, val);
+    uint32_t dta;
+    EEPROM.get(eepAddr,dta);
     eepAddr += 4;
+    return dta;
 }
 
-static void eepWriteBlock(const void *p, size_t n)
+void eepReadBlock(void *p, size_t n)
+{   
+   uint8_t *pnt = (uint8_t *)p;
+    for (uint16_t i=0; i<n; i++){
+      pnt[i] = EEPROM.read(eepAddr);
+      eepAddr++;
+    }
+}
+
+void eepWrite8(uint8_t val)
 {
-    //eeprom_busy_wait();
-//    eeprom_write_block(p, (void *) eepAddr, n);
-    eepAddr += n;
+    EEPROM.put(eepAddr, val);
+    eepAddr++;
+    EEPROM.commit();
+}
+
+void eepWrite16(uint16_t val)
+{
+    EEPROM.put(eepAddr, val);
+    eepAddr += 2;
+    EEPROM.commit();
+}
+
+void eepWrite32(uint32_t val)
+{
+    EEPROM.put(eepAddr, val);
+    eepAddr += 4;
+    EEPROM.commit();
+}
+
+void eepWriteBlock(const void *p, size_t n)
+{   
+    uint8_t *pnt = (uint8_t *)p;
+    for (uint16_t i=0; i<n; i++){
+      EEPROM.write(eepAddr, pnt[i]);
+      eepAddr++;
+ }
+ EEPROM.commit();
 }
