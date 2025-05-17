@@ -639,8 +639,7 @@ protected:
         };
           
         static currentDBT currentDataByte1, currentDataByte2, currentDataByte3;
-        static uint16_t xPos, yPos, kPos, addr;
-        static uint16_t currentDataAddr;
+        static uint16_t xPos, yPos, kPos, addr, currentDataAddr;
           
         for(kPos = 0; kPos<4; kPos++){
          currentDataAddr = kPos * WIDTH * 2;
@@ -656,17 +655,8 @@ protected:
                 currentDataAddr -= 127;
                 addr = xPos;
                 for (yPos = 0; yPos < 16; yPos++) {
-                  if(!arduboyYscaleFlag){
-                    oBuffer[addr] = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);
-                    addr+=WIDTH;
-                  }
-                  else{
-                    uint16_t selectedPixelColor = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);          
-                    oBuffer[addr] = selectedPixelColor;
-                    addr+=WIDTH;
-                    oBuffer[addr] = selectedPixelColor; 
-                    addr+=WIDTH;               
-                  }
+                  oBuffer[addr] = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);  
+                  arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH;            
                   currentDataByte1.byte >>= 1;
                   currentDataByte2.byte >>= 1;
                   currentDataByte3.byte >>= 1;
@@ -683,51 +673,30 @@ protected:
                 currentDataByte2.bit.h = plane1[currentDataAddr];
                 currentDataAddr -= 127;
                 addr = xPos;
-                for (yPos = 0; yPos < 16; yPos++) {   
-                  if(!arduboyYscaleFlag)
-                  {       
-                    oBuffer[addr] = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);
-                    addr+=WIDTH;
-                  }
-                  else
-                  {
-                    uint16_t selectedPixelColor = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);
-                    oBuffer[addr] = selectedPixelColor;
-                    addr+=WIDTH;
-                    oBuffer[addr] = selectedPixelColor; 
-                    addr+=WIDTH;
-                  }
+                for (yPos = 0; yPos < 16; yPos++) { 
+                  oBuffer[addr] = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);  
+                  arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH; 
                   currentDataByte1.byte >>= 1;
                   currentDataByte2.byte >>= 1;
                 }
              }           
           }
+
+          if(arduboyYscaleFlag)
+            for(uint8_t i=0; i<16; i++){
+              memcpy(&oBuffer[WIDTH*2*i+WIDTH], &oBuffer[WIDTH*2*i], WIDTH*2);}
+          
 #ifndef USE_nbSPI
-          if(!arduboyYscaleFlag)
-          {
-            myESPboy.tft.pushColors(oBuffer, WIDTH*16);
-          }
-          else
-          {
-            myESPboy.tft.pushColors(oBuffer, WIDTH*32); 
-          }
+          arduboyYscaleFlag ? myESPboy.tft.pushColors(oBuffer, WIDTH*32, 0) : myESPboy.tft.pushColors(oBuffer, WIDTH*16, 0); 
 #else          
-           while(nbSPI_isBusy());
-           if(!arduboyYscaleFlag)
-           {
-             nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);
-           }
-           else
-           {
-		         nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*4);
-           }
-           
-           if (oBuffer == oBuffer1) oBuffer = oBuffer2;
-           else oBuffer = oBuffer1;
+          while(nbSPI_isBusy());
+          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*32);         
+          (oBuffer == oBuffer1) ? oBuffer = oBuffer2 : oBuffer = oBuffer1;
 #endif            
-          }
-          if (clear == BLACK) memset(b, 0, 128*64/8);
-          else memset(b, 255, 128*64/8);
+         }
+          
+          (clear == BLACK) ? memset(b, 0, 128*64/8) : memset(b, 255, 128*64/8);
+          
           update_every_n_count++;
           if(update_every_n_count > update_every_n){
              update_flag = true;
