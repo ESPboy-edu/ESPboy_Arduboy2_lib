@@ -4,8 +4,8 @@
 #define DEFAULT_PALETTE 11
 #define Y_SCALE_PRESET 0
 
-//#pragma GCC optimize ("-O3")
-//#pragma GCC push_options
+#pragma GCC optimize ("-O3")
+#pragma GCC push_options
 
 /*
 
@@ -129,7 +129,6 @@ extern ESPboyInit myESPboy;
   static uint8_t *b;
   static bool arduboyYscaleFlag = Y_SCALE_PRESET;
   static uint32_t frameRateDelayMs = 1000/200, frameRateMillisPrev;
-
 
 #undef BLACK
 #undef WHITE
@@ -255,11 +254,6 @@ struct ArduboyG_Common : public BASE
       while(currentPlane() != num_planes(MODE)-1) waitForNextPlane();
       
     }  
-    
-    
-    //static void setFrameRate(uint8_t fr){
-    //  frameRateDelayMs = 1000/fr;
-    //}
     
     
     static void startGrey() {startGray();}
@@ -600,15 +594,14 @@ struct ArduboyG_Common : public BASE
 
     
 protected:    
-    ICACHE_RAM_ATTR static void doDisplay(uint8_t clear){
-     static uint8_t keys;
-     static bool keysPass=0;
-     keysPass =! keysPass;
-        
-     if(keysPass){
+    void static doSettings(){
+        static uint8_t keys;
         keys = myESPboy.getKeys();        
+        
         if (keys&PAD_RGT || keys&PAD_LFT) {
+         #ifdef USE_nbSPI
            while(nbSPI_isBusy());
+         #endif
            noInterrupts();
            delay(50);
            keys = myESPboy.getKeys();
@@ -639,16 +632,26 @@ protected:
            interrupts();
         }
     }
+
+
+    static void doDisplay(uint8_t clear){
+     static bool keysPass=0;
+     keysPass =! keysPass;
         
-        if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
-        if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
+     if(keysPass) 
+       doSettings();
+        
+     if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
+     if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
+     if (current_plane == num_planes(MODE)-1) {doRender(clear);}
+    }
 
-        if (current_plane == num_planes(MODE)-1){
-
-        while (frameRateMillisPrev+frameRateDelayMs > millis());
-        frameRateMillisPrev = millis();
 
 //// START renderPlanesToLCD 
+    static void doRender(uint8_t clear){
+        //while (frameRateMillisPrev+frameRateDelayMs > millis());
+        //frameRateMillisPrev = millis();
+        
         union currentDBT {
          struct {
            uint8_t l;
@@ -656,8 +659,8 @@ protected:
          uint16_t byte;
         };
           
-        currentDBT currentDataByte1, currentDataByte2, currentDataByte3;
-        uint16_t addr, currentDataAddr;
+        static currentDBT currentDataByte1, currentDataByte2, currentDataByte3;
+        static uint32_t addr, currentDataAddr;
           
         for(uint8_t kPos = 0; kPos<4; kPos++){
          currentDataAddr = kPos * WIDTH * 2;
@@ -708,7 +711,7 @@ protected:
             }
           
 #ifndef USE_nbSPI
-          arduboyYscaleFlag ? myESPboy.tft.pushColors(oBuffer, WIDTH*32, 0) : myESPboy.tft.pushColors(oBuffer, WIDTH*16, 0); 
+          arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*32) : myESPboy.tft.pushPixels(oBuffer, WIDTH*16); 
 #else          
           while(nbSPI_isBusy());
           arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*32);         
@@ -723,9 +726,9 @@ protected:
              update_flag = true;
              update_every_n_count = 0;
           }
-       }
+     }
 // END OF renderPlanesToLCD 
-    }
+    
       
     
     // Plane                               0  1  2  index
@@ -837,6 +840,11 @@ struct ArduboyG_Config : public abg_detail::ArduboyG_Common<
         }
 
         return 1;
+    }
+
+public:
+    static void setFrameRate(uint8_t fr){
+      frameRateDelayMs = 1000/fr;
     }
 };
     
