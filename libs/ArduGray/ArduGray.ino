@@ -8,7 +8,7 @@ decltype(a) a;
 
 void setup()
 {  
-    Serial.begin(74880);
+    //Serial.begin(74880);
     a.boot();
     a.startGray();
     a.setFrameRate(240);

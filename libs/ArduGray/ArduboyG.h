@@ -2,12 +2,28 @@
 #define USE_nbSPI //accelerates gfx but less hardware compatibility
 #define MAX_PALETTES 37
 #define DEFAULT_PALETTE 11
-#define Y_SCALE_PRESET 0
+#define Y_SCALE_PRESET 1
 
 #pragma GCC optimize ("-O3")
 #pragma GCC push_options
 
 /*
+  // Plane                               0  1  2  index
+    // ==================================================
+    //
+    // ABG_Mode::L4_Contrast   BLACK       .  .       0
+    // ABG_Mode::L4_Contrast   DARK_GRAY   X  .       1 
+    // ABG_Mode::L4_Contrast   LIGHT_GRAY  .  X .     2 
+    // ABG_Mode::L4_Contrast   WHITE       X  X .     3
+    //
+    // ABG_Mode::L4_Triplane   BLACK       .  .  .    0 
+    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1
+    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3
+    // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7 
+    //
+    // ABG_Mode::L3            BLACK       .  .       0
+    // ABG_Mode::L3            GRAY        X  .       1
+    // ABG_Mode::L3            WHITE       X  X .     3
 
     When using L4_Triplane, you can define one of the following macros to
     convert to L3 while retaining the plane behavior of L4_Triplane:
@@ -112,12 +128,12 @@ extern ESPboyInit myESPboy;
 
   PROGMEM const static uint8_t decodePaletteL4C[8] = {3, 2, 1, 0, 1, 0, 0, 0};
   PROGMEM const static uint8_t decodePaletteL4T[8] = {3, 2, 2, 1, 2, 1, 1, 0};
-  PROGMEM const static uint8_t decodePaletteL4L[8] = {3, 4, 4, 0, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4D[8] = {3, 3, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL4M[8] = {3, 4, 4, 4, 4, 4, 4, 0};
-  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 4, 4, 0, 4, 4, 4, 4};
+  PROGMEM const static uint8_t decodePaletteL3L[8] = {3, 1, 0, 0, 0, 0, 0, 0};
+  PROGMEM const static uint8_t decodePaletteL3D[8] = {3, 2, 0, 0, 0, 0, 0, 0};
+  PROGMEM const static uint8_t decodePaletteL3M[8] = {3, 2, 0, 0, 0, 0, 0, 0};
+  PROGMEM const static uint8_t decodePaletteL3 [8] = {3, 2, 0, 0, 0, 0, 0, 0};
 
-  PROGMEM const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL4L, decodePaletteL4D, decodePaletteL4M, decodePaletteL3};
+  PROGMEM const static uint8_t  *paletteDecodeTable[] = {decodePaletteL4C, decodePaletteL4T, decodePaletteL3L, decodePaletteL3D, decodePaletteL3M, decodePaletteL3};
 
   static uint16_t currentPalette[8];
   static uint8_t paletteDecodeTableIndex = 0;
@@ -219,8 +235,8 @@ struct ArduboyG_Common : public BASE
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
             memset(plane0, 0, 128*64/8);
-		        oBuffer1 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
-            oBuffer2 = (uint16_t *)malloc(WIDTH*2*16*sizeof(uint16_t));
+		        oBuffer1 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
+            oBuffer2 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
             oBuffer = oBuffer1;
             b = Arduboy2Base::getBuffer();
             memset(b, 0, 128*64/8);
@@ -236,7 +252,7 @@ struct ArduboyG_Common : public BASE
 #else
             if(MODE == ABG_Mode::L4_Triplane) paletteDecodeTableIndex = 1;
             else
-            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 1;
+            if(MODE == ABG_Mode::L4_Contrast) paletteDecodeTableIndex = 0;
             else 
             paletteDecodeTableIndex = 5;
 #endif
@@ -560,13 +576,28 @@ struct ArduboyG_Common : public BASE
     }
 
     
-    static void waitForNextPlane(uint8_t clear = BLACK){
+  static void waitForNextPlane(uint8_t clear = BLACK){
       current_plane++;
       if (current_plane >= num_planes(MODE)){
         current_plane = 0;
        }  
-      doDisplay(clear);
+     
+      if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
+      if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
+      if (current_plane == num_planes(MODE)-1){
+        while (frameRateMillisPrev+frameRateDelayMs > millis());
+        frameRateMillisPrev = millis();
+        doDisplay(clear);  
+        update_every_n_count++;
+          if(update_every_n_count > update_every_n){
+            update_flag = true;
+            update_every_n_count = 0;
+          } 
+        if (!planeColor(current_plane, clear)) memset(b, 0, 128*64/8);
+      }
+      if (planeColor(current_plane, clear)) memset(b, 255, 128*64/8);
     }
+        
         
         
     ABG_NOT_SUPPORTED static void flipVertical();
@@ -634,119 +665,99 @@ protected:
     }
 
 
-    static void doDisplay(uint8_t clear){
+//// START renderPlanesToLCD 
+  static void doDisplay(uint8_t clear){
      static bool keysPass=0;
      keysPass =! keysPass;
-        
-     if(keysPass) 
-       doSettings();
-        
-     if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
-     if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
-     if (current_plane == num_planes(MODE)-1) {doRender(clear);}
-    }
-
-
-//// START renderPlanesToLCD 
-    static void doRender(uint8_t clear){
-        //while (frameRateMillisPrev+frameRateDelayMs > millis());
-        //frameRateMillisPrev = millis();
-        
+     if(keysPass) doSettings();
+    
         union currentDBT {
          struct {
-           uint8_t l;
-           uint8_t h;} bit;
-         uint16_t byte;
+           uint8_t ll;
+           uint8_t hl;
+           uint8_t lh;
+           uint8_t hh;
+           } bit;
+         uint32_t byte;
         };
           
-        static currentDBT currentDataByte1, currentDataByte2, currentDataByte3;
-        static uint32_t addr, currentDataAddr;
+        currentDBT currentDataByte0, currentDataByte1, currentDataByte2;
+        uint16_t addr, currentDataAddr;
           
-        for(uint8_t kPos = 0; kPos<4; kPos++){
-         currentDataAddr = kPos * WIDTH * 2;
+        for(uint8_t kPos = 0; kPos<2; kPos++){
+         currentDataAddr = kPos * WIDTH * 4;
          if(MODE == ABG_Mode::L4_Triplane){
              for (uint8_t xPos = 0; xPos < WIDTH; xPos++) {
-                currentDataByte1.bit.l = plane0[currentDataAddr];
-                currentDataByte2.bit.l = plane1[currentDataAddr];
-                currentDataByte3.bit.l = b[currentDataAddr];
+                currentDataByte0.bit.ll = plane0[currentDataAddr];
+                currentDataByte1.bit.ll = plane1[currentDataAddr];
+                currentDataByte2.bit.ll = b[currentDataAddr];
                 currentDataAddr += 128;
-                currentDataByte1.bit.h = plane0[currentDataAddr];
-                currentDataByte2.bit.h = plane1[currentDataAddr];
-                currentDataByte3.bit.h = b[currentDataAddr];
-                currentDataAddr -= 127;
+                currentDataByte0.bit.hl = plane0[currentDataAddr];
+                currentDataByte1.bit.hl = plane1[currentDataAddr];
+                currentDataByte2.bit.hl = b[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte0.bit.lh = plane0[currentDataAddr];
+                currentDataByte1.bit.lh = plane1[currentDataAddr];
+                currentDataByte2.bit.lh = b[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte0.bit.hh = plane0[currentDataAddr];
+                currentDataByte1.bit.hh = plane1[currentDataAddr];
+                currentDataByte2.bit.hh = b[currentDataAddr];
+                currentDataAddr -= 383;
                 addr = xPos;
-                for (uint8_t yPos = 0; yPos < 16; yPos++) {
-                  oBuffer[addr] = (currentPalette[((currentDataByte3.byte & 0x01)<<1) | (currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<2)]);  
+                for (uint8_t yPos = 0; yPos < 32; yPos++) {
+                  oBuffer[addr] = (currentPalette[(currentDataByte0.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1) | ((currentDataByte2.byte & 0x01)<<2)]);  
                   arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH;            
+                  currentDataByte0.byte >>= 1;
                   currentDataByte1.byte >>= 1;
                   currentDataByte2.byte >>= 1;
-                  currentDataByte3.byte >>= 1;
                 }
              }
           }
           
           else{
              for (uint8_t xPos = 0; xPos < WIDTH; xPos++) {
-                currentDataByte1.bit.l = plane0[currentDataAddr];
-                currentDataByte2.bit.l = plane1[currentDataAddr];
+                currentDataByte1.bit.ll = plane0[currentDataAddr];
+                currentDataByte2.bit.ll = plane1[currentDataAddr];
                 currentDataAddr += 128;
-                currentDataByte1.bit.h = plane0[currentDataAddr];         
-                currentDataByte2.bit.h = plane1[currentDataAddr];
-                currentDataAddr -= 127;
+                currentDataByte1.bit.hl = plane0[currentDataAddr];         
+                currentDataByte2.bit.hl = plane1[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte1.bit.lh = plane0[currentDataAddr];
+                currentDataByte2.bit.lh = plane1[currentDataAddr];
+                currentDataAddr += 128;
+                currentDataByte1.bit.hh = plane0[currentDataAddr];         
+                currentDataByte2.bit.hh = plane1[currentDataAddr];
+                currentDataAddr -= 383;
                 addr = xPos;
-                for (uint8_t yPos = 0; yPos < 16; yPos++) { 
-                  oBuffer[addr] = (currentPalette[(currentDataByte2.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);  
+                for (uint8_t yPos = 0; yPos < 32; yPos++) { 
+                  oBuffer[addr] = (currentPalette[(currentDataByte0.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);  
                   arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH; 
+                  currentDataByte0.byte >>= 1;
                   currentDataByte1.byte >>= 1;
-                  currentDataByte2.byte >>= 1;
                 }
              }           
           }
 
           addr = 0;
           if(arduboyYscaleFlag)
-            for(uint8_t i=0; i<16; i++){
+            for(uint8_t i=0; i<32; i++){
               memcpy(&oBuffer[addr+WIDTH], &oBuffer[addr], WIDTH*2);
               addr+=WIDTH*2;
             }
           
 #ifndef USE_nbSPI
-          arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*32) : myESPboy.tft.pushPixels(oBuffer, WIDTH*16); 
+          arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*64) : myESPboy.tft.pushPixels(oBuffer, WIDTH*32); 
 #else          
           while(nbSPI_isBusy());
-          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*32);         
+          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64);         
           (oBuffer == oBuffer1) ? oBuffer = oBuffer2 : oBuffer = oBuffer1;
 #endif            
          }
-          
-          (clear == BLACK) ? memset(b, 0, 128*64/8) : memset(b, 255, 128*64/8);
-          
-          update_every_n_count++;
-          if(update_every_n_count > update_every_n){
-             update_flag = true;
-             update_every_n_count = 0;
-          }
-     }
-// END OF renderPlanesToLCD 
+    }
+//// END renderPlanesToLCD     
     
-      
     
-    // Plane                               0  1  2  index
-    // ==================================================
-    //
-    // ABG_Mode::L4_Contrast   BLACK       .  .       0
-    // ABG_Mode::L4_Contrast   DARK_GRAY   X  .       1 2 4
-    // ABG_Mode::L4_Contrast   LIGHT_GRAY  .  X .     2 4 1
-    // ABG_Mode::L4_Contrast   WHITE       X  X .     3 6 5
-    //
-    // ABG_Mode::L4_Triplane   BLACK       .  .  .    0 
-    // ABG_Mode::L4_Triplane   DARK_GRAY   X  .  .    1 2 4
-    // ABG_Mode::L4_Triplane   LIGHT_GRAY  X  X  .    3 6 5
-    // ABG_Mode::L4_Triplane   WHITE       X  X  X .  7 
-    //
-    // ABG_Mode::L3            BLACK       .  .       0
-    // ABG_Mode::L3            GRAY        X  .       1 2
-    // ABG_Mode::L3            WHITE       X  X .     3
 
     template<uint8_t PLANE>
     static constexpr uint8_t planeColor(uint8_t color)
