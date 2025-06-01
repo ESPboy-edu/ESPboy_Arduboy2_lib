@@ -956,13 +956,14 @@ if(!allpixelson_flag){
        }
      }
  
-    //while(nbSPI_isBusy()); 
-    if(!arduboySaveLoadSettings.arduboyYscale){
-      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64*2);  
-    }
-    else{
-      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128*2);
-    }
+    if (!nbSPI_isBusy()){
+      if(!arduboySaveLoadSettings.arduboyYscale){
+        nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64*2);  
+       }
+      else{
+        nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128*2);
+      }
+     }
   }
 else {
   while(nbSPI_isBusy()); 
@@ -973,6 +974,7 @@ else {
   }
 }
 else {
+  while(nbSPI_isBusy()); 
   myESPboy.tft.fillScreen(TFT_BLACK);
   }
 }

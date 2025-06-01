@@ -751,10 +751,10 @@ protected:
 #ifndef USE_nbSPI
           arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*128) : myESPboy.tft.pushPixels(oBuffer, WIDTH*64); 
 #else          
-          while(nbSPI_isBusy());
-          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*256) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128);         
+          if (!nbSPI_isBusy())
+            arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*256) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128);         
 #endif            
-         }
+}
    
 //// END renderPlanesToLCD     
     
