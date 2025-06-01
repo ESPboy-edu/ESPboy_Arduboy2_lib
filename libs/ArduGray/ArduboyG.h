@@ -140,7 +140,7 @@ extern ESPboyInit myESPboy;
   static int16_t paletteIndex = DEFAULT_PALETTE;
   
   static uint8_t *plane0, *plane1;
-  static uint16_t *oBuffer1, *oBuffer2, *oBuffer;
+  static uint16_t *oBuffer;
   
   static uint8_t *b;
   static bool arduboyYscaleFlag = Y_SCALE_PRESET;
@@ -234,10 +234,8 @@ struct ArduboyG_Common : public BASE
             plane0 =  (uint8_t *) malloc(128*64/8);
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
-            memset(plane0, 0, 128*64/8);
-	        oBuffer1 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
-            oBuffer2 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
-            oBuffer = oBuffer1;
+            memset(plane1, 0, 128*64/8);
+		        oBuffer = (uint16_t *)malloc(128*128*2);
             b = Arduboy2Base::getBuffer();
             memset(b, 0, 128*64/8);
     
@@ -683,9 +681,11 @@ protected:
           
         currentDBT currentDataByte0, currentDataByte1, currentDataByte2;
         uint16_t addr, currentDataAddr;
+
+        ESP.wdtFeed();
           
         for(uint8_t kPos = 0; kPos<2; kPos++){
-         currentDataAddr = kPos * WIDTH * 4;
+         currentDataAddr = (kPos<<9);
          if(MODE == ABG_Mode::L4_Triplane){
              for (uint8_t xPos = 0; xPos < WIDTH; xPos++) {
                 currentDataByte0.bit.ll = plane0[currentDataAddr];
@@ -704,7 +704,8 @@ protected:
                 currentDataByte1.bit.hh = plane1[currentDataAddr];
                 currentDataByte2.bit.hh = b[currentDataAddr];
                 currentDataAddr -= 383;
-                addr = xPos;
+                arduboyYscaleFlag ? addr = xPos + (kPos<<13) : addr = xPos + (kPos<<12);
+      
                 for (uint8_t yPos = 0; yPos < 32; yPos++) {
                   oBuffer[addr] = (currentPalette[(currentDataByte0.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1) | ((currentDataByte2.byte & 0x01)<<2)]);  
                   arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH;            
@@ -729,7 +730,7 @@ protected:
                 currentDataByte1.bit.hh = plane0[currentDataAddr];         
                 currentDataByte2.bit.hh = plane1[currentDataAddr];
                 currentDataAddr -= 383;
-                addr = xPos;
+                arduboyYscaleFlag ? addr = xPos + (kPos<<13) : addr = xPos + (kPos<<12);
                 for (uint8_t yPos = 0; yPos < 32; yPos++) { 
                   oBuffer[addr] = (currentPalette[(currentDataByte0.byte & 0x01) | ((currentDataByte1.byte & 0x01)<<1)]);  
                   arduboyYscaleFlag ? addr+=WIDTH*2 : addr+=WIDTH; 
@@ -738,23 +739,23 @@ protected:
                 }
              }           
           }
+        }
 
           addr = 0;
           if(arduboyYscaleFlag)
-            for(uint8_t i=0; i<32; i++){
+            for(uint8_t i=0; i<64; i++){
               memcpy(&oBuffer[addr+WIDTH], &oBuffer[addr], WIDTH*2);
               addr+=WIDTH*2;
             }
           
 #ifndef USE_nbSPI
-          arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*64) : myESPboy.tft.pushPixels(oBuffer, WIDTH*32); 
+          arduboyYscaleFlag ? myESPboy.tft.pushPixels(oBuffer, WIDTH*128) : myESPboy.tft.pushPixels(oBuffer, WIDTH*64); 
 #else          
           while(nbSPI_isBusy());
-          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64);         
-          (oBuffer == oBuffer1) ? oBuffer = oBuffer2 : oBuffer = oBuffer1;
+          arduboyYscaleFlag ? nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*256) : nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128);         
 #endif            
          }
-    }
+   
 //// END renderPlanesToLCD     
     
     
