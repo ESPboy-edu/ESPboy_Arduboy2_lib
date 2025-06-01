@@ -827,94 +827,32 @@ void Arduboy2Base::clearDisplay(){
 
 #define SWPLH(x) ((x>>8)|(x<<8))
 
-/*
-void IRAM_ATTR Arduboy2Base::display(){ 
+
+void Arduboy2Base::display(){ 
 //WARNING! flip_horizontal and flip_vertical control and render not implemented
 //but you can do it checking global 
 //bool flip_vertical_flag;
 //bool flip_horizontal_flag;
   static bool mallocFlag=false;
-  static uint16_t currentDataByte, currentDataAddr;
-  static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
-  static uint16_t* oBuffer1;
-  static uint16_t* oBuffer2;
-  static uint16_t* oBuffer;
-  bool flipBuf;
-   
-   if(mallocFlag==false){
-     mallocFlag=true;
-     oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-     oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t));
-     oBuffer = oBuffer1;
-   }
-   
-   myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
-   
-  if(!invert_flag){
-    foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
-    backgroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyBackground]);
-  }
-  else{
-    backgroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
-    foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyBackground]);
-  }
-
-if(!allpixelson_flag){
-  for(kPos = 0; kPos<4*(HEIGHT/64); kPos++){
-    kkPos = kPos<<1;
-    for (xPos = 0; xPos < WIDTH; xPos++) {
-            currentDataAddr = xPos + kkPos * WIDTH;
-            currentDataByte = sBuffer[currentDataAddr] + (sBuffer[currentDataAddr+128]<<8);
-      for (yPos = 0; yPos < 16; yPos++) {		
-		    //if (!(yPos % 8)) currentDataByte = sBuffer[xPos + ((yPos>>3)+kkPos) * WIDTH];
-		    addr = 	yPos*WIDTH+xPos;
-            if (currentDataByte & 0x01) oBuffer[addr] = foregroundColor;
-            else oBuffer[addr] = backgroundColor;
-			currentDataByte = currentDataByte >> 1;
-	  }
-    }
-    while(nbSPI_isBusy()); 
-    nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);  
-    flipBuf = !flipBuf;
-    oBuffer = flipBuf?oBuffer1:oBuffer2;
-    //myESPboy.tft.pushColors(oBuffer, WIDTH*16);
-  }
-}
-else {
-  while(nbSPI_isBusy()); 
-  myESPboy.tft.fillRect(0, VERT_OFFSET, WIDTH, HEIGHT,foregroundColor);
-  }
-}
-*/
-
-void IRAM_ATTR Arduboy2Base::display(){ 
-//WARNING! flip_horizontal and flip_vertical control and render not implemented
-//but you can do it checking global 
-//bool flip_vertical_flag;
-//bool flip_horizontal_flag;
-  static bool mallocFlag=false;
-  static uint16_t currentDataByte, currentDataAddr;
-  static uint16_t foregroundColor, backgroundColor, xPos, yPos, kPos, kkPos, addr;
-  static uint16_t* oBuffer1;
-  static uint16_t* oBuffer2;
-  static uint16_t* oBuffer;
+  static uint16_t foregroundColor, backgroundColor;
+  static uint16_t *oBuffer;
   static uint8_t keys;
   static uint32_t tickcount;
-  bool flipBuf;
   
   keys = 0;
   
-  if (millis() - tickcount > 100){
+  if (millis() - tickcount > 50){
     keys = myESPboy.getKeys();
     tickcount = millis();
   }
   
-  
-if (keys&PAD_RGT || (keys&PAD_LFT)){ 
+if ((keys&PAD_RGT) || (keys&PAD_LFT)){ 
+  while(nbSPI_isBusy()); 
+  noInterrupts();
   delay(50);
   keys = myESPboy.getKeys();
-  if ((keys&PAD_RGT) && (keys&PAD_LFT))  
-  {
+  
+if ((keys&PAD_RGT) && (keys&PAD_LFT)){
   arduboySaveLoadSettings.arduboyYscale = !arduboySaveLoadSettings.arduboyYscale;
   while (myESPboy.getKeys()) 
     delay(10);
@@ -922,6 +860,10 @@ if (keys&PAD_RGT || (keys&PAD_LFT)){
   EEPROM.commit();
   myESPboy.tft.fillScreen(0);
   
+  if(!arduboySaveLoadSettings.arduboyYscale)
+    myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, 64);
+  else 
+    myESPboy.tft.setAddrWindow(0, 0, WIDTH, 128);
   }
   
   else if (keys&PAD_RGT) 
@@ -945,6 +887,7 @@ if (keys&PAD_RGT || (keys&PAD_LFT)){
     EEPROM.put(EEPROM_STORAGE_SPACE_START_SETTINGS, arduboySaveLoadSettings);
     EEPROM.commit();
   }
+ interrupts();
 }
   
 
@@ -952,15 +895,8 @@ if (!displayoff_flag){
    
    if(mallocFlag==false){
      mallocFlag=true;
-     oBuffer1 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t)*2);
-     oBuffer2 = (uint16_t *)malloc(WIDTH*16*sizeof(uint16_t)*2);
-     oBuffer = oBuffer1;
+     oBuffer = (uint16_t *)malloc(128*128*2);
    }
-   
-   if(!arduboySaveLoadSettings.arduboyYscale)
-     myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);
-   else 
-     myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);
    
   if(!invert_flag){
     foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
@@ -970,50 +906,64 @@ if (!displayoff_flag){
     backgroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyForeground]);
     foregroundColor = SWPLH(colors[arduboySaveLoadSettings.arduboyBackground]);
   }
+  
+  //RENDER
+     union currentDBT {
+         struct {
+           uint8_t ll;
+           uint8_t hl;
+           uint8_t lh;
+           uint8_t hh;
+           } bit;
+         uint32_t byte;
+        };
+        
+uint16_t addr, currentDataAddr, kPos;
+currentDBT currentDataByte;
+
+ESP.wdtFeed();
 
 if(!allpixelson_flag){
-  for(kPos = 0; kPos<4*(HEIGHT/64); kPos++){
-    kkPos = kPos<<1;
-    for (xPos = 0; xPos < WIDTH; xPos++) {
-            currentDataAddr = xPos + kkPos * WIDTH;
-            currentDataByte = sBuffer[currentDataAddr] + (sBuffer[currentDataAddr+128]<<8);
-      for (yPos = 0; yPos < 16; yPos++) {		
-		    //if (!(yPos % 8)) currentDataByte = sBuffer[xPos + ((yPos>>3)+kkPos) * WIDTH];
-		    if(!arduboySaveLoadSettings.arduboyYscale)
-		       addr = 	yPos*WIDTH+xPos;
-		    else
-		       addr = 	yPos*2*WIDTH+xPos;
-            if (currentDataByte & 0x01){ 
-              if(!arduboySaveLoadSettings.arduboyYscale)
-                oBuffer[addr] = foregroundColor;
-              else{
-                oBuffer[addr] = foregroundColor;
-                oBuffer[addr+WIDTH] = foregroundColor;
-              }
-            }
-            else {
-              if(!arduboySaveLoadSettings.arduboyYscale){
-                oBuffer[addr] = backgroundColor;
-              }
-              else{
-                oBuffer[addr] = backgroundColor;
-                oBuffer[addr+WIDTH] = backgroundColor;
-              }
-            }
-			
-			currentDataByte = currentDataByte >> 1;
-	  }
+  addr = 0;
+  for(kPos = 0; kPos < 2; kPos++){
+    currentDataAddr = (kPos<<9);
+    for (uint8_t xPos = 0; xPos < WIDTH; xPos++) {
+      currentDataByte.bit.ll = sBuffer[currentDataAddr];
+      currentDataAddr += 128;
+      currentDataByte.bit.hl = sBuffer[currentDataAddr];
+      currentDataAddr += 128;
+      currentDataByte.bit.lh = sBuffer[currentDataAddr];
+      currentDataAddr += 128;
+      currentDataByte.bit.hh = sBuffer[currentDataAddr];
+      currentDataAddr -= 383;
+      arduboySaveLoadSettings.arduboyYscale ? addr = xPos + (kPos<<13) : addr = xPos + (kPos<<12);
+      for (uint8_t yPos = 0; yPos < 32; yPos++) {
+        if (currentDataByte.byte & 0x01) 
+          oBuffer[addr] = foregroundColor;
+        else
+          oBuffer[addr] = backgroundColor;
+        arduboySaveLoadSettings.arduboyYscale ? addr+=WIDTH*2 : addr+=WIDTH;            
+        currentDataByte.byte >>= 1;
+      }
+            
     }
-    while(nbSPI_isBusy()); 
-    if(!arduboySaveLoadSettings.arduboyYscale)
-      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2);  
-    else
-      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*16*2*2);
-    flipBuf = !flipBuf;
-    oBuffer = flipBuf?oBuffer1:oBuffer2;
-    //myESPboy.tft.pushColors(oBuffer, WIDTH*16);
   }
-}
+     if(arduboySaveLoadSettings.arduboyYscale){
+       addr = 0;
+       for(uint8_t i=0; i<64; i++){
+         memcpy(&oBuffer[addr+WIDTH], &oBuffer[addr], WIDTH*2);
+         addr+=WIDTH*2;
+       }
+     }
+ 
+    //while(nbSPI_isBusy()); 
+    if(!arduboySaveLoadSettings.arduboyYscale){
+      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*64*2);  
+    }
+    else{
+      nbSPI_writeBytes((uint8_t*)oBuffer, WIDTH*128*2);
+    }
+  }
 else {
   while(nbSPI_isBusy()); 
   if(!arduboySaveLoadSettings.arduboyYscale)

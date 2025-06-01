@@ -447,7 +447,7 @@ noInterrupts();
       sigmaDeltaWrite(0, t);
     else sigmaDeltaWrite(0, 0);
     
-    interrupts();
+interrupts();
 }
 
 

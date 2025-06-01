@@ -67,7 +67,7 @@ bool enemyImmediateRetreat = false;
 // ---------------------------------------------------------------------------------------------------------------
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   
   arduboy.begin();
   //arduboy.boot();
@@ -87,8 +87,6 @@ void setup() {
   #endif  
 
   gameStateDetails.setCurrState(GAME_SPLASH_SCREEN_INIT);
-
-  Serial.println("START"); Serial.println();
 }
 
 
@@ -101,7 +99,6 @@ void loop() {
   if (!(arduboy.nextFrame())) return;
 
   if (arduboy.frameCount % 2 == 0) {
-
   arduboy.pollButtons();
 //  player.health = 240;//SJH
   switch (gameStateDetails.getCurrState()) {
@@ -279,7 +276,7 @@ void loop() {
       break;
 
   }
-
+  ESP.wdtFeed();
   FX::display(CLEAR_BUFFER);
   }
 
