@@ -1,0 +1,97 @@
+namespace Images {
+
+    image_t Title                   = "../images/Titles/Title.png"
+    image_t JordanMechner           = "../images/Titles/ByJordanMechner.png"
+    image_t PPOT                    = "../images/Titles/PPOT_64x32.png"
+    image_t Castle                  = "../images/Titles/Castle.png"
+    image_t TheEnd                  = "../images/Titles/TheEnd.png"
+    image_t IntroText               = "../images/Entrance/Text.png"
+
+    image_t Emperor                 = "../images/Emperor_41x64.png"
+    image_t Emperor_Arm_Normal      = "../images/EmperorArmNormal_14x24.png"
+    image_t Emperor_Arm_Out         = "../images/EmperorArmOut_25x16.png"
+
+    image_t Princess_00             = "../images/Princess/Princess_00.png"
+    image_t Princess_01             = "../images/Princess/Princess_01.png"
+    image_t Princess_02             = "../images/Princess/Princess_02.png"
+    image_t Princess_03             = "../images/Princess/Princess_03.png"
+    image_t Princess_04             = "../images/Princess/Princess_04.png"
+    image_t Princess_05             = "../images/Princess/Princess_05.png"
+    image_t Princess_06             = "../images/Princess/Princess_06.png"
+    image_t Princess_07             = "../images/Princess/Princess_07.png"
+    image_t Princess_08             = "../images/Princess/Princess_08.png"
+    image_t Princess_09             = "../images/Princess/Princess_09.png"
+    image_t Princess_10             = "../images/Princess/Princess_10.png"
+    image_t Princess_11             = "../images/Princess/Princess_11.png"
+
+    image_t Princess_Seat           = "../images/Princess_Seat.png"
+
+    image_t Arrow_Left              = "../images/ArrowLeft.png"
+    image_t Arrow_Right             = "../images/ArrowRight.png"
+    image_t Backdrop                = "../images/Backdrop.png"
+    image_t Backdrop2               = "../images/Backdrop2.png"
+    image_t Crevice                 = "../images/Crevice.png"
+    image_t ArchExt_Left            = "../images/ArchExteriorLeft_17x64.png"
+    image_t ArchExt_Right           = "../images/ArchExteriorRight_22x64.png"
+    image_t ArchInt_Left            = "../images/ArchInterior2_LH_16x56.png"
+    image_t ArchInt_Right           = "../images/ArchInterior2_RH_15x56.png"
+    image_t Head1                   = "../images/Head1.png"
+    image_t Head2                   = "../images/Head2_9x16.png"
+    image_t Volcano                 = "../images/Volcano.png"
+
+    image_t Body1                   = "../images/Body1_23x16.png"
+    image_t Body2                   = "../images/Body2_23x16.png"
+    image_t Body3                   = "../images/Body3_26x16.png"
+    image_t Body4                   = "../images/Body4_25x16.png"
+    image_t Body5                   = "../images/Body5_26x16.png"
+    image_t Body6                   = "../images/Body6_24x24.png"
+    image_t Body7                   = "../images/Body7_35x16.png"
+    image_t Body8                   = "../images/Body8_33x24.png"
+    image_t Body9                   = "../images/Body9_31x24.png"
+    image_t Body10                  = "../images/Body10_30x16.png"
+    image_t Body11                  = "../images/Body11_30x16.png"
+    image_t Body12                  = "../images/Body12_33x24.png"
+    image_t Body13                  = "../images/Body13_13x16.png"
+    image_t Body14                  = "../images/Body14_9x16.png"
+    image_t Body15                  = "../images/Body15_14x24.png"
+    image_t Body16                  = "../images/Body16_16x16.png"
+    image_t Body17                  = "../images/Body17_11x16.png"
+    image_t Body18                  = "../images/Body18_16x16.png"
+    image_t Body19                  = "../images/Body19_24x16.png"
+    image_t Body20                  = "../images/Body20_14x16.png"
+    image_t Body21                  = "../images/Body21_14x16.png"
+    image_t Body22                  = "../images/Body22_12x16.png"
+    image_t Body23                  = "../images/Body23_13x16.png"
+    image_t Body24                  = "../images/Body24_28x16.png"
+    image_t Body25                  = "../images/Body25_27x16.png"
+
+    uint24_t Bodies[] = {
+        Body1,
+        Body2,
+        Body3,
+        Body4,
+        Body5,
+        Body6,
+        Body7,
+        Body8,
+        Body9,
+        Body10,
+        Body11,
+        Body12,
+        Body13,
+        Body14,
+        Body15,
+        Body16,
+        Body17,
+        Body18,
+        Body19,
+        Body20,
+        Body21,
+        Body22,
+        Body23,
+        Body24,
+        Body25,
+    }
+}
+
+namespace_end

@@ -1,0 +1,105 @@
+//namespace Images {
+
+    include "data/images.txt"
+
+//namespace_end
+
+namespace Images {
+
+    uint24_t Princess[] = { Princess_00, Princess_01, Princess_02, Princess_03, Princess_04, Princess_05, Princess_06, Princess_07, Princess_08, Princess_09, Princess_10, Princess_11,  };
+
+
+namespace_end
+
+namespace Constants {
+
+//    uint8_t StanceToImageXRefFX[] = {
+//        0,
+//        include "movements_convert.txt"
+//    };
+
+int8_t Dungeon_1_x[] = { 
+-20, -18, -16, -16,      
+-12, -10, -8, -8,
+-4, -2, 0, 0, 
+4, 6, 8, 8, 
+12, 14, 16, 16,
+20, 22, 24, 24,
+28, 30, 32, 32,
+36, 38, 40, 40,
+44, 46, 48, 48,
+52, 54, 56, 56,
+60, 62, 64, 64,
+68, 70, 72, 72,
+76, 78, 80, 80,
+84, 86, 88, 88,
+92, 94, 96, 96,
+100, 102, 104, 104,
+108, 110, 112, 112,
+118, 120, 122, 122,
+};
+
+uint8_t Dungeon_1_i[] = { 
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+0, 1, 2, 3,  
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+0, 1, 2, 3,  
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+0, 1, 2, 3,  
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+0, 1, 2, 3,  
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+};
+
+int8_t Dungeon_2_x[] = { 
+-20, -18, -16, -16,      
+-12, -10, -8, -8,
+-4, -2, 0, 0, 
+4, 6, 8, 8, 
+12, 14, 16, 16,
+20, 22, 24, 24,
+28, 30, 32, 32,
+36, 38, 40, 40,
+44, 44, 44, 44,
+44, 44, 44, 44,
+44, 44, 44, 44,
+44, 44, 42, 42,
+38, 36, 34, 34,
+34, 34, 34, 34,
+};
+
+uint8_t Dungeon_2_i[] = { 
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+0, 1, 2, 3,   
+0, 1, 2, 3,  
+0, 1, 2, 3,   
+0, 1, 2, 3,    
+0, 1, 2, 3,   
+4, 4, 4, 4,  
+4, 4, 4, 4,  
+5, 6, 7, 7,   
+7, 7, 8, 8, 
+9, 10, 11, 11,
+11, 11, 11, 11,
+};
+
+namespace_end
+
+
+include "data/Music.txt"
+
+
+savesection  // Anything below here will be stored in the save block
+
+uint16_t 0xFFFF // Save state  end marker

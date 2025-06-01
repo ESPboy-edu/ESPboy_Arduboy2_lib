@@ -1,0 +1,32 @@
+namespace Music 
+   
+    raw_t Song_Track01 = "music/Track01.bin"
+    raw_t Song_Track02 = "music/Track02.bin"
+    raw_t Song_Track03 = "music/Track03.bin"
+    raw_t Song_Track04 = "music/Track04.bin"
+    raw_t Song_Track05 = "music/Track05.bin"
+    raw_t Song_Track06 = "music/Track06.bin"
+    raw_t Song_Track07 = "music/Track07.bin"
+
+    raw_t SFX_Death = "music/SFX_Death.bin"
+    raw_t SFX_PlayerBlip = "music/SFX_PlayerBlip.bin"
+    raw_t SFX_EnemyBlip = "music/SFX_EnemyBlip.bin"
+
+    uint24_t Songs[] = { 
+        Song_Track01, 
+        Song_Track02, 
+        Song_Track03, 
+        Song_Track04, 
+        Song_Track05, 
+        Song_Track06, 
+        Song_Track07, 
+        };
+
+    uint24_t SFXs[] =  { 
+        SFX_Death, 
+        SFX_PlayerBlip,
+        SFX_EnemyBlip,
+        };
+
+
+namespace_end  

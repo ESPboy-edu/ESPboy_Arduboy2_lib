@@ -1,0 +1,41 @@
+In file included from /Users/romans/Desktop/KaratekaFX/KaratekaFX.ino:20:
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp: In instantiation of 'uint8_t synthu_detail::ld_u8_inc(T*&) [with T = volatile synthu_detail::command_t; uint8_t = unsigned char]':
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:198:41:   required from here
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:138:31: error: cannot convert 'const uint8_t*' {aka 'const unsigned char*'} to 'volatile synthu_detail::command_t*' in assignment
+  138 |     ptr = (uint8_t const*)ptr + 1;
+      |           ~~~~~~~~~~~~~~~~~~~~^~~
+      |                               |
+      |                               const uint8_t* {aka const unsigned char*}
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp: In instantiation of 'uint16_t synthu_detail::ld_u16_inc(T*&) [with T = volatile synthu_detail::command_t; uint16_t = short unsigned int]':
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:199:46:   required from here
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:147:32: error: cannot convert 'const uint16_t*' {aka 'const short unsigned int*'} to 'volatile synthu_detail::command_t*' in assignment
+  147 |     ptr = (uint16_t const*)ptr + 1;
+      |           ~~~~~~~~~~~~~~~~~~~~~^~~
+      |                                |
+      |                                const uint16_t* {aka const short unsigned int*}
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp: In instantiation of 'uint8_t synthu_detail::ld_u8_inc(T*&) [with T = const volatile synthu_detail::command_t; uint8_t = unsigned char]':
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:417:55:   required from here
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:138:31: error: cannot convert 'const uint8_t*' {aka 'const unsigned char*'} to 'const volatile synthu_detail::command_t*' in assignment
+  138 |     ptr = (uint8_t const*)ptr + 1;
+      |           ~~~~~~~~~~~~~~~~~~~~^~~
+      |                               |
+      |                               const uint8_t* {aka const unsigned char*}
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp: In instantiation of 'uint16_t synthu_detail::ld_u16_inc(T*&) [with T = const volatile synthu_detail::command_t; uint16_t = short unsigned int]':
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:418:60:   required from here
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:147:32: error: cannot convert 'const uint16_t*' {aka 'const short unsigned int*'} to 'const volatile synthu_detail::command_t*' in assignment
+  147 |     ptr = (uint16_t const*)ptr + 1;
+      |           ~~~~~~~~~~~~~~~~~~~~~^~~
+      |                                |
+      |                                const uint16_t* {aka const short unsigned int*}
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp: In instantiation of 'void synthu_detail::st_u16_inc(T*&, uint16_t) [with T = const volatile synthu_detail::channel_t; uint16_t = short unsigned int]':
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:431:36:   required from here
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:154:27: error: assignment of read-only location '*(const uint16_t*)ptr'
+  154 |     *(uint16_t const*)ptr = x;
+      |     ~~~~~~~~~~~~~~~~~~~~~~^~~
+/Users/romans/Desktop/KaratekaFX/src/utils/SynthU.hpp:155:32: error: cannot convert 'const uint16_t*' {aka 'const short unsigned int*'} to 'const volatile synthu_detail::channel_t*' in assignment
+  155 |     ptr = (uint16_t const*)ptr + 1;
+      |           ~~~~~~~~~~~~~~~~~~~~~^~~
+      |                                |
+      |                                const uint16_t* {aka const short unsigned int*}
+exit status 1
+Error compiling for board LOLIN(WEMOS) D1 R2 & mini.
