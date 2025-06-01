@@ -235,7 +235,7 @@ struct ArduboyG_Common : public BASE
             plane1 =  (uint8_t *) malloc(128*64/8);
             memset(plane0, 0, 128*64/8);
             memset(plane0, 0, 128*64/8);
-		        oBuffer1 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
+	        oBuffer1 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
             oBuffer2 = (uint16_t *)malloc(WIDTH*4*16*sizeof(uint16_t));
             oBuffer = oBuffer1;
             b = Arduboy2Base::getBuffer();

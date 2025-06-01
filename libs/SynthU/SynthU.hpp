@@ -83,6 +83,7 @@ constexpr uint16_t NOISE_PERIOD = 16000000ul / (1 << ADV_SHIFT) / SYNTHU_NOISE_C
 #endif
 
 
+
 struct command_t
 {
     uint8_t  vol;
@@ -161,45 +162,45 @@ static void tick()
 static void load_fx_data()
 {
   static uint8_t soundBuf[SYNTHU_NUM_CHANNELS*(sizeof(uint8_t)+sizeof(uint16_t))+sizeof(uint8_t)];
-  static uint8_t *PsoundBuf;
     if(g_playing && g_tick.reps == 0)
     {
+        uint8_t *PsoundBuf;
         PsoundBuf = soundBuf;
         SYNTHU_FX_READDATABYTES_FUNC(g_buffer_addr, soundBuf,sizeof(soundBuf));
-        for (uint8_t i; i<SYNTHU_NUM_CHANNELS; i++){
+        for (uint8_t i = 0; i < SYNTHU_NUM_CHANNELS; ++i){
           g_tick.cmds[i].vol = *PsoundBuf++;
           g_tick.cmds[i].period = (*PsoundBuf++)+(*PsoundBuf++)*256;
         }
         g_tick.reps = *PsoundBuf;
     }
-
-    
-#if SYNTHU_ENABLE_SFX
-    if(g_playing_sfx && g_tick_sfx.reps == 0)
-    {
-        SYNTHU_FX_READDATABYTES_FUNC(g_buffer_addr_sfx, soundBuf, sizeof(uint8_t)+sizeof(uint16_t)+sizeof(uint8_t));
-        PsoundBuf = soundBuf;
-        g_tick_sfx.cmd.vol = *PsoundBuf++;
-        g_tick_sfx.cmd.period = (*PsoundBuf++)+(*PsoundBuf++)*256;
-        g_tick_sfx.reps = *PsoundBuf;
-        
-        if(g_tick_sfx.cmd.period == 0)
-            g_playing_sfx = false;
-    }
-#endif
-    int16_t t = 0;
+   
+       int16_t t = 0;
     
     // song tbase
     for(uint8_t i = 0; i < SYNTHU_NUM_CHANNELS; ++i)
     {
         uint8_t vol = g_tick.cmds[i].vol;
         uint16_t period = g_tick.cmds[i].period;
-        if(period == 0) SynthU::stop();
+        if(period == 0) 
+          g_playing = false;
         vol >>= 1;
         t -= vol;
     }
     
-    g_tbase = t;
+    g_tbase = t; 
+    
+#if SYNTHU_ENABLE_SFX
+    if(g_playing_sfx && g_tick_sfx.reps == 0)
+    {
+        SYNTHU_FX_READDATABYTES_FUNC(g_buffer_addr_sfx, soundBuf, sizeof(uint8_t)+sizeof(uint16_t)+sizeof(uint8_t));
+        g_tick_sfx.cmd.vol = soundBuf[0];
+        g_tick_sfx.cmd.period = soundBuf[1]+soundBuf[2]*256;
+        g_tick_sfx.reps = soundBuf[3];
+        
+        if(g_tick_sfx.cmd.period == 0)
+            g_playing_sfx = false;
+    }
+#endif
 }
 
 static void disable(){ 
@@ -232,6 +233,7 @@ uint8_t SynthU::volume(){
     return 3;
 #endif
 }
+
 
 void SynthU::setVolume(uint8_t vol){
 #if SYNTHU_ENABLE_VOLUME
@@ -347,8 +349,8 @@ bool SynthU::update(){
 
 void IRAM_ATTR SoundISR(){
 noInterrupts();
-    if(!SYNTHU_AUDIO_ENABLED_FUNC() ||
-        !g_playing &&
+    if(!SYNTHU_AUDIO_ENABLED_FUNC() || 
+    !g_playing &&
 #if SYNTHU_ENABLE_SFX
         !g_playing_sfx
 #else
@@ -360,9 +362,7 @@ noInterrupts();
         return;
     }
 
-noInterrupts();
-
-    uint16_t adv=128;
+    uint16_t adv = 128;
     int16_t t = 0;
     
     // song contribution
@@ -371,13 +371,13 @@ noInterrupts();
 #endif
     {
         t = g_tbase;
-        for(uint8_t i = 0; i < SYNTHU_NUM_CHANNELS; ++i)
+        for(uint8_t i = 0; i < 2/*SYNTHU_NUM_CHANNELS*/; ++i)
         {
             uint8_t vol = g_tick.cmds[i].vol;
             uint16_t period = g_tick.cmds[i].period;
             if(vol == 0) continue; 
             
-            uint16_t pha =  g_channels[i].pha;
+            uint16_t pha = g_channels[i].pha;
             pha += adv;
             while(pha >= period)
                 pha -= period;
@@ -436,21 +436,128 @@ noInterrupts();
         }
     }
 #endif
-    
-    uint8_t tc = uint8_t(t);
-#if SYNTHU_ENABLE_CLIP
-    if(t > +120) tc = uint8_t(+120);
-    if(t < -120) tc = uint8_t(-120);
-#endif
-    tc += 128;
-
+    static int16_t norm=0;
+    static int16_t div=1;
+    if(t<norm) norm=t;
+    t-=norm;
+    t/=div;
+    if (t>255) div++; 
     //check sigma-delta info for ESP8266 here https://github.com/esp8266/Arduino/blob/master/cores/esp8266/sigma_delta.h
     if (soundOn)
-      sigmaDeltaWrite(0, tc);
+      sigmaDeltaWrite(0, t);
     else sigmaDeltaWrite(0, 0);
     
     interrupts();
 }
+
+
+//newer version but plays different and not so good as previous 
+//probably due to removed OCR3 counter
+
+/*
+void IRAM_ATTR SoundISR(){
+noInterrupts();
+    if(!SYNTHU_AUDIO_ENABLED_FUNC() ||
+        !g_playing &&
+#if SYNTHU_ENABLE_SFX
+        !g_playing_sfx
+#else
+        true
+#endif
+        )
+    {
+        interrupts();
+        return;
+    }
+    uint16_t adv = 128;
+    adv >>= ADV_SHIFT;
+    int16_t t = 0;
+    
+    // song contribution
+#if SYNTHU_ENABLE_SFX
+    if(g_playing)
+#endif
+    {
+        t = g_tbase;
+        for(uint8_t i = 0; i < SYNTHU_NUM_CHANNELS; ++i)
+        {
+            uint8_t vol = g_tick.cmds[i].vol;
+            uint16_t period = g_tick.cmds[i].period;
+            if(vol == 0) { continue; }
+            
+            uint16_t pha = g_channels[i].pha;
+            pha += adv;
+            if(pha >= period)
+                pha -= period;
+            uint16_t half_period = period / 2;
+            if(pha < half_period)
+            {
+                t += vol;
+                period = half_period;
+            }
+            g_channels[i].pha = pha;
+            period -= pha;
+        }
+    
+        // song volume adjust
+#if SYNTHU_ENABLE_VOLUME
+        t *= g_volume;
+        t >>= 4;
+#else
+        t >>= 1;
+#endif
+    }
+
+    // SFX contribution
+#if SYNTHU_ENABLE_SFX
+    if(g_playing_sfx)
+    {
+        uint8_t vol = g_tick_sfx.cmd.vol;
+        int16_t tsfx = 0;
+        if(vol != 0)
+        {
+            uint16_t period = g_tick_sfx.cmd.period; 
+            uint16_t pha = g_channel_sfx.pha;
+            pha += adv;
+            while(pha >= period)
+                pha -= period;
+            uint16_t half_period = period / 2;
+            if(pha < half_period)
+            {
+                tsfx += vol;
+                period = half_period;
+            }
+            else
+                tsfx -= vol;
+            
+            g_channel_sfx.pha = pha;
+            period -= pha;
+
+#if SYNTHU_ENABLE_VOLUME
+            tsfx *= g_volume_sfx;
+
+            tsfx >>= 4;
+#else
+            tsfx >>= 1;
+#endif
+            t += tsfx;
+        }
+    }
+#endif
+    static int16_t norm=0;
+    static int16_t div=1;
+    if(t<norm) norm=t;
+    t-=norm;
+    t/=div;
+    if (t>256) div++; 
+    //check sigma-delta info for ESP8266 here https://github.com/esp8266/Arduino/blob/master/cores/esp8266/sigma_delta.h
+    if (soundOn)
+      sigmaDeltaWrite(0, t);
+    else sigmaDeltaWrite(0, 0);
+    
+    interrupts();
+}
+*/
 
 #endif
 #endif

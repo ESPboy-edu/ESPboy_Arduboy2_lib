@@ -8,7 +8,7 @@
 Arduboy2 arduboy;
 
 void setup() {
-  Serial.begin(74880);
+  Serial.begin(115200);
   arduboy.begin();
   SynthU::setup();
   // set the framerate of the game at 60 fps
