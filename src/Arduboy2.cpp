@@ -10,11 +10,11 @@
 
 extern ESPboyInit myESPboy;
 
-#if (HEIGHT == 64) 
+//#if (HEIGHT == 64) 
   #define VERT_OFFSET 20
-#else 
-  #define VERT_OFFSET 0
-#endif
+//#else 
+//  #define VERT_OFFSET 0
+//#endif
 
 ArduboySettings arduboyDefaultSettings;
 ArduboySettings arduboySaveLoadSettings;
@@ -59,6 +59,10 @@ void Arduboy2Base::start(){
     delay(5000);
     myESPboy.tft.fillScreen(TFT_BLACK);
     }
+  if(!arduboySaveLoadSettings.arduboyYscale)
+    myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, 64);
+  else 
+    myESPboy.tft.setAddrWindow(0, 0, WIDTH, 128);  
   clear();  
   display();
   systemButtons(); 
