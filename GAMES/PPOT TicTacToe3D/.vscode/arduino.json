@@ -1,0 +1,6 @@
+{
+    "board": "arduboy-homemade:avr:arduboy-fx",
+    "sketch": "TicTacToe3D.ino",
+    "output": "../build",
+    "configuration": "core=arduboy-core,boot=cathy3k"
+}
