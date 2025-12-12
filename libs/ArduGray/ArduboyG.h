@@ -144,7 +144,7 @@ extern ESPboyInit myESPboy;
   
   static uint8_t *b;
   static bool arduboyYscaleFlag = Y_SCALE_PRESET;
-  static uint32_t frameRateDelayMs = 1000/200, frameRateMillisPrev;
+  static uint32_t frameRateDelayMs = 1000/120, frameRateMillisPrev;
 
 #undef BLACK
 #undef WHITE
@@ -220,6 +220,10 @@ struct ArduboyG_Common : public BASE
     
     static uint8_t pressedButtons() {
         return Arduboy2Base::currentButtonState;
+    }
+    
+    static void setFrameRate (uint8_t fr){
+      frameRateDelayMs = 1000/(fr*num_planes(MODE));
     }
     
     static void startGray(){
@@ -583,7 +587,7 @@ struct ArduboyG_Common : public BASE
       if (current_plane == 0) {memcpy(plane0, b, 128*64/8);}
       if (current_plane == 1) {memcpy(plane1, b, 128*64/8);}
       if (current_plane == num_planes(MODE)-1){
-        while (frameRateMillisPrev+frameRateDelayMs > millis());
+        while ((frameRateMillisPrev+frameRateDelayMs) > millis());
         frameRateMillisPrev = millis();
         doDisplay(clear);  
         update_every_n_count++;
@@ -852,11 +856,6 @@ struct ArduboyG_Config : public abg_detail::ArduboyG_Common<
         }
 
         return 1;
-    }
-
-public:
-    static void setFrameRate(uint8_t fr){
-      frameRateDelayMs = 1000/fr;
     }
 };
     
