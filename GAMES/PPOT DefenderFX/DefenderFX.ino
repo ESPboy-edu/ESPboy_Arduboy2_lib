@@ -59,19 +59,20 @@ uint8_t enemyPickupIdx = 0;
 bool gameOver = false;
 
 void setup() {
-    Serial.begin(74880);
-    
+
     a.boot();
+    
     //abg_detail::send_cmds_prog<0xDB, 0x20>();
 
     FX::begin(FX_DATA_PAGE, FX_SAVE_PAGE);
     FX::loadGameState((uint8_t*)&cookie, sizeof(cookie));
     delay(100);
     
-    a.startGray();
     audioInit();
     setAudioOn();
 
+    a.setFrameRate(40);
+    a.startGray();
 }
 
 
@@ -85,6 +86,7 @@ void loop() {
         a.waitForNextPlane(WHITE);
     }
 
+    ESP.wdtFeed();
     //FX::disableOLED();
 
     switch (gameState) {
