@@ -1,0 +1,7 @@
+{
+    "board": "arduboy-homemade:avr:arduboy-fx-devkit",
+    "port": "/dev/tty.usbmodem14601",
+    "sketch": "ButtonsTrail.ino",
+    "output": "../build",
+    "configuration": "core=arduboy-core,boot=cathy3k"
+}
