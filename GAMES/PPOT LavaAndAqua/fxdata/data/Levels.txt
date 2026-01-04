@@ -1,0 +1,56 @@
+
+namespace Levels
+
+    include "data/Level_00.txt"
+    include "data/Level_01.txt"
+    include "data/Level_02.txt"
+    include "data/Level_03.txt"
+    include "data/Level_04.txt"
+    include "data/Level_05.txt"
+    include "data/Level_06.txt"
+    include "data/Level_07.txt"
+    include "data/Level_08.txt"
+    include "data/Level_09.txt"
+    include "data/Level_10.txt"
+    include "data/Level_11.txt"
+    include "data/Level_12.txt"
+    include "data/Level_13.txt"
+    include "data/Level_14.txt"
+    include "data/Level_15.txt"
+    include "data/Level_16.txt"
+    include "data/Level_17.txt"
+    include "data/Level_18.txt"
+    include "data/Level_19.txt"
+    include "data/Level_20.txt"
+    include "data/Level_21.txt"
+    include "data/Level_22.txt"
+    include "data/Level_23.txt"
+    
+    uint24_t Levels[] = {
+        Level_00,
+        Level_01,
+        Level_02,
+        Level_03,
+        Level_04,
+        Level_05,
+        Level_06,
+        Level_07,
+        Level_08,
+        Level_09,
+        Level_10,
+        Level_11,
+        Level_12,
+        Level_13,
+        Level_14,
+        Level_15,
+        Level_16,
+        Level_17,
+        Level_18,
+        Level_19,
+        Level_20,
+        Level_21,
+        Level_22,
+        Level_23,
+    };
+    
+namespace_end

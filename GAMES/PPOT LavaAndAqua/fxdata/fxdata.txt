@@ -1,0 +1,77 @@
+namespace Constants
+
+
+namespace_end 
+
+include "data/Levels.txt"
+
+namespace Images
+
+    include "images/Images.hpp"
+
+    uint24_t Level_Images[] = {
+        Level_Img_00,
+        Level_Img_01,
+        Level_Img_02,
+        Level_Img_03,
+        Level_Img_04,
+        Level_Img_05,
+        Level_Img_06,
+        Level_Img_07,
+        Level_Img_08,
+        Level_Img_09,
+        Level_Img_10,
+        Level_Img_11,
+        Level_Img_12,
+        Level_Img_13,
+        Level_Img_14,
+        Level_Img_15,
+        Level_Img_16,
+        Level_Img_17,
+        Level_Img_18,
+        Level_Img_19,
+        Level_Img_20,
+        Level_Img_21,
+        Level_Img_22,
+        Level_Img_23,
+    };
+
+    uint24_t Lavas[] = {
+        Lava_01,
+        Lava_02,
+        Lava_03,
+        Lava_04,
+        Lava_05,
+        Lava_06,
+        Lava_07,
+        Lava_08,
+        Lava_09,
+        Lava_10,
+        Lava_11,
+        Lava_12,
+        Lava_13,
+        Lava_14,
+    };
+
+    uint24_t Waters[] = {
+        Water_01,
+        Water_02,
+        Water_03,
+        Water_04,
+        Water_05,
+        Water_06,
+        Water_07,
+        Water_08,
+        Water_09,
+        Water_10,
+        Water_11,
+        Water_12,
+        Water_13,
+        Water_14,
+    };
+
+namespace_end
+
+savesection  // Anything below here will be stored in the save block
+
+uint16_t 0xFFFF // Save state  end marker

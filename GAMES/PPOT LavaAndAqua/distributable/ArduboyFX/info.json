@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 3,
+  "binaries": [
+    {
+      "title": "Lava And Aqua",
+      "filename": "LavaAndAqua.hex",
+      "flashdata": "LavaAndAqua-data.bin",
+      "flashsave": "LavaAndAqua-save.bin",
+      "device": "ArduboyFX"
+    }
+  ]
+}
