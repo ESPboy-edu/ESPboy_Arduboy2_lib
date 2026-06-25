@@ -1,0 +1,400 @@
+:root {
+  color-scheme: dark;
+  --bg: #111;
+  --panel: #1b1b1b;
+  --panel-2: #242424;
+  --text: #f5f5f5;
+  --muted: #a9a9a9;
+  --line: #69b7ff;
+  --mill: #ffcf5a;
+  --point: #f7f7f7;
+  --bad: #ff7474;
+  --ok: #7ee787;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 system-ui, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  border: 1px solid #444;
+  background: #101010;
+  color: var(--text);
+  font: inherit;
+}
+
+button {
+  min-height: 32px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+button.active {
+  border-color: var(--point);
+  background: #303030;
+}
+
+input,
+select {
+  min-height: 32px;
+  padding: 0 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 520px;
+  padding: 12px;
+  resize: vertical;
+  font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+.topbar,
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #303030;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.topbar p {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
+
+.status {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.toolbar {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.toolbar label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.tabs {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 0;
+}
+
+.panel,
+.editor {
+  padding: 18px;
+}
+
+.panel {
+  background: var(--panel);
+  border-right: 1px solid #303030;
+}
+
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.summary,
+.validation {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.summary div,
+.validation div {
+  padding: 8px;
+  background: var(--panel-2);
+}
+
+.validation .ok {
+  color: var(--ok);
+}
+
+.validation .bad {
+  color: var(--bad);
+}
+
+.canvasFrame {
+  width: min(72vh, 680px);
+  max-width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(150, 150, 150, 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150, 150, 150, 0.42) 1px, transparent 1px),
+    linear-gradient(rgba(150, 150, 150, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150, 150, 150, 0.18) 1px, transparent 1px),
+    #080808;
+  background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
+  border: 1px solid #343434;
+}
+
+.canvasFrame.gridHidden {
+  background: #080808;
+}
+
+.graphTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.spriteTools {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.spriteTools h2 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.spriteTools p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.audioTools {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.audioTools label {
+  display: grid;
+  gap: 4px;
+  min-width: 140px;
+  color: var(--muted);
+}
+
+.audioTools input,
+.audioTools select {
+  width: 100%;
+}
+
+.graphTools label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+}
+
+.modeGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.cursorInfo,
+.selectionInfo {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+.selectionInfo {
+  margin-left: 0;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.spriteCanvasFrame {
+  width: min(86vw, 768px);
+  aspect-ratio: 2;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(45deg, #222 25%, transparent 25% 75%, #222 75%),
+    linear-gradient(45deg, #222 25%, #151515 25% 75%, #222 75%);
+  background-position: 0 0, 8px 8px;
+  background-size: 16px 16px;
+  border: 1px solid #343434;
+}
+
+.pianoRoll {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  max-width: 100%;
+  min-height: 360px;
+  max-height: 58vh;
+  overflow: auto;
+  background: #080808;
+  border: 1px solid #343434;
+  user-select: none;
+}
+
+.pianoLabels,
+.rollGrid {
+  position: relative;
+}
+
+.pianoLabel {
+  height: 16px;
+  padding: 1px 5px;
+  border-right: 1px solid #343434;
+  border-bottom: 1px solid #262626;
+  background: #f7f7f7;
+  color: #050505;
+  font: 10px/13px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.pianoLabel.sharp {
+  background: #101010;
+  color: #f7f7f7;
+}
+
+.rollGrid {
+  min-width: 860px;
+  cursor: crosshair;
+}
+
+.rollRow {
+  position: relative;
+  height: 16px;
+  border-bottom: 1px solid #262626;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.11) 1px, transparent 1px);
+  background-size: 40px 16px;
+}
+
+.rollRow.sharp {
+  background-color: #121212;
+}
+
+.rollNote,
+.rollPreview {
+  position: absolute;
+  top: 2px;
+  height: 12px;
+  min-width: 5px;
+  border-radius: 2px;
+}
+
+.rollNote {
+  border: 1px solid #050505;
+  background: var(--ok);
+}
+
+.rollPreview {
+  border: 1px dashed var(--point);
+  background: rgba(126, 231, 135, 0.35);
+  pointer-events: none;
+}
+
+.audioEvents {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  margin-top: 12px;
+  overflow: auto;
+}
+
+.audioRow {
+  display: grid;
+  grid-template-columns: 1fr 90px 42px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid #343434;
+}
+
+.legend {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.legend i {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.legend .line {
+  background: repeating-linear-gradient(90deg, #f7f7f7 0 6px, #050505 6px 11px);
+  border: 1px solid #555;
+}
+
+.legend .mill {
+  background: linear-gradient(90deg, hsl(0 92% 62%), hsl(137.5 92% 72%), hsl(275 92% 62%), hsl(52.5 92% 72%));
+  height: 7px;
+}
+
+.legend .point {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--point);
+}
+
+.rulesForm {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.rulesForm label {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  background: var(--panel);
+}
+
+.rulesForm input[type="checkbox"] {
+  width: 18px;
+}
+
+.hidden {
+  display: none;
+}

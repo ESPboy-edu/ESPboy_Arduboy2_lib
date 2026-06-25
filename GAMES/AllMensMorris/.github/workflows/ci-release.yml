@@ -1,0 +1,67 @@
+name: CI and Release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Flake check
+        run: nix flake check
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Install Arduino dependencies
+        run: make setup
+
+      - name: Compile stable
+        run: make compile
+
+      - name: Compile debug
+        run: make compile-debug
+
+      - name: Compile FX-C
+        run: make compile-fxc
+
+      - name: Prepare FX entry
+        run: make fx-entry
+
+      - name: Prepare FX-C entry
+        run: make fx-entry-fxc
+
+      - name: Package .arduboy
+        run: make package-arduboy ARDUBOY_VERSION=${{ github.ref_name }}
+
+      - name: Package artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME}"
+          mkdir -p dist/release
+          cp build/stable/all-mens-morris.ino.hex "dist/release/all-mens-morris-${version}.hex"
+          cp build/debug/all-mens-morris.ino.hex "dist/release/all-mens-morris-debug-${version}.hex"
+          cp build/fxc/all-mens-morris.ino.hex "dist/release/all-mens-morris-fxc-${version}.hex"
+          tar -C dist/fx-cart -czf "dist/release/all-mens-morris-fx-entry-${version}.tar.gz" .
+          (cd dist/release && sha256sum * > "SHA256SUMS-${version}.txt")
+          printf 'All Men'\''s Morris %s\n' "$version" > "dist/release/README-${version}.txt"
+
+      - name: Upload release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/release/*

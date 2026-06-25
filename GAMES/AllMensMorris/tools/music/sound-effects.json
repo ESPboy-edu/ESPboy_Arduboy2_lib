@@ -1,0 +1,60 @@
+{
+  "effects": [
+    {
+      "id": "action-low",
+      "name": "Action Low",
+      "kind": "effect",
+      "tickMs": 35,
+      "events": [
+        {
+          "note": 57,
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "id": "cursor-step",
+      "name": "Cursor Step",
+      "kind": "effect",
+      "tickMs": 12,
+      "events": [
+        {
+          "note": 78,
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "id": "invalid",
+      "name": "Invalid",
+      "kind": "effect",
+      "tickMs": 80,
+      "events": [
+        {
+          "note": 47,
+          "duration": 1
+        }
+      ]
+    },
+    {
+      "id": "mill",
+      "name": "Mill",
+      "kind": "effect",
+      "tickMs": 70,
+      "events": [
+        {
+          "note": 76,
+          "duration": 1
+        },
+        {
+          "note": 81,
+          "duration": 1
+        },
+        {
+          "note": 86,
+          "duration": 2
+        }
+      ]
+    }
+  ]
+}

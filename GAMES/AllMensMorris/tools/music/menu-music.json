@@ -1,0 +1,206 @@
+{
+  "id": "menu-music",
+  "name": "Menu Music",
+  "kind": "music",
+  "tickMs": 110,
+  "themes": [
+    {
+      "id": "bossa-one",
+      "name": "Bossa One",
+      "events": [
+        {
+          "note": 60,
+          "duration": 4
+        },
+        {
+          "note": 64,
+          "duration": 2
+        },
+        {
+          "note": 64,
+          "duration": 2
+        },
+        {
+          "note": 60,
+          "duration": 2
+        },
+        {
+          "note": 64,
+          "duration": 4
+        },
+        {
+          "note": 60,
+          "duration": 4
+        },
+        {
+          "note": 64,
+          "duration": 4
+        },
+        {
+          "note": 64,
+          "duration": 2
+        },
+        {
+          "note": 60,
+          "duration": 4
+        },
+        {
+          "note": 64,
+          "duration": 4
+        }
+      ]
+    },
+    {
+      "id": "bossa-two",
+      "name": "Bossa Two",
+      "events": [
+        {
+          "note": 72,
+          "duration": 6
+        },
+        {
+          "note": 72,
+          "duration": 4
+        },
+        {
+          "note": 69,
+          "duration": 2
+        },
+        {
+          "note": 72,
+          "duration": 2
+        },
+        {
+          "note": 69,
+          "duration": 2
+        },
+        {
+          "note": 72,
+          "duration": 2
+        },
+        {
+          "note": 67,
+          "duration": 6
+        },
+        {
+          "note": 0,
+          "duration": 2
+        },
+        {
+          "note": 69,
+          "duration": 6
+        },
+        {
+          "note": 69,
+          "duration": 4
+        },
+        {
+          "note": 67,
+          "duration": 2
+        },
+        {
+          "note": 69,
+          "duration": 2
+        },
+        {
+          "note": 67,
+          "duration": 2
+        },
+        {
+          "note": 69,
+          "duration": 2
+        },
+        {
+          "note": 65,
+          "duration": 6
+        },
+        {
+          "note": 0,
+          "duration": 2
+        }
+      ]
+    },
+    {
+      "id": "bossa-three",
+      "name": "Bossa Three",
+      "events": [
+        {
+          "note": 61,
+          "duration": 6
+        },
+        {
+          "note": 60,
+          "duration": 2
+        },
+        {
+          "note": 59,
+          "duration": 2
+        },
+        {
+          "note": 58,
+          "duration": 2
+        },
+        {
+          "note": 57,
+          "duration": 2
+        },
+        {
+          "note": 56,
+          "duration": 2
+        },
+        {
+          "note": 55,
+          "duration": 6
+        },
+        {
+          "note": 57,
+          "duration": 6
+        },
+        {
+          "note": 0,
+          "duration": 2
+        },
+        {
+          "note": 64,
+          "duration": 4
+        },
+        {
+          "note": 0,
+          "duration": 2
+        },
+        {
+          "note": 63,
+          "duration": 2
+        },
+        {
+          "note": 62,
+          "duration": 2
+        },
+        {
+          "note": 61,
+          "duration": 2
+        },
+        {
+          "note": 60,
+          "duration": 2
+        },
+        {
+          "note": 59,
+          "duration": 2
+        },
+        {
+          "note": 58,
+          "duration": 6
+        },
+        {
+          "note": 61,
+          "duration": 6
+        },
+        {
+          "note": 0,
+          "duration": 2
+        }
+      ]
+    }
+  ]
+}

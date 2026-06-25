@@ -1,0 +1,8 @@
+/.arduino/
+/.arduino-sketchbook/
+/.codex
+/backups/
+/build/
+/dist/
+/result
+__pycache__/

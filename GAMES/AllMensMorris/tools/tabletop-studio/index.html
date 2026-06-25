@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Men's Morris TableTop Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>TableTop Studio</h1>
+        <p>Board graph and rule profile editor for All Men's Morris.</p>
+      </div>
+      <div id="status" class="status">Ready</div>
+    </header>
+
+    <section class="toolbar">
+      <label>
+        Board
+        <select id="boardSelect"></select>
+      </label>
+      <input id="newBoardName" type="text" placeholder="New board name">
+      <button id="createBoard">New blank</button>
+      <button id="duplicateBoard">Duplicate</button>
+      <button id="saveBoard">Save</button>
+      <div class="tabs">
+        <button class="active" data-tab="graph">Graph</button>
+        <button data-tab="rules">Rules</button>
+        <button data-tab="sprites">Sprites</button>
+        <button data-tab="audio">Audio</button>
+        <button data-tab="raw">Raw JSON</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <h2>Profile</h2>
+        <div id="summary" class="summary"></div>
+        <h2>Validation</h2>
+        <div id="validation" class="validation"></div>
+      </aside>
+
+      <section id="graphTab" class="editor">
+        <div class="graphTools">
+          <div class="modeGroup">
+            <button class="active" data-tool="move">Move</button>
+            <button data-tool="point">Point</button>
+            <button data-tool="edge">Connect</button>
+            <button data-tool="mill">Mill</button>
+            <button data-tool="erase">Erase</button>
+          </div>
+          <label><input id="showAdjacency" type="checkbox" checked> connections</label>
+          <label><input id="showMills" type="checkbox" checked> mills</label>
+          <label><input id="showGrid" type="checkbox" checked> grid</label>
+          <span id="cursorInfo" class="cursorInfo">x -- y --</span>
+          <span id="selectionInfo" class="selectionInfo">No selection</span>
+        </div>
+        <div class="canvasFrame">
+          <canvas id="boardCanvas" width="512" height="512"></canvas>
+        </div>
+        <div class="legend">
+          <span><i class="line"></i> connection / legal move</span>
+          <span><i class="mill"></i> mill color band</span>
+          <span><i class="point"></i> point</span>
+        </div>
+      </section>
+
+      <section id="rulesTab" class="editor hidden">
+        <div id="rulesForm" class="rulesForm"></div>
+      </section>
+
+      <section id="spritesTab" class="editor hidden">
+        <div class="spriteTools">
+          <div>
+            <h2>Global Sprites</h2>
+            <p>FX banner and shared UI sprites belong to the project, not to a board profile.</p>
+          </div>
+          <label>
+            Asset
+            <select id="spriteAssetSelect">
+              <option value="assets/fx/banner.png" data-width="128" data-height="64">FX Banner 128x64</option>
+              <option value="assets/ui/pieces.png" data-width="32" data-height="10">UI Pieces 32x10</option>
+            </select>
+          </label>
+          <div class="modeGroup">
+            <button class="active" data-sprite-tool="black">Black</button>
+            <button data-sprite-tool="white">White</button>
+            <button id="invertSprite" type="button">Invert</button>
+            <button id="reloadSprite" type="button">Reload</button>
+            <button id="saveSprite" type="button">Save</button>
+          </div>
+          <span id="spriteCursorInfo" class="cursorInfo">x -- y --</span>
+        </div>
+        <div class="spriteCanvasFrame">
+          <canvas id="spriteCanvas" width="128" height="64"></canvas>
+        </div>
+      </section>
+
+      <section id="audioTab" class="editor hidden">
+        <div class="audioTools">
+          <label>
+            Project sound
+            <select id="audioSelect"></select>
+          </label>
+          <label id="audioThemeLabel">
+            Theme
+            <select id="audioThemeSelect"></select>
+          </label>
+          <label>
+            Name
+            <input id="audioName" type="text">
+          </label>
+          <label>
+            Tick ms
+            <input id="audioTickMs" type="number" min="20" max="250">
+          </label>
+          <button id="newEffect" type="button">New effect</button>
+          <button id="addRest" type="button">Add rest</button>
+          <button id="playAudio" type="button">Play</button>
+          <button id="saveAudio" type="button">Save</button>
+          <span id="audioStats" class="selectionInfo">No audio</span>
+        </div>
+        <div id="audioRoll" class="pianoRoll"></div>
+        <div id="audioEvents" class="audioEvents"></div>
+      </section>
+
+      <section id="rawTab" class="editor hidden">
+        <textarea id="rawJson" spellcheck="false"></textarea>
+      </section>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
