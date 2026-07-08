@@ -46,6 +46,7 @@
 #ifdef _WIN32
 #define ZOOM_SCALE 2
 
+/*
 #define PROGMEM
 #define PSTR
 #define pgm_read_byte(x) (*((uint8_t*)x))
@@ -53,10 +54,11 @@
 
 #define pgm_read_ptr(x) (*((uintptr_t*)x))
 #define strlen_P(x) strlen(x)
+*/
 
 #include <stdint.h>
-typedef uint32_t __uint24;
-using uint24_t = __uint24;
+//typedef uint32_t __uint24;
+//using uint24_t = __uint24;
 
 #include <stdio.h>
 #define WARNING(msg, ...) printf((msg), __VA_ARGS__)
@@ -64,7 +66,7 @@ using uint24_t = __uint24;
 #else
 #include <avr/pgmspace.h>
 #define WARNING(msg, ...)
-#define pgm_read_ptr(x) pgm_read_word(x)
+//#define pgm_read_ptr(x) pgm_read_word(x)
 
 #endif
 // end

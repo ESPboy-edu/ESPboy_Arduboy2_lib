@@ -1,11 +1,12 @@
 #include <Arduboy2.h>
 #include <ArduboyTones.h>
+
+// --- CHANGED: Подключаем Wi-Fi мост и отключаем старые макросы таймингов AVR ---
 #define I2C_IMPLEMENTATION
-#define I2C_FREQUENCY 200000
-#define I2C_HANDSHAKE_BUSY_CHECKS 2000
-#define I2C_CHECK_CABLE_FLIPPED_CHECKS 1500
-#define I2C_CHECK_CABLE_FLIPPED_DEBOUNCE_CHECKS 4
-#include <ArduboyI2C.h>
+#include <ArduboyI2CtoESPboyWiFi.h>
+#include <ESP8266WiFi.h> // Для экономии батареи (WIFI_OFF)
+// -------------------------------------------------------------------------------
+
 #include "Game.h"
 #include "Draw.h"
 #include "Font.h"
@@ -17,7 +18,7 @@ Arduboy2Base arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 Sprites sprites;
 
-ARDUBOY_NO_USB
+//ARDUBOY_NO_USB
 
 uint8_t Platform::GetInput()
 {
@@ -53,7 +54,7 @@ uint8_t Platform::GetInput()
 
 void Platform::PlaySound(const uint16_t* audioPattern)
 {
-	sound.tones(audioPattern);
+  sound.tones(audioPattern);
 }
 
 void Platform::SetLED(uint8_t r, uint8_t g, uint8_t b)
@@ -76,17 +77,17 @@ const uint8_t bottommask_[] PROGMEM = {
 void Platform::DrawVLine(uint8_t x, int8_t y0_, int8_t y1_, uint8_t pattern)
 {
   uint8_t *screenptr = arduboy.getBuffer() + x;
-
   if (y1_ < y0_ || y1_ < 0 || y0_ > 63) return;
-
+  
   // clip (FIXME; clipping should be handled elsewhere)
   // cast to unsigned after clipping to simplify generated code below
   uint8_t y0 = y0_, y1 = y1_;
   if (y0_ < 0) y0 = 0;
   if (y1_ > 63) y1 = 63;
-
+  
   uint8_t *page0 = screenptr + ((y0 & 0x38) << 4);
   uint8_t *page1 = screenptr + ((y1 & 0x38) << 4);
+  
   if (page0 == page1)
   {
     uint8_t mask = pgm_read_byte(topmask_ + (y0 & 7))
@@ -102,10 +103,12 @@ void Platform::DrawVLine(uint8_t x, int8_t y0_, int8_t y1_, uint8_t pattern)
     page0 += 128;
     while (page0 != page1)
     {
-      *page0 = pattern;  // fill middle 8 pixels at a time
+      *page0 = pattern;
+      // fill middle 8 pixels at a time
       page0 += 128;
     }
-    mask = pgm_read_byte(bottommask_ + (y1 & 7));  // and bottom 1..8 pixels
+    mask = pgm_read_byte(bottommask_ + (y1 & 7));
+    // and bottom 1..8 pixels
     *page0 &= ~mask;
     *page0 |= pattern & mask;
   }
@@ -152,10 +155,10 @@ unsigned long lastGoodTickTime;
 
 bool Platform::IsAudioEnabled()
 {
-	return arduboy.audio.enabled();
+  return arduboy.audio.enabled();
 }
 
-static void Platform::SetAudioEnabled(bool isEnabled)
+void Platform::SetAudioEnabled(bool isEnabled)
 {
   if (isEnabled)
   {
@@ -169,8 +172,8 @@ static void Platform::SetAudioEnabled(bool isEnabled)
 
 void Platform::ExpectLoadDelay()
 {
-	// Resets the timer so that we don't tick multiple times after a level load
-	lastTimingSample = millis();
+  // Resets the timer so that we don't tick multiple times after a level load
+  lastTimingSample = millis();
 }
 
 #define CENTER_STR(str, csize) (WIDTH / 2 - (sizeof(str) - 1) * csize / 2)
@@ -181,76 +184,102 @@ volatile uint8_t controllerInput = 0;
 volatile bool controllerRequested = false;
 volatile uint8_t targetInput = 0;
 
-static void onReceive()
+void onReceive()
 {
-  uint8_t *buffer = I2C::getBuffer();
+  // --- CHANGED: Пространство имен ArduboyI2C ---
+  uint8_t *buffer = ArduboyI2C::getBuffer();
   controllerInput = buffer[0];
   controllerReceived = true;
 }
 
-static void onRequest()
+void onRequest()
 {
-  I2C::reply(targetInput);
+  // --- CHANGED: Пространство имен ArduboyI2C ---
+  ArduboyI2C::reply(targetInput);
   controllerRequested = true;
 }
 
-static void PlatformNet::Init()
+void PlatformNet::Init()
 {
-  I2C::begin();
+  // --- CHANGED: Пространство имен ArduboyI2C ---
+  ArduboyI2C::begin();
 
-
-  I2C::checkCableFlipped(nullptr, []() {
+// --- CRITICAL FIX: Replace nullptr with an empty lambda [](){} ---
+  ArduboyI2C::checkCableFlipped([](){}, []() {
     Game::menu.DrawHandshaking(PSTR("Please flip the cable"), 4, CENTER_STR("Please flip the cable", 4));
     arduboy.display(CLEAR_BUFFER);
   });
-
-  I2C::Role role = I2C::handshake(nullptr, [] {
+  
+  // --- CHANGED: Строгая типизация возвращаемого значения (v3.0.0) ---
+  ArduboyI2C::Role role = ArduboyI2C::handshake([](){}, []() {
     Game::menu.DrawHandshaking(PSTR("Waiting..."), 4, CENTER_STR("Waiting...", 4));
     arduboy.display(CLEAR_BUFFER);
   });
-  if (role == I2C::Role::Target)
+  
+  if (role == ArduboyI2C::Role::Target)
   {
-    I2C::setAddress(I2C::nullAddress);
-    I2C::onReceive(onReceive);
-    I2C::onRequest(onRequest);
+    ArduboyI2C::setAddress(ArduboyI2C::nullAddress);
+    ArduboyI2C::onReceive(onReceive);
+    ArduboyI2C::onRequest(onRequest);
   }
-  Game::localPlayerId = role == I2C::Role::Controller ? 1 : 0;
+  
+  Game::localPlayerId = role == ArduboyI2C::Role::Controller ? 1 : 0;
 }
 
-static void PlatformNet::RunController(uint8_t localInput, uint8_t &remoteInput)
+void PlatformNet::RunController(uint8_t localInput, uint8_t &remoteInput)
 {
   do {
-      I2C::write(I2C::targetAddress, localInput, I2C::Mode::Sync);
-  } while (I2C::getError() != I2C::Error::None);
+      // --- CHANGED: ArduboyI2C, targetAddress и Mode::Sync ---
+      ArduboyI2C::write(ArduboyI2C::targetAddress, localInput, ArduboyI2C::Mode::Sync);
+  } while (ArduboyI2C::getError() != ArduboyI2C::Error::None);
+  
   do {
-      I2C::read(I2C::targetAddress, remoteInput);
-  } while (I2C::getError() != I2C::Error::None);
+      // --- CHANGED: ArduboyI2C и Error::None ---
+      ArduboyI2C::read(ArduboyI2C::targetAddress, remoteInput);
+  } while (ArduboyI2C::getError() != ArduboyI2C::Error::None);
 }
 
-static void PlatformNet::RunTarget(uint8_t localInput, uint8_t &remoteInput)
+void PlatformNet::RunTarget(uint8_t localInput, uint8_t &remoteInput)
 {
   targetInput = localInput;
 
-  I2C::setAddress(I2C::targetAddress);
-  while (!controllerReceived) { }
+  // --- CHANGED: Пространство имен ArduboyI2C ---
+  ArduboyI2C::setAddress(ArduboyI2C::targetAddress);
+  
+  // --- ADDED: Кормим Watchdog и фоновую сеть ESP8266 во время ожидания ---
+  while (!controllerReceived) { ArduboyI2C::update(); }
+  // -----------------------------------------------------------------------
+  
   remoteInput = controllerInput;
   controllerReceived = false;
 
-  while (!controllerRequested) { }
+  // --- ADDED: Кормим Watchdog и фоновую сеть ESP8266 во время ожидания ---
+  while (!controllerRequested) { ArduboyI2C::update(); }
+  // -----------------------------------------------------------------------
+  
   controllerRequested = false;
-  I2C::setAddress(I2C::nullAddress);
+  ArduboyI2C::setAddress(ArduboyI2C::nullAddress);
 }
+
 void setup()
 {
-  arduboy.boot();
-  arduboy.flashlight();
-  arduboy.systemButtons();
-  arduboy.waitNoButtons();
-  //arduboy.bootLogo();
+  arduboy.begin();
+  
+  // --- ADDED: Экономия батареи на старте ---
+  WiFi.mode(WIFI_OFF);
+  
+  //arduboy.flashlight();
+  //arduboy.systemButtons();
+  
+  // --- CHANGED: Защита Watchdog ESP8266 ---
+  // Оригинальный arduboy.waitNoButtons(); может повесить плату, если кнопку зажать надолго
+  while(arduboy.buttonsState()) {
+      yield();
+      ESP.wdtFeed();
+  }
+  // ----------------------------------------
+  
   arduboy.setFrameRate(TARGET_FRAMERATE);
-
-  //arduboy.audio.off();
-
 
 //  SeedRandom((uint16_t) arduboy.generateRandomSeed());
   Game::Init();
@@ -261,28 +290,29 @@ void setup()
 
 void loop()
 {
+  // --- ADDED: Глобальное обновление сети для отслеживания таймаутов/потери связи ---
+  ArduboyI2C::update();
+  // ---------------------------------------------------------------------------------
+
 #if DEV_MODE
   if(arduboy.nextFrameDEV())
 #else
   if(arduboy.nextFrame())
 #endif
   {
-	Game::Tick();
-	Game::Draw();
-  arduboy.display(false);
-
-    //Serial.write(arduboy.getBuffer(), 128 * 64 / 8);
+  Game::Tick();
+  Game::Draw();
+    arduboy.display(false);
 
 #if DEV_MODE
-	// CPU load bar graph
-	int load = arduboy.cpuLoad();
-	uint8_t* screenPtr = arduboy.getBuffer();
-
-	for(int x = 0; x < load && x < 128; x++)
-	{
-		screenPtr[x] = (screenPtr[x] & 0xf8) | 3;
-	}
-	screenPtr[100] = 0;
+  // CPU load bar graph
+  int load = arduboy.cpuLoad();
+  uint8_t* screenPtr = arduboy.getBuffer();
+    for(int x = 0; x < load && x < 128; x++)
+  {
+    screenPtr[x] = (screenPtr[x] & 0xf8) | 3;
+    }
+  screenPtr[100] = 0;
 #endif
   }
 }

@@ -4,7 +4,7 @@
 #define I2C_IMPLEMENTATION
 #include <ArduboyI2CtoESPboyWiFi.h>
 
-//#include <ArduboyPlaytune.h>
+#include <ESPboyPlaytune.h>
 
 #include "data.h"
 
@@ -45,7 +45,8 @@ const float FRICTION = 0.5;
 const int KNOCKBACK_DURATION = 20;
 
 
-//ArduboyPlaytune tunes(arduboy.audio.enabled);
+ESPboyPlaytune tunes(arduboy.audio.enabled);
+
 // Particle system parameters
 const int MAX_PARTICLES = 10;
 struct Particle {
@@ -204,34 +205,27 @@ void setup() {
   arduboy.begin();
   Serial.begin(115200);
 
+  // I2C initialization
+  //ArduboyI2C::begin();
   //pinMode(5, OUTPUT);
   //pinMode(13, OUTPUT);
   //digitalWrite(13, LOW);
 
-  //tunes.initChannel(PIN_SPEAKER_1);
+  tunes.initChannel(PIN_SPEAKER_1);
   //tunes.initChannel(PIN_SPEAKER_2);
-  //if (!tunes.playing())
-  //  tunes.playScore(score);
-
-  // I2C initialization
-  ArduboyI2C::begin();
+  if (!tunes.playing())
+    tunes.playScore(score);
   
   arduboy.clear();
   arduboy.setFrameRate(50);
   // Ensure the game runs at a consistent 30 FPS
-
-
-  while (arduboy.buttonsState()) {
-    arduboy.pollButtons();
-    // Poll the buttons but do nothing
-    ArduboyI2C::update(); // FIX: Prevent Watchdog Reset
-  }
 
   int titleY = 64;
   int titleTick = 0;
 
   do {
     arduboy.clear();
+    ESP.wdtFeed();
     updateParticles();
     drawParticles();  // Draw particles
 
@@ -312,8 +306,6 @@ void setup() {
     }
 
     arduboy.display();
-    ArduboyI2C::update(); // FIX: Prevent Watchdog Reset
-
     if (arduboy.justPressed(A_BUTTON)) {
       break;
     }
@@ -326,8 +318,8 @@ void setup() {
 
   while (arduboy.buttonsState()) {
     arduboy.pollButtons();
+    ESP.wdtFeed();
     // Poll the buttons but do nothing
-    ArduboyI2C::update(); // FIX: Prevent Watchdog Reset
   }
 
   arduboy.clear();
@@ -339,8 +331,8 @@ void setup() {
   
   // Inside setup()
   do {
+    ESP.wdtFeed();
     arduboy.pollButtons();
-    ArduboyI2C::update(); // FIX: Prevent Watchdog Reset
     
     if (arduboy.justPressed(A_BUTTON)) {
       isSinglePlayer = true; // Single-player mode
@@ -353,10 +345,13 @@ void setup() {
     }
   } while (true);
 
-  //tunes.stopScore();
+  tunes.stopScore();
   
   if (!isSinglePlayer) {
     // Multiplayer: Initialize I2C handshake
+    tunes.closeChannels();
+    ArduboyI2C::begin();
+    tunes.initChannel(PIN_SPEAKER_1);
     arduboy.clear();
     ArduboyI2C::checkCableFlipped([]() {
       arduboy.setCursor(0, 0); // FIX: Reset cursor to top left
@@ -539,7 +534,7 @@ void handleInput(Player& player) {
     player.velY = JUMP_STRENGTH;
     player.jumping = true;
     moving = true;
-    //tunes.playScore(jump);
+    tunes.playScore(jump);
   }
 
   if (arduboy.pressed(B_BUTTON)) {
@@ -553,7 +548,7 @@ void handleInput(Player& player) {
     player.attacking = true;
     player.attackTimer = player.chargedAttack ? CHARGED_ATTACK_DURATION : ATTACK_DURATION;
     player.chargeTime = 0;
-    //tunes.playScore(miss);
+    tunes.playScore(miss);
   }
 
   if (player.attackTimer > 0) {
@@ -761,7 +756,7 @@ void processAttack(Player& attacker, Player& defender) {
 
   attacker.attackDisplay = 5;
 
-  //tunes.playScore(hit);
+  tunes.playScore(hit);
   spawnParticles(defender.x + PLAYER_WIDTH / 2, defender.y + PLAYER_HEIGHT / 2, defender.velX, defender.velY);
 }
 
@@ -894,7 +889,7 @@ void victoryAnimation(int winner) {
   arduboy.setCursor(40, 30);
   arduboy.print((winner == 1) ? "P1 Wins!" : "P2 Wins!");
   arduboy.display();
-  //tunes.playScore(end);
+  tunes.playScore(end);
 
   while (arduboy.buttonsState()) {
     arduboy.pollButtons();
@@ -921,5 +916,5 @@ void victoryAnimation(int winner) {
 
   } while (true);
 
-  //tunes.stopScore();
+  tunes.stopScore();
 }
