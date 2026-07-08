@@ -1,0 +1,13 @@
+{
+    "name": "ArduboyI2C",
+    "keywords": "arduboy, i2c, game, multiplayer, networking",
+    "description": "An I2C library for Arduboy multiplayer games.",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/sub1inear/ArduboyI2C.git"
+    },
+    "version": "3.0.0",
+    "frameworks": "arduino",
+    "platforms": "atmelavr"
+}
