@@ -4,6 +4,78 @@
 [![PlatformIO Registry](https://img.shields.io/badge/PlatformIO-Registry-orange?logo=platformio)](https://registry.platformio.org/libraries/sub1inear/ArduboyI2C)
 [![Docs](https://img.shields.io/badge/Docs-Online-blue)](https://sub1inear.github.io/ArduboyI2C/)
 
+# ArduboyI2C is ported as ArduboyI2CtoESPboyWiFi with AI help
+
+Works fine using WiFi on the ESPboy:
+
+Two multiplayer examples:
+
+Basic
+
+Pong
+
+And three multiplayer ports
+
+BashBuddies
+
+ArduSoccer
+
+NetworkOfTheDamned
+
+Guide for future developers who want to port multiplayer games from the wired ArduboyI2C library to the wireless ArduboyI2CtoESPboyWiFi for the ESPboy.
+
+Porting instruction
+
+Step 1: Replace the Library and Namespace
+
+The ESPboy uses a Wi-Fi module instead of physical I²C pins. The first thing to do is replace the original library with our wireless bridge.
+
+Find #include <ArduboyI2C.h> and replace it with #include <ArduboyI2CtoESPboyWiFi.h>.
+
+Replace all I2C:: namespace calls with ArduboyI2C:: (for example, I2C::begin() becomes ArduboyI2C::begin()).
+
+Replace the old address macros: I2C_TARGET_ADDRESS becomes ArduboyI2C::targetAddress, and I2C_NULL_ADDRESS becomes ArduboyI2C::nullAddress.
+
+Step 2: Feed the Watchdog and Handle Network Updates (Critical for ESP8266)
+
+The original Arduboy (AVR chip) can run infinitely inside an empty loop like while(!flag) {}. If the ESP8266 does this, its Hardware Watchdog Timer (WDT) will assume the board has frozen and hard-reset the device. Furthermore, background Wi-Fi tasks need CPU time.
+
+In any "blocking" waiting loops (like menus, intro screens, or waiting for network data), you must insert an update call:
+
+C++
+
+while (!controllerReceived) { 
+    ArduboyI2C::update(); // Feeds the WDT and processes Wi-Fi packets
+}
+
+
+Passive Devices (Target/Slave): If the game architecture relies on the Slave device merely listening for interrupts (onReceive) without actively writing data in the main loop(), you must add ArduboyI2C::update(); at the beginning of loop(). Otherwise, the device won't realize the connection dropped and will never display the "Synch lost" screen.
+
+Step 3: Resolve Audio Interrupt and Wi-Fi Init Conflicts
+
+If the game uses sound via the ESPboyPlaytune library, initializing the network will cause a system crash (Fatal Exception).
+
+When ArduboyI2C::begin() is called, the ESP8266 writes its Wi-Fi configuration to the Flash memory. If the hardware audio timer triggers an interrupt during that exact millisecond and attempts to read a note from Flash (PROGMEM), the processor will panic.
+
+The safe initialization pattern when using audio:
+
+C++
+
+tunes.closeChannels(); // 1. Safely pause the audio timer
+ArduboyI2C::begin();   // 2. Safely initialize Wi-Fi and write to Flash
+tunes.initChannel(0);  // 3. Bring the audio hardware timer back to life
+
+
+Step 4: Save Battery Life (Optional but Recommended)
+
+The Wi-Fi module consumes a lot of power. If the game has a "Single Player" mode, do not turn on the network at boot.
+
+In the menu loops, since the network library isn't initialized yet, use raw WDT feeding instead of ArduboyI2C::update(): yield(); ESP.wdtFeed();.
+
+Call ArduboyI2C::begin() only after the player explicitly selects the "Multiplayer" option.
+
+
+
 # ArduboyI2C Library
 The **ArduboyI2C** library provides I2C support for Arduboy multiplayer games. It includes standard I2C functionality, support for multi-controller (master) setups, and helpers for multiplayer handshakes while keeping PROGMEM and RAM usage low.
 
