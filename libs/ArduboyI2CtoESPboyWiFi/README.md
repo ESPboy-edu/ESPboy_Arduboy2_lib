@@ -4,7 +4,7 @@
 [![PlatformIO Registry](https://img.shields.io/badge/PlatformIO-Registry-orange?logo=platformio)](https://registry.platformio.org/libraries/sub1inear/ArduboyI2C)
 [![Docs](https://img.shields.io/badge/Docs-Online-blue)](https://sub1inear.github.io/ArduboyI2C/)
 
-# ArduboyI2C is ported as ArduboyI2CtoESPboyWiFi with AI help
+# ArduboyI2C has been ported as ArduboyI2CtoESPboyWiFi using AI
 
 Multiplayer Arduboy games designed to be played via a cable can be easily ported to ESPboy for play over Wi-Fi
 
