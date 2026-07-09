@@ -6,6 +6,8 @@
 
 # ArduboyI2C is ported as ArduboyI2CtoESPboyWiFi with AI help
 
+Multiplayer Arduboy games designed to be played via a cable can be easily ported to ESPboy for play over Wi-Fi
+
 Works fine using WiFi on the ESPboy:
 
 Two multiplayer examples:
