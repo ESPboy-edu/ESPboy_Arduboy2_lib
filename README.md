@@ -8,6 +8,7 @@ This port of following Arduboy dev libraries (check "libs" folder):
 5. Arduboy Grayscale lib (Arduboy G)
 6. Arduboy SynthU
 7. FixedPointsArduino
+8. ArduboyI2C to ESPboyWiFi
 
 and separate Arduboy libs
 1. Arduboy playtune -> [ESPboy_Playtune](https://github.com/ESPboy-edu/ESPboy_Playtune)
