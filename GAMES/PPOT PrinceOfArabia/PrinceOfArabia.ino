@@ -1,6 +1,6 @@
 #include "src/utils/Arduboy2Ext.h"
 #include "src/ArduboyTonesFX.h"
-#include "src/fxdta.h"  
+#include "src/fxdta.h"
 #include <ArduboyFX.h>  
 
 #include "src/utils/Constants.h"
@@ -12,8 +12,6 @@
 #include "src/utils/EEPROM_Utils.h"
 
 
-//#define POP_OR_POA
-
 //#ifdef SAVE_MEMORY_USB
 //ARDUBOY_NO_USB
 //#endif
@@ -23,6 +21,7 @@ Arduboy2Ext arduboy;
 //#ifndef SAVE_MEMORY_SOUND
     
     uint16_t buffer[16]; 
+
     ArduboyTonesFX sound(arduboy.audio.enabled, buffer);
     
 //#endif

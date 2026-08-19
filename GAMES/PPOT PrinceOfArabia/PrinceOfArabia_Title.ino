@@ -3,7 +3,6 @@
 
 
 
-
 void setTitleFrame(TitleFrameIndex index) {
 
     #if defined (POP_OR_POA)
@@ -14,7 +13,7 @@ void setTitleFrame(TitleFrameIndex index) {
         uint8_t idx = 2 * static_cast<uint8_t>(index);
     #endif
 
-    FX::seekDataArray(TitleFrameIndexTable, idx, 0, /*sizeof(uint24_t) + sizeof(uint8_t)*/4);
+    FX::seekDataArray(TitleFrameIndexTable, idx, 0, 3/*sizeof(uint24_t)*/ + sizeof(uint8_t));
     uint32_t data = FX::readPendingLastUInt32();
     FX::setFrame((uint24_t)(data >> 8), (uint8_t)data);
 
@@ -34,7 +33,8 @@ void title_Init() {
 }
 
 void saveSoundState() {
-    eeprom_update_byte(/*(uint8_t*)*/2, arduboy.audio.enabled()); // arduboy2base::eepromAudioOnOff is protected so we just use 2 here :P
+
+    eeprom_update_byte(2000, arduboy.audio.enabled()); // arduboy2base::eepromAudioOnOff is protected so we just use 2 here :P
 }
 
 // ----------------------------------------------------------------------------

@@ -15,7 +15,7 @@ bool testScroll(GamePlay &gamePlay, Prince &prince, Level &level) {
     bool result = false;
 
 
-    // Have we scrolled to axxnother screen ?
+    // Have we scrolled to another screen ?
 
     if (prince.getY() - level.getYOffset() >= 56 + Constants::TileHeight) {
 
