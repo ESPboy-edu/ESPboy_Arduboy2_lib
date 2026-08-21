@@ -235,6 +235,8 @@ void ArduboyTonesFX::fillBufferFromFX()
 void ArduboyTonesFX::noTone()
 {
   ::noTone(TONE_PIN);
+  tonesPlaying = false;
+  tmrcount = 0;
 }
 
 void ArduboyTonesFX::volumeMode(uint8_t mode)
