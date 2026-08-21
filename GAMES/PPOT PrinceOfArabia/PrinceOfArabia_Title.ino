@@ -33,8 +33,8 @@ void title_Init() {
 }
 
 void saveSoundState() {
-
-    eeprom_update_byte(2000, arduboy.audio.enabled()); // arduboy2base::eepromAudioOnOff is protected so we just use 2 here :P
+    arduboy.audio.saveOnOff();
+    EEPROM.commit();
 }
 
 // ----------------------------------------------------------------------------
@@ -199,6 +199,11 @@ void title() {
 
                             #ifndef SAVE_MEMORY_SOUND
                                 sound.noTone();
+                                {
+                     
+                                uint16_t stopMusic[] = { TONES_END };
+                                sound.tonesInRAM(stopMusic);
+                                 }
                             #endif
 
                             return;

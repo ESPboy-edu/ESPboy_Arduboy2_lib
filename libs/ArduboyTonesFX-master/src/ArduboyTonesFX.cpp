@@ -236,7 +236,6 @@ void ArduboyTonesFX::noTone()
 {
   ::noTone(TONE_PIN);
   tonesPlaying = false;
-  tmrcount = 0;
 }
 
 void ArduboyTonesFX::volumeMode(uint8_t mode)
@@ -257,7 +256,6 @@ void ArduboyTonesFX::nextTone()
 
   if (freq == TONES_END) { // if freq is actually an "end of sequence" marker
     noTone(); // stop playing
-    tonesPlaying = false;
     tmrcount = 0;
     return;
   }
