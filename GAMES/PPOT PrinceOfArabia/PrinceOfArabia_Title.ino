@@ -199,11 +199,6 @@ void title() {
 
                             #ifndef SAVE_MEMORY_SOUND
                                 sound.noTone();
-                                {
-                     
-                                uint16_t stopMusic[] = { TONES_END };
-                                sound.tonesInRAM(stopMusic);
-                                 }
                             #endif
 
                             return;

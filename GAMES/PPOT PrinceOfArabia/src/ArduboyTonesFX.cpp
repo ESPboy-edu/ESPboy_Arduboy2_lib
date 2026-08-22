@@ -234,8 +234,19 @@ void ArduboyTonesFX::fillBufferFromFX()
 
 void ArduboyTonesFX::noTone()
 {
+  static bool insideNoTone = false;
   ::noTone(TONE_PIN);
+  tonesPlaying = false;
+  if (insideNoTone) {
+    return;
+  }
+  
+  insideNoTone = true;
+  static uint16_t stopMusic[] = { TONES_END };
+  tonesInRAM(stopMusic);
+  insideNoTone = false;
 }
+
 
 void ArduboyTonesFX::volumeMode(uint8_t mode)
 {
@@ -280,8 +291,8 @@ void ArduboyTonesFX::nextTone()
     toneSilent = true;
   }
   
-  if (toneSilent) 
-	noTone();
+if (toneSilent) 
+	::noTone(TONE_PIN); // Добавили "::" и пин. Теперь это просто отключение ШИМ, без сброса таймера!
   else 
 	::tone(TONE_PIN, freq&0b11111111111111);
 	
