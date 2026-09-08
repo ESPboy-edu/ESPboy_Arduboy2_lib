@@ -1,30 +1,48 @@
-// check "ArduboyFX.h" for
-//
-//#define USE_LITTLEFS
-// if defined then Little_FS will be used as FX data source overwise PROGMEM array fxdta[] will be used 
-//
-//#define USE_RLE_COMPRESSION
-//if defined, then put RLE compressed data to fxdta[]
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// check "ArduboyFX.h" to define ArduboyFX library MODE!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #include "ArduboyFX.h"
 #include "font5x7local.h"
 
-#ifdef USE_RLE_COMPRESSION
+#ifndef USE_LITTLEFS
   extern uint8_t fxdta[];
 #endif
 
-// [STEP 1]: One-time allocated sprite cache buffer
+// [OPTIMIZATION]: One-time allocated sprite cache buffer
 static uint8_t* bmpCache = nullptr;
 #define BMP_CACHE_SIZE 1024
 
-#ifdef USE_LITTLEFS
-  #define CACHE_BUF_SIZE 4096
-  File fle;
-#else
-  volatile uint32_t globalAddress = 0;
-  extern uint8_t fxdta[];
+// ---------------------------------------------------------
+// LZSS Cache Variables
+// ---------------------------------------------------------
+#ifdef USE_LZSS_PACKING
+  static uint8_t* pagedCache = nullptr;
+  static uint16_t currentPage = 0xFFFF;
 #endif
 
+// ---------------------------------------------------------
+// Standard (LittleFS / PROGMEM) Cache Variables
+// ---------------------------------------------------------
+#ifdef USE_LITTLEFS
+  #ifndef USE_LZSS_PACKING
+    #define CACHE_BUF_SIZE 4096
+  #endif
+  File fle;
+  
+  #ifndef USE_LZSS_PACKING
+    // Stream cache for single-byte LittleFS reads
+    static struct StreamCache {
+        uint8_t* buffer = nullptr;
+        uint32_t startAddr = 0xFFFFFFFF; 
+        uint16_t len = 0;
+    } fsCache;
+    #define STREAM_CACHE_SIZE 512
+  #endif
+#endif
+
+volatile uint32_t globalAddress = 0; 
 volatile uint32_t globalAddressSave = EEPROMWRITEOFFSET;
 
 uint16_t FX::programDataPage = 0; // program read only data location in flash memory
@@ -34,7 +52,10 @@ Cursor   FX::cursor = {0,0,0,WIDTH};
 
 FrameControl FX::frameControl;
 
-#ifdef USE_RLE_COMPRESSION
+// =========================================================
+// RLE DECODER (Used only for standard unpaged format)
+// =========================================================
+#if !defined(USE_LZSS_PACKING) && defined(USE_RLE_COMPRESSION)
 void FX::Rle_Decode(unsigned char *inbuf, uint32_t inSize){
     uint8_t *outBuf;
     uint16_t cntOutBuf = 0;
@@ -77,31 +98,194 @@ void FX::Rle_Decode(unsigned char *inbuf, uint32_t inSize){
 }
 #endif
 
+// =========================================================
+// LZSS DECODER (Decompresses 4KB pages on-the-fly)
+// =========================================================
+#ifdef USE_LZSS_PACKING
+  static uint8_t* audioCache = nullptr;
+  static uint16_t audioCurrentPage = 0xFFFF;
+
+  static void loadAudioPage(uint16_t page_idx) {
+      if (!audioCache) return;
+      uint32_t offset;
+      memcpy_P(&offset, &fxdta[4 + page_idx * 4], 4);
+      uint32_t comp_ptr = offset;
+      uint16_t out_pos = 0;
+      while (out_pos < 4096) {
+          ESP.wdtFeed();
+          uint8_t flags = pgm_read_byte(&fxdta[comp_ptr++]);
+          for (int bit = 0; bit < 8 && out_pos < 4096; bit++) {
+              if (flags & (1 << bit)) {
+                  audioCache[out_pos++] = pgm_read_byte(&fxdta[comp_ptr++]);
+              } else {
+                  uint8_t b1 = pgm_read_byte(&fxdta[comp_ptr++]);
+                  uint8_t b2 = pgm_read_byte(&fxdta[comp_ptr++]);
+                  uint16_t match_pos = ((b1 & 0x0F) << 8) | b2;
+                  uint16_t match_len = (b1 >> 4);
+                  if (match_len == 15) {
+                      uint8_t ext;
+                      do { ext = pgm_read_byte(&fxdta[comp_ptr++]); match_len += ext; } while (ext == 255);
+                  }
+                  match_len += 3;
+                  while (match_len-- && out_pos < 4096) {
+                      audioCache[out_pos] = audioCache[match_pos];
+                      out_pos++; match_pos++;
+                  }
+              }
+          }
+      }
+  }
+
+  void FX::readAudioBytes(uint24_t address, uint8_t* buffer, size_t length) {
+      while (length > 0) {
+          uint16_t page_idx = address / 4096;
+          uint16_t page_offset = address % 4096;
+          if (page_idx != audioCurrentPage) {
+              loadAudioPage(page_idx);
+              audioCurrentPage = page_idx;
+          }
+          size_t available = 4096 - page_offset;
+          size_t to_copy = (length < available) ? length : available;
+          if (audioCache) memcpy(buffer, &audioCache[page_offset], to_copy);
+          buffer += to_copy; address += to_copy; length -= to_copy;
+      }
+  }
+
+static void loadPage(uint16_t page_idx) {
+    if (!pagedCache) return;
+    
+    // —читываем общее количество страниц из заголовка fxdta
+    uint32_t total_pages = 0;
+    memcpy_P(&total_pages, &fxdta[0], 4);
+
+    // «ащита от выхода за пределы массива
+    if (page_idx >= total_pages) {
+        return;
+    }
+
+    uint32_t offset;
+    memcpy_P(&offset, &fxdta[4 + page_idx * 4], 4);
+    uint32_t comp_ptr = offset;
+
+    uint16_t out_pos = 0;
+    while (out_pos < 4096) {
+        ESP.wdtFeed(); // —брасываем Watchdog на каждом шаге распаковки
+        
+        uint8_t flags = pgm_read_byte(&fxdta[comp_ptr++]);
+
+        for (int bit = 0; bit < 8 && out_pos < 4096; bit++) {
+            if (flags & (1 << bit)) {
+                // Literal Byte
+                pagedCache[out_pos++] = pgm_read_byte(&fxdta[comp_ptr++]);
+            } else {
+                // LZ Match
+                uint8_t b1 = pgm_read_byte(&fxdta[comp_ptr++]);
+                uint8_t b2 = pgm_read_byte(&fxdta[comp_ptr++]);
+
+                uint16_t match_pos = ((b1 & 0x0F) << 8) | b2;
+                uint16_t match_len = (b1 >> 4);
+                
+                if (match_len == 15) {
+                    uint8_t ext;
+                    do {
+                        ext = pgm_read_byte(&fxdta[comp_ptr++]);
+                        match_len += ext;
+                    } while (ext == 255);
+                }
+                match_len += 3;
+                
+                while (match_len-- && out_pos < 4096) {
+                    pagedCache[out_pos] = pagedCache[match_pos];
+                    out_pos++;
+                    match_pos++;
+                }
+            }
+        }
+    }
+}
+#endif
+
 uint8_t FX::writeByte(uint8_t data){
+#ifdef USE_LZSS_PACKING
+  // Writing to compressed graphics file is disabled
+  globalAddress++;
+  return 0;
+#else
   uint8_t result;
   #ifdef USE_LITTLEFS
      result = data; 
+     fle.seek(globalAddress, SeekSet); 
      fle.write(data);
+     fsCache.startAddr = 0xFFFFFFFF; // Invalidate cache on write
+     globalAddress++;
   #else
     result = 0;
     globalAddress++;
   #endif
   return result;
+#endif
 }
 
 uint8_t FX::readByte(){
+#ifdef USE_LZSS_PACKING
+  uint16_t page_idx = globalAddress / 4096;
+  uint16_t page_offset = globalAddress % 4096;
+  
+  if (page_idx != currentPage) {
+      loadPage(page_idx);
+      currentPage = page_idx;
+  }
+  globalAddress++;
+  return pagedCache ? pagedCache[page_offset] : 0;
+#else
  #ifdef USE_LITTLEFS
-  return(fle.read());
+  if (fsCache.buffer) {
+    if (globalAddress < fsCache.startAddr || globalAddress >= (fsCache.startAddr + fsCache.len)) {
+      fle.seek(globalAddress, SeekSet);
+      fsCache.startAddr = globalAddress;
+      fsCache.len = fle.read(fsCache.buffer, STREAM_CACHE_SIZE);
+    }
+    if (globalAddress >= fsCache.startAddr && globalAddress < (fsCache.startAddr + fsCache.len)) {
+      return fsCache.buffer[globalAddress++ - fsCache.startAddr];
+    }
+  }
+  fle.seek(globalAddress++, SeekSet);
+  return fle.read();
  #else
   return pgm_read_byte(&fxdta[globalAddress++]);
  #endif
+#endif
 }
 
 void FX::begin(){ 
-    // [STEP 1]: Allocate sprite cache RAM buffer only when FX starts
+    // Allocate shared sprite cache RAM buffer
     if (!bmpCache) {
         bmpCache = (uint8_t*)malloc(BMP_CACHE_SIZE);
+#ifdef USE_LZSS_PACKING    
+    if (!audioCache) audioCache = (uint8_t*)malloc(4096);
+#endif
     }
+
+
+#ifdef USE_LZSS_PACKING
+    if (!pagedCache) {
+        pagedCache = (uint8_t*)malloc(4096);
+    }
+    EEPROM.begin(4096);
+    #ifdef USE_LITTLEFS    
+        LittleFSConfig cfg;
+        cfg.setAutoFormat(true);
+        LittleFS.setConfig(cfg);
+        LittleFS.begin();
+        fle = LittleFS.open("/fxdta_paged.bin", "r");
+    #endif
+#else
+    // Standard initialization
+    #ifdef USE_LITTLEFS
+        if (!fsCache.buffer) {
+            fsCache.buffer = (uint8_t*)malloc(STREAM_CACHE_SIZE);
+        }
+    #endif
 
     EEPROM.begin(4096);
 
@@ -149,6 +333,7 @@ void FX::begin(){
      Serial.println("FX data OK");
 #endif
 #endif
+#endif // USE_LZSS_PACKING
 }
 
 void FX::begin(uint16_t developmentDataPage){
@@ -179,11 +364,7 @@ bool FX::detect(){return true;}
 void FX::noFXReboot(){ESP.restart();}
 
 void FX::seekData(uint24_t address){
- #ifdef USE_LITTLEFS 
-  fle.seek(address, SeekSet);
- #else
-  globalAddress = address;
- #endif
+  globalAddress = address; 
 }
 
 void FX::seekDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t elementSize){
@@ -192,7 +373,7 @@ void FX::seekDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t 
 }
 
 void FX::seekSave(uint24_t address){   
-  globalAddressSave = address + EEPROMWRITEOFFSET;
+  globalAddressSave = address + ((uint32_t)programSavePage << 8) + EEPROMWRITEOFFSET;
 }
 
 uint8_t FX::readPendingUInt8(){
@@ -203,7 +384,7 @@ uint8_t FX::readPendingLastUInt8(){
    return readByte();
 }
 
-// [STEP 3]: Batch reading multi-byte values in a single readBytes() call
+// Batch reading multi-byte values
 uint16_t FX::readPendingUInt16(){
   uint8_t b[2];
   readBytes(b, 2);
@@ -235,28 +416,48 @@ uint32_t FX::readPendingLastUInt32(){
 }
 
 void FX::readBytes(uint8_t* buffer, size_t length){
+#ifdef USE_LZSS_PACKING
+  while (length > 0) {
+      uint16_t page_idx = globalAddress / 4096;
+      uint16_t page_offset = globalAddress % 4096;
+      
+      if (page_idx != currentPage) {
+          loadPage(page_idx);
+          currentPage = page_idx;
+      }
+      
+      size_t available = 4096 - page_offset;
+      size_t to_copy = (length < available) ? length : available;
+      
+      if (pagedCache) {
+          memcpy(buffer, &pagedCache[page_offset], to_copy);
+      }
+      
+      buffer += to_copy;
+      globalAddress += to_copy;
+      length -= to_copy;
+  }
+#else
   #ifdef USE_LITTLEFS
+    fle.seek(globalAddress, SeekSet); 
     fle.readBytes((char *)buffer, length);
+    globalAddress += length;
+    fsCache.startAddr = 0xFFFFFFFF; // Invalidate stream cache
   #else
     memcpy_P(buffer, &fxdta[globalAddress], length);
     globalAddress += length;
   #endif
+#endif
 }
 
 void FX::readBytesSave(uint8_t* buffer, size_t length){
   noInterrupts();
   for (uint16_t i = 0; i < length; i++) {
-    if (globalAddressSave < 4092 - EEPROMWRITEOFFSET) {
+    if (globalAddressSave < 4092) {
       buffer[i] = EEPROM.read(globalAddressSave);
-#ifdef DEBUG_INFO_ON
-      Serial.print(buffer[i], HEX); Serial.print(" ");
-#endif
     }
     globalAddressSave++;
   }
-#ifdef DEBUG_INFO_ON
-  Serial.println();
-#endif   
   interrupts();
 }
 
@@ -278,51 +479,74 @@ void FX::readSaveBytes(uint24_t address, uint8_t* buffer, size_t length){
   readBytesSave(buffer, length);
 }
 
+// Sequential scan for wear-leveling ring buffer & Big-Endian headers
 uint8_t FX::loadGameState(uint8_t* gameState, size_t size){
   noInterrupts();
-#ifdef DEBUG_INFO_ON
-  Serial.println("Load game state");
-  Serial.print("size "); Serial.println(size); 
-#endif 
-  seekSave(0);
-  if (EEPROM.read(globalAddressSave++) == (uint8_t)(size & 255) && 
-      EEPROM.read(globalAddressSave++) == (uint8_t)((size >> 8) & 255)) {
+  uint16_t addr = 0;
+  uint8_t result = 0;
+
+  for (;;) {
+    seekSave(addr);
+    if (globalAddressSave + 2 + size > 4092) break;
+
+    // Read Big-Endian 16-bit size header
+    uint8_t msb = EEPROM.read(globalAddressSave++);
+    uint8_t lsb = EEPROM.read(globalAddressSave++);
+    uint16_t storedSize = ((uint16_t)msb << 8) | lsb;
+
+    if (storedSize != size) break; // Reached end of valid saved game states
+
     readBytesSave(gameState, size);
-    interrupts();
-    return 1;
-  } else {
-    interrupts(); 
-    return 0;
+    result = 1; // Mark as loaded
+    addr += size + 2;
   }
+
+  interrupts();
+  return result;
 }
 
+// Append new game state in ring buffer or erase if space is full
 void FX::saveGameState(const uint8_t* gameState, size_t size){ 
   noInterrupts();
-#ifdef DEBUG_INFO_ON
-  Serial.println("Save game state");
-  Serial.print("size "); Serial.println(size); 
-#endif        
-  seekSave(0);    
-  EEPROM.write(globalAddressSave++, (uint8_t)(size & 255));
-  EEPROM.write(globalAddressSave++, (uint8_t)((size >> 8) & 255));
-  for (uint16_t i = 0; i < size; i++) {
-    EEPROM.write(globalAddressSave++, gameState[i]);
-#ifdef DEBUG_INFO_ON
-    Serial.print(gameState[i], HEX); Serial.print(" ");  
-#endif
+
+  uint16_t addr = 0;
+
+  // Locate end of previous saved states
+  for (;;) {
+    seekSave(addr);
+    if (globalAddressSave + 2 + size > 4092) break;
+
+    uint8_t msb = EEPROM.read(globalAddressSave++);
+    uint8_t lsb = EEPROM.read(globalAddressSave++);
+    uint16_t storedSize = ((uint16_t)msb << 8) | lsb;
+
+    if (storedSize != size) break;
+    addr += size + 2;
   }
-#ifdef DEBUG_INFO_ON
-  Serial.println();
-#endif
-  EEPROM.commit();
+
+  // If block space is exhausted, erase save block and restart at address 0
+  if ((addr + size + 2) > (4092 - EEPROMWRITEOFFSET)) {
+    eraseSaveBlock(0);
+    addr = 0;
+  }
+
+  seekSave(addr);
+  // Write Big-Endian 16-bit size header
+  EEPROM.write(globalAddressSave++, (uint8_t)(size >> 8));
+  EEPROM.write(globalAddressSave++, (uint8_t)(size & 0xFF));
+
+  for (uint16_t i = 0; i < size; i++){
+    EEPROM.write(globalAddressSave++, gameState[i]);
+  }
   interrupts();
+  EEPROM.commit();
 }
 
 void FX::eraseSaveBlock(uint16_t page){
   noInterrupts(); 
-  seekSave(0);                 
-  for (uint16_t i = 0; i < 4096 - EEPROMWRITEOFFSET; i++) {
-    EEPROM.write(globalAddressSave, 0);
+  seekSave(page * 256);                 
+  for (uint16_t i = 0; i < 4096 - EEPROMWRITEOFFSET; i++){
+    EEPROM.write(globalAddressSave, 0xFF);
     globalAddressSave++;
   }
   EEPROM.commit();
@@ -331,8 +555,8 @@ void FX::eraseSaveBlock(uint16_t page){
 
 void FX::writeSavePage(uint16_t page, uint8_t* buffer){
   noInterrupts(); 
-  seekSave(0);                                     
-  for (uint16_t i = 0; i < 256; i++) {
+  seekSave(page * 256);                                     
+  for (uint16_t i = 0; i < 256; i++){
     EEPROM.write(globalAddressSave, buffer[i]);
     globalAddressSave++;
   }
@@ -351,24 +575,20 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
   uint8_t renderwidth;
   if (x < 0) {
     skipleft = -x;
-    if (width - skipleft < WIDTH) renderwidth = width - skipleft;
-    else renderwidth = WIDTH;
+    renderwidth = (width - skipleft < WIDTH) ? width - skipleft : WIDTH;
   } else {
-    if (x + width > WIDTH) renderwidth = WIDTH - x;
-    else renderwidth = width;
+    renderwidth = (x + width > WIDTH) ? WIDTH - x : width;
   }
 
   int16_t skiptop;     
   int8_t renderheight; 
   if (y < 0) {
     skiptop = -y & -8; 
-    if (height - skiptop <= HEIGHT) renderheight = height - skiptop;
-    else renderheight = HEIGHT + (-y & 7);
+    renderheight = (height - skiptop <= HEIGHT) ? height - skiptop : HEIGHT + (-y & 7);
     skiptop = fastDiv8(skiptop); 
   } else {
     skiptop = 0;
-    if (y + height > HEIGHT) renderheight = HEIGHT - y;
-    else renderheight = height;
+    renderheight = (y + height > HEIGHT) ? HEIGHT - y : height;
   }
   
   uint24_t offset = (uint24_t)(frame * ((height + 7) / 8) + skiptop) * width + skipleft;
@@ -377,17 +597,18 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
     width += width;
   }
   address += offset + 4; 
+  
   int8_t displayrow = (y >> 3) + skiptop;
   int16_t displayoffset = displayrow * WIDTH + x + skipleft;
   uint8_t yshift = bitShiftLeftUInt8(y); 
   uint8_t lastmask = bitShiftRightMaskUInt8(8 - height); 
   
   seekData(address);
-  int32_t initAddress = address;
+  int32_t initAddress = globalAddress; 
   uint8_t *bitmapBuffer = nullptr;
   int32_t pointertoBmp = 0;
 
-  // [STEP 4]: Optimize buffer size calculation. Read only active rendered rows instead of full sprite height
+  // Optimize buffer size calculation. Read only active rendered rows
   size_t numRenderRows = (renderheight + 7) / 8;
   size_t bmpSize = (size_t)width * numRenderRows;
   bool allocatedLocally = false;
@@ -399,19 +620,19 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
     allocatedLocally = true;
   }
 
+  // Uses abstracted readBytes (Automatically routes through LZSS/FS/PROGMEM)
   if (bitmapBuffer) {
     readBytes(bitmapBuffer, bmpSize);
   }
   
   do { 
-    pointertoBmp = address - initAddress;
-    address += width;
+    pointertoBmp = globalAddress - initAddress;
+    globalAddress += width;
     mode &= ~((1 << dbfExtraRow));
     if (yshift != 1 && displayrow < (HEIGHT / 8 - 1)) mode |= (1 << dbfExtraRow);
-    uint8_t rowmask = 0xFF;
-    if (renderheight < 8) rowmask = lastmask;
+    uint8_t rowmask = (renderheight < 8) ? lastmask : 0xFF;
+    
     for (uint8_t c = 0; c < renderwidth; c++) {
-      // [STEP 4]: Direct RAM read when bitmapBuffer is present
       uint8_t bitmapbyte = bitmapBuffer ? bitmapBuffer[pointertoBmp++] : readUnsafe();
            
       if (mode & (1 << dbfReverseBlack)) bitmapbyte ^= rowmask;
@@ -419,11 +640,13 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
       if (mode & (1 << dbfWhiteBlack)) maskbyte = bitmapbyte;
       if (mode & (1 << dbfBlack)) bitmapbyte = 0;
       uint16_t bitmap = multiplyUInt8(bitmapbyte, yshift);
+      
       if (mode & (1 << dbfMasked)) {
         uint8_t tmp = bitmapBuffer ? bitmapBuffer[pointertoBmp++] : readUnsafe();
         if ((mode & dbfWhiteBlack) == 0) maskbyte = tmp;
       }
       uint16_t mask = multiplyUInt8(maskbyte, yshift);
+      
       if (displayrow >= 0) {
         uint8_t pixels = bitmap;
         uint8_t display = Arduboy2Base::sBuffer[displayoffset];
@@ -443,8 +666,8 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
       (mode & (1 << dbfFlip)) ? displayoffset-- : displayoffset++;
     }
     displayoffset += WIDTH;
-    (mode & (1 << dbfFlip)) ?  displayoffset += renderwidth : displayoffset -= renderwidth;
-    displayrow ++;
+    (mode & (1 << dbfFlip)) ? displayoffset += renderwidth : displayoffset -= renderwidth;
+    displayrow++;
     renderheight -= 8;
     
   } while (renderheight > 0);
@@ -463,8 +686,7 @@ void FX::setFrame(uint24_t frame, uint8_t repeat){
 
 uint8_t FX::drawFrame(){
   uint24_t frame = drawFrame(frameControl.current);
-  uint8_t moreFrames;
-  moreFrames = (frame != 0) | frameControl.count;
+  uint8_t moreFrames = (frame != 0) | frameControl.count;
   if (frameControl.count > 0) {
     frameControl.count--;
   } else {
@@ -475,7 +697,7 @@ uint8_t FX::drawFrame(){
   return moreFrames;
 }
 
-// [STEP 2]: Batch read frame header (9 bytes at once)
+// Batch read frame header (9 bytes at once)
 uint24_t FX::drawFrame(uint24_t address){
   for(;;) {
     seekData(address);
@@ -500,25 +722,10 @@ void FX::readDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t 
   readBytesEnd(buffer, length);
 }
 
-uint8_t FX::readIndexedUInt8(uint24_t address, uint8_t index){
-  seekDataArray(address, index, 0, sizeof(uint8_t));
-  return readByte();
-}
-
-uint16_t FX::readIndexedUInt16(uint24_t address, uint8_t index){
-  seekDataArray(address, index, 0, sizeof(uint16_t));
-  return readPendingLastUInt16();
-}
-
-uint24_t FX::readIndexedUInt24(uint24_t address, uint8_t index){
-  seekDataArray(address, index, 0, sizeof_uint24_t);
-  return readPendingLastUInt24();
-}
-
-uint32_t FX::readIndexedUInt32(uint24_t address, uint8_t index){
-  seekDataArray(address, index, 0, sizeof_uint24_t);
-  return readPendingLastUInt32();
-}
+uint8_t  FX::readIndexedUInt8(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof(uint8_t)); return readByte(); }
+uint16_t FX::readIndexedUInt16(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof(uint16_t)); return readPendingLastUInt16(); }
+uint24_t FX::readIndexedUInt24(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof_uint24_t); return readPendingLastUInt24(); }
+uint32_t FX::readIndexedUInt32(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof_uint24_t); return readPendingLastUInt32(); }
 
 void FX::displayPrefetch(uint24_t address, uint8_t* target, uint16_t len, bool clear){
   seekData(address);
@@ -526,13 +733,8 @@ void FX::displayPrefetch(uint24_t address, uint8_t* target, uint16_t len, bool c
   display(clear);
 }
 
-void FX::display(){
-  Arduboy2Base::display();
-}
-
-void FX::display(bool clear){
-  Arduboy2Base::display(clear);
-}
+void FX::display(){ Arduboy2Base::display(); }
+void FX::display(bool clear){ Arduboy2Base::display(clear); }
 
 void FX::setFont(uint24_t address, uint8_t mode){
   font.address = address;
@@ -542,35 +744,13 @@ void FX::setFont(uint24_t address, uint8_t mode){
   font.height = readPendingLastUInt16();
 }
 
-void FX::setFontMode(uint8_t mode){
-  font.mode = mode;
-}
-
-void FX::setCursor(int16_t x, int16_t y){
-  cursor.x = x;
-  cursor.y = y;
-}
-
-void FX::setCursorX(int16_t x){
-  cursor.x = x;
-}
-
-void FX::setCursorY(int16_t y){
-  cursor.y = y;
-}
-
-void FX::setCursorRange(int16_t left, int16_t wrap){
-  cursor.left = left;
-  cursor.wrap = wrap;
-}
-
-void FX::setCursorLeft(int16_t left){
-  cursor.left = left;
-}
-
-void FX::setCursorWrap(int16_t wrap){
-  cursor.wrap = wrap;
-}
+void FX::setFontMode(uint8_t mode){ font.mode = mode; }
+void FX::setCursor(int16_t x, int16_t y){ cursor.x = x; cursor.y = y; }
+void FX::setCursorX(int16_t x){ cursor.x = x; }
+void FX::setCursorY(int16_t y){ cursor.y = y; }
+void FX::setCursorRange(int16_t left, int16_t wrap){ cursor.left = left; cursor.wrap = wrap; }
+void FX::setCursorLeft(int16_t left){ cursor.left = left; }
+void FX::setCursorWrap(int16_t wrap){ cursor.wrap = wrap; }
 
 void FX::drawChar(uint8_t c){
   if (c == '\r') return;
@@ -594,18 +774,11 @@ void FX::drawChar(uint8_t c){
 }
 
 void FX::drawString(const uint8_t* buffer){
-  for(;;) {
-    uint8_t c = *buffer++;
-    if (c) drawChar(c);
-    else break;
-  }
+  while(uint8_t c = *buffer++) drawChar(c);
 }
 
-void FX::drawString(const char* str){
-  FX::drawString((const uint8_t*)str);
-}
+void FX::drawString(const char* str){ FX::drawString((const uint8_t*)str); }
 
-// [STEP 5]: Buffered string reading from FX storage in a single batch call
 void FX::drawString(uint24_t address){
   uint8_t strBuf[64];
   bool finished = false;
@@ -626,25 +799,15 @@ void FX::drawString(uint24_t address){
   }
 }
 
-void FX::drawNumber(int16_t n, int8_t digits){
-  drawNumber((int32_t)n, digits);
-}
-
-void FX::drawNumber(uint16_t n, int8_t digits){
-  drawNumber((uint32_t)n, digits);
-}
-
+void FX::drawNumber(int16_t n, int8_t digits){ drawNumber((int32_t)n, digits); }
+void FX::drawNumber(uint16_t n, int8_t digits){ drawNumber((uint32_t)n, digits); }
 void FX::drawNumber(int32_t n, int8_t digits){
-  if (n < 0) {
-    n = -n;
-    drawChar('-');
-  } else if (digits != 0) {
-    drawChar(' ');
-  }
+  if (n < 0) { n = -n; drawChar('-'); } 
+  else if (digits != 0) { drawChar(' '); }
   drawNumber((uint32_t)n, digits);
 }
 
-void FX::drawNumber(uint32_t n, int8_t digits){
+void FX::drawNumber(uint32_t n, int8_t digits) {
   uint8_t buf[33]; 
   uint8_t *str = &buf[sizeof(buf) - 1];
   *str = '\0';
@@ -661,10 +824,8 @@ void FX::drawNumber(uint32_t n, int8_t digits){
 }
 
 void FX::drawStringOld(int16_t x, int16_t y, uint8_t color, const char* buffer){
-  for(;;) {
-    uint8_t c = *buffer++;
-    if (c) drawCharOld(x, y, c, color, !color, 1);
-    else break;
+  while(uint8_t c = *buffer++) {
+    drawCharOld(x, y, c, color, !color, 1);
     x += 6;
   }
 }
@@ -672,38 +833,21 @@ void FX::drawStringOld(int16_t x, int16_t y, uint8_t color, const char* buffer){
 void FX::drawPixelOld(int16_t x, int16_t y, uint8_t color){
   if (x < 0 || x > (WIDTH-1) || y < 0 || y > (HEIGHT-1)) return;
   uint8_t row = (uint8_t)y / 8;
-  if (color) {
-    Arduboy2Base::sBuffer[(row*WIDTH) + (uint8_t)x] |= _BV((uint8_t)y % 8);
-  } else {
-    Arduboy2Base::sBuffer[(row*WIDTH) + (uint8_t)x] &= ~_BV((uint8_t)y % 8);
-  }
-};
+  if (color) Arduboy2Base::sBuffer[(row*WIDTH) + (uint8_t)x] |= _BV((uint8_t)y % 8);
+  else       Arduboy2Base::sBuffer[(row*WIDTH) + (uint8_t)x] &= ~_BV((uint8_t)y % 8);
+}
 
 void FX::drawCharOld(int16_t x, int16_t y, uint8_t c, uint8_t color, uint8_t bg, uint8_t size){
   bool drawBackground = bg != color;
-  
-  uint8_t characterWidth = 5;
-  uint8_t characterHeight = 8;
-  uint8_t characterSpacing = 1;
-  uint8_t lineSpacing = 0;
+  uint8_t characterWidth = 5, characterHeight = 8, characterSpacing = 1, lineSpacing = 1;
   uint8_t fullCharacterWidth = characterWidth + characterSpacing;
-  uint8_t fullCharacterHeight = characterHeight + lineSpacing;
   
   const uint8_t* bitmap = &font5x7local[c * characterWidth * ((characterHeight + 8 - 1) / 8)];
   for (uint8_t i = 0; i < fullCharacterWidth; i++) {
-    uint8_t column;
-    if (characterHeight <= 8) {
-      column = (i < characterWidth) ? pgm_read_byte(bitmap++) : 0;
-    } else {
-      column = 0;
-    }
+    uint8_t column = (characterHeight <= 8 && i < characterWidth) ? pgm_read_byte(bitmap++) : 0;
 
     for (uint8_t j = 0; j < characterHeight; j++) {
-      if (characterHeight > 8) {
-        if ((j % 8 == 0) && (i < characterWidth)) {
-          column = pgm_read_byte(bitmap++);
-        }
-      }
+      if (characterHeight > 8 && (j % 8 == 0) && (i < characterWidth)) column = pgm_read_byte(bitmap++);
       uint8_t pixelIsSet = column & 0x01;
       if (pixelIsSet || drawBackground) {
         for (uint8_t a = 0; a < size; a++) {
@@ -714,9 +858,8 @@ void FX::drawCharOld(int16_t x, int16_t y, uint8_t c, uint8_t color, uint8_t bg,
       }
       column >>= 1;
     }
-
     if (drawBackground) {
-      for (uint8_t j = characterHeight; j < fullCharacterHeight; j++) {
+      for (uint8_t j = characterHeight; j < characterHeight + lineSpacing; j++) {
         for (uint8_t a = 0; a < size; a++) {
           for (uint8_t b = 0; b < size; b++) {
             drawPixelOld(x + (i * size) + a, y + (j * size) + b, bg);
