@@ -379,6 +379,7 @@ noInterrupts();
             
             uint16_t pha = g_channels[i].pha;
             pha += adv;
+            if (period == 0) continue;
             while(pha >= period)
                 pha -= period;
             uint16_t half_period = period / 2;
@@ -400,7 +401,7 @@ noInterrupts();
 #endif
     }
 
-    // SFX contribution
+// SFX contribution
 #if SYNTHU_ENABLE_SFX
     if(g_playing_sfx)
     {
@@ -408,34 +409,39 @@ noInterrupts();
         int16_t tsfx = 0;
         if(vol != 0)
         { 
-            uint16_t period =  g_tick_sfx.cmd.period;
-            uint16_t pha = g_channel_sfx.pha;
-            pha += adv;
-            while(pha >= period)
-                pha -= period;
-            uint16_t half_period = period / 2;
-            if(pha < half_period)
-            {
-                tsfx += vol;
-                period = half_period;
-            }
-            else
-                tsfx -= vol;
+            uint16_t period = g_tick_sfx.cmd.period;
+            
+            if(period != 0) { // <--- Защита от деления/бесконечного цикла в SFX
+                uint16_t pha = g_channel_sfx.pha;
+                pha += adv;
+                while(pha >= period)
+                    pha -= period;
+                uint16_t half_period = period / 2;
+                if(pha < half_period)
+                {
+                    tsfx += vol;
+                    period = half_period;
+                }
+                else
+                    tsfx -= vol;
 
-            g_channel_sfx.pha = pha;
-            period -= pha;
+                g_channel_sfx.pha = pha;
+                period -= pha;
 
-            // SFX volume adjust
+                // SFX volume adjust
 #if SYNTHU_ENABLE_VOLUME
-            tsfx *= g_volume_sfx;
-            tsfx >>= 4;
+                tsfx *= g_volume_sfx;
+                tsfx >>= 4;
 #else
-            tsfx >>= 1;
+                tsfx >>= 1;
 #endif
-            t += tsfx;
+                t += tsfx;
+            }
         }
     }
 #endif
+
+
     static int16_t norm=0;
     static int16_t div=1;
     if(t<norm) norm=t;

@@ -390,7 +390,6 @@ protected:
          #ifdef USE_nbSPI
            while(nbSPI_isBusy());
          #endif
-           noInterrupts();
            delay(50);
            keys = myESPboy.getKeys();
            if ((keys&0x40)/*PAD_LFT*/ && (keys&0x80)/*PAD_RGT*/) {arduboyYscaleFlag =! arduboyYscaleFlag;}
@@ -407,7 +406,7 @@ protected:
              myESPboy.tft.setAddrWindow(0, VERT_OFFSET, WIDTH, HEIGHT);}
            else{
              myESPboy.tft.setAddrWindow(0, 0, WIDTH, HEIGHT*2);}
-           
+           noInterrupts();
            for(uint8_t i=0; i<8; i++)
                          currentPalette[i] = SWPLH(
                                   myESPboy.tft.color24to16(
@@ -416,8 +415,8 @@ protected:
                                   )
                                     )
                                 );
-           while (myESPboy.getKeys()) delay(10);
            interrupts();
+           while (myESPboy.getKeys()) delay(10);
         }
     }
 
