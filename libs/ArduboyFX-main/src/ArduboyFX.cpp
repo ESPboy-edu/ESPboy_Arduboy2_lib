@@ -257,6 +257,24 @@ uint8_t FX::readByte(){
 #endif
 }
 
+void FX::safeCommit() {
+    ESP.wdtFeed();
+#if defined(ESP8266)
+    // Глушим аппаратный таймер звука, освобождая шину SPI
+    timer1_disable(); 
+#endif
+
+    EEPROM.commit();
+
+#if defined(ESP8266)
+    // Возвращаем таймер звука на частоте 22kHz
+    timer1_enable(TIM_DIV1, TIM_EDGE, TIM_LOOP);
+    timer1_write(80 * 1000000 / 22000); 
+#endif
+    ESP.wdtFeed();
+}
+
+
 void FX::begin(){ 
     // Allocate shared sprite cache RAM buffer
     if (!bmpCache) {
@@ -373,7 +391,7 @@ void FX::seekDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t 
 }
 
 void FX::seekSave(uint24_t address){   
-  globalAddressSave = address + ((uint32_t)programSavePage << 8) + EEPROMWRITEOFFSET;
+  globalAddressSave = address + EEPROMWRITEOFFSET;
 }
 
 uint8_t FX::readPendingUInt8(){
@@ -539,7 +557,7 @@ void FX::saveGameState(const uint8_t* gameState, size_t size){
     EEPROM.write(globalAddressSave++, gameState[i]);
   }
   interrupts();
-  EEPROM.commit();
+  safeCommit();
 }
 
 void FX::eraseSaveBlock(uint16_t page){
@@ -549,8 +567,8 @@ void FX::eraseSaveBlock(uint16_t page){
     EEPROM.write(globalAddressSave, 0xFF);
     globalAddressSave++;
   }
-  EEPROM.commit();
   interrupts();
+  safeCommit();
 }
 
 void FX::writeSavePage(uint16_t page, uint8_t* buffer){
@@ -560,8 +578,8 @@ void FX::writeSavePage(uint16_t page, uint8_t* buffer){
     EEPROM.write(globalAddressSave, buffer[i]);
     globalAddressSave++;
   }
-  EEPROM.commit();
-  interrupts(); 
+  interrupts();
+  safeCommit();
 }
 
 void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8_t mode){

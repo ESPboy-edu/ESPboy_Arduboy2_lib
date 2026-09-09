@@ -410,8 +410,7 @@ noInterrupts();
         if(vol != 0)
         { 
             uint16_t period = g_tick_sfx.cmd.period;
-            
-            if(period != 0) { // <--- Защита от деления/бесконечного цикла в SFX
+            if (period != 0) { 
                 uint16_t pha = g_channel_sfx.pha;
                 pha += adv;
                 while(pha >= period)

@@ -1,7 +1,7 @@
 #ifndef ARDUBOYFX_H
 #define ARDUBOYFX_H
 
-#define EEPROMWRITEOFFSET 30
+#define EEPROMWRITEOFFSET 34
 
 /*
  * =========================================================================
@@ -278,6 +278,7 @@ class FX
     static void readBytes(uint8_t* buffer, size_t length);
     static void readBytesSave(uint8_t* buffer, size_t length);
     static void readBytesEnd(uint8_t* buffer, size_t length);
+    static void safeCommit();
 
     [[gnu::noinline]] static uint8_t readEnd();
 
