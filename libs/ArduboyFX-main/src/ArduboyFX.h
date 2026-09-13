@@ -68,7 +68,7 @@
 
 //#define USE_LITTLEFS 
 //#define USE_RLE_COMPRESSION
-#define USE_LZSS_PACKING
+//#define USE_LZSS_PACKING
 
 
 

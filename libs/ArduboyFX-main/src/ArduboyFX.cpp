@@ -599,7 +599,8 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
   }
 
   int16_t skiptop;     
-  int8_t renderheight; 
+  int16_t renderheight; // ИСПРАВЛЕНО: int16_t предотвращает переполнение на экранах >127px
+  
   if (y < 0) {
     skiptop = -y & -8; 
     renderheight = (height - skiptop <= HEIGHT) ? height - skiptop : HEIGHT + (-y & 7);
@@ -616,17 +617,17 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
   }
   address += offset + 4; 
   
-  int8_t displayrow = (y >> 3) + skiptop;
+  int16_t displayrow = (y >> 3) + skiptop; // ИСПРАВЛЕНО: защита от переполнения Y
   int16_t displayoffset = displayrow * WIDTH + x + skipleft;
   uint8_t yshift = bitShiftLeftUInt8(y); 
   uint8_t lastmask = bitShiftRightMaskUInt8(8 - height); 
   
   seekData(address);
-  int32_t initAddress = globalAddress; 
+  uint24_t currentAddress = globalAddress; // ИСПРАВЛЕНО: сохраняем якорь для чтения строк
+  
   uint8_t *bitmapBuffer = nullptr;
-  int32_t pointertoBmp = 0;
+  int32_t bufferRowOffset = 0; 
 
-  // Optimize buffer size calculation. Read only active rendered rows
   size_t numRenderRows = (renderheight + 7) / 8;
   size_t bmpSize = (size_t)width * numRenderRows;
   bool allocatedLocally = false;
@@ -638,14 +639,22 @@ void FX::drawBitmap(int16_t x, int16_t y, uint24_t address, uint8_t frame, uint8
     allocatedLocally = true;
   }
 
-  // Uses abstracted readBytes (Automatically routes through LZSS/FS/PROGMEM)
   if (bitmapBuffer) {
     readBytes(bitmapBuffer, bmpSize);
   }
-  
+
   do { 
-    pointertoBmp = globalAddress - initAddress;
-    globalAddress += width;
+    int32_t pointertoBmp = 0;
+    
+    // ИСПРАВЛЕНО: Безопасный расчет позиции в кэше без привязки к сбившемуся globalAddress
+    if (bitmapBuffer) {
+      pointertoBmp = bufferRowOffset;
+      bufferRowOffset += width;
+    } else {
+      seekData(currentAddress);
+    }
+    currentAddress += width;
+
     mode &= ~((1 << dbfExtraRow));
     if (yshift != 1 && displayrow < (HEIGHT / 8 - 1)) mode |= (1 << dbfExtraRow);
     uint8_t rowmask = (renderheight < 8) ? lastmask : 0xFF;
@@ -743,7 +752,7 @@ void FX::readDataArray(uint24_t address, uint8_t index, uint8_t offset, uint8_t 
 uint8_t  FX::readIndexedUInt8(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof(uint8_t)); return readByte(); }
 uint16_t FX::readIndexedUInt16(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof(uint16_t)); return readPendingLastUInt16(); }
 uint24_t FX::readIndexedUInt24(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof_uint24_t); return readPendingLastUInt24(); }
-uint32_t FX::readIndexedUInt32(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof_uint24_t); return readPendingLastUInt32(); }
+uint32_t FX::readIndexedUInt32(uint24_t address, uint8_t index){ seekDataArray(address, index, 0, sizeof(uint32_t)); return readPendingLastUInt32(); }
 
 void FX::displayPrefetch(uint24_t address, uint8_t* target, uint16_t len, bool clear){
   seekData(address);
