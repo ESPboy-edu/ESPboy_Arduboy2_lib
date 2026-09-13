@@ -2,6 +2,10 @@
 ESPboy LED class
 for www.ESPboy.com project by RomanS
 */
+
+#ifndef ESPboy_LED_CPP
+#define ESPboy_LED_CPP
+
 #include "ESPboyLED.h"
 
 
@@ -124,3 +128,5 @@ void ICACHE_RAM_ATTR ESPboyLED::ledset(uint8_t rled, uint8_t gled, uint8_t bled)
   GPIO_REG_WRITE(GPIO_OUT_W1TS_ADDRESS, pinMask); 
   mcp->digitalWrite(LEDLOCK, LOW); 
 }
+
+#endif

@@ -5,8 +5,8 @@ https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun
 v1.0
 */
 
-#ifndef ESPboy_Init_cpp
-#define ESPboy_Init_cpp
+#ifndef ESPboy_Init_CPP
+#define ESPboy_Init_CPP
 
 #include "ESPboyInit.h"
 

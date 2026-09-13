@@ -4,6 +4,10 @@ for www.ESPboy.com project by RomanS
 https://hackaday.io/project/164830-espboy-games-iot-stem-for-education-fun
 v1.0
 */
+
+#ifndef ESPboy_MCP_CPP
+#define ESPboy_MCP_CPP
+
 #include "ESPboyMCP.h"
 
 void ESPboyMCP::begin() {
@@ -100,3 +104,5 @@ uint16_t ESPboyMCP::readGPIOAB() {
 	ba |= a;
 	return ba;
 }
+
+#endif

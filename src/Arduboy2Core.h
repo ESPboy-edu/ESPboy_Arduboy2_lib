@@ -24,16 +24,15 @@
 #define maxVal(a,b) ((a)>(b)?(a):(b))
 #define minVal(a,b) ((a)<(b)?(a):(b))
 
-// there is only one pin for audio
-#define PIN_SPEAKER_1 D3
-#define PIN_SPEAKER_2 D3
+//Always take SOUNDPIN define from ESPBoyInit.h
+#define PIN_SPEAKER_1   SOUNDPIN
+#define PIN_SPEAKER_2   SOUNDPIN
 
 #define RGB_ON 	200
 #define RGB_OFF 0
 #define RED_LED  0
 #define GREEN_LED  1
 #define BLUE_LED  2
-
 
 // bit values for button states
 // these are determined by the buttonsState() function
