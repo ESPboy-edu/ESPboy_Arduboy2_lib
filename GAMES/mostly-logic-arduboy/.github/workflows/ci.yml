@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install clang-format
+        run: python -m pip install clang-format==18.1.8
+      - name: Check C++ formatting
+        run: clang-format --dry-run --Werror MostlyLogic/MostlyLogic.ino MostlyLogic/*.cpp MostlyLogic/*.h tests/*.cpp tests/include/*.h
+
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Run host-side tests and level validation
+        run: sh tests/run-host-tests.sh
+
+  platformio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install PlatformIO
+        run: python -m pip install platformio==6.1.19
+      - name: Build Arduboy firmware
+        run: pio run
+      - name: Verify checked-in release artifacts
+        run: python scripts/build-release.py --check

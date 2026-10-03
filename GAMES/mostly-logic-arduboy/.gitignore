@@ -1,0 +1,25 @@
+# PlatformIO and compiler output
+.pio/
+build/
+compile_commands.json
+*.elf
+*.eep
+*.bin
+*.o
+*.hex
+*.arduboy
+
+# Release artifacts kept in the repository
+!dist/
+!dist/*.hex
+!dist/*.arduboy
+
+# Python
+*.pyc
+__pycache__/
+.venv/
+
+# Local editor and operating-system files
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,22 @@
+---
+BasedOnStyle: Google
+Language: Cpp
+Standard: Cpp11
+ColumnLimit: 100
+IndentWidth: 2
+ContinuationIndentWidth: 4
+NamespaceIndentation: None
+PointerAlignment: Left
+DerivePointerAlignment: false
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBraces: Attach
+ReflowComments: true
+...

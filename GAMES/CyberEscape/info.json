@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 3,
+  "title": "Cyber Escape",
+  "author": "SKRTM",
+  "description": "A rail flight through cyberspace, inspired by the 3D levels of The Lawnmower Man on Sega Genesis. Dodge wireframe obstacles, collect ten keys on every track and fly into the exit cube on the last level. 18 procedurally generated levels, alternating day and night, three speed phases.",
+  "version": "1.0.0",
+  "genre": "Action",
+  "date": "2026-09-18",
+  "publisher": "SKRTM",
+  "idea": "SKRTM",
+  "code": "SKRTM",
+  "art": "SKRTM",
+  "sound": "",
+  "url": "",
+  "sourceUrl": "",
+  "email": "",
+  "companion": "",
+  "banner": "banner.png",
+  "binaries": [
+    {
+      "title": "Cyber Escape",
+      "filename": "CyberEscape.hex",
+      "device": "Arduboy",
+      "screenshots": [
+        "screenshots/screen1.png",
+        "screenshots/screen2.png",
+        "screenshots/screen3.png",
+        "screenshots/screen4.png",
+      ]
+    }
+  ]
+}

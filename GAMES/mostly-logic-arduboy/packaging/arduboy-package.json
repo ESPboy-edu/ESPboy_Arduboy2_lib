@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 4,
+  "title": "Mostly Logic",
+  "description": "Guide projectiles through seven increasingly devious logic puzzles by placing deflectors and manipulating circuits.",
+  "author": "MostlyBuilds",
+  "version": "1.0.0",
+  "date": "2026-08-03",
+  "genre": "Puzzle",
+  "licenseFile": "LICENSE",
+  "url": "https://github.com/MostlyBuilds/mostly-logic-arduboy",
+  "sourceUrl": "https://github.com/MostlyBuilds/mostly-logic-arduboy",
+  "email": "info@mostlybuilds.com",
+  "companion": "",
+  "contributors": [],
+  "binaries": [
+    {
+      "title": "Mostly Logic",
+      "filename": "MostlyLogic.hex",
+      "device": "Arduboy",
+      "cartImage": "mostly-logic-launcher.png"
+    }
+  ]
+}

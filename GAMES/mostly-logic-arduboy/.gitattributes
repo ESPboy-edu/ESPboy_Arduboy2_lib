@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.arduboy binary
+*.hex binary
+*.png binary
