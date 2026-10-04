@@ -1,0 +1,159 @@
+<!doctype html>
+<!--
+  Local wrapper around the Ardens web emulator (by Peter Brown, tiberiusbrown.github.io/Ardens).
+  The emulator itself is loaded from its official page at run time; this wrapper only exists so
+  that freshly built files can be loaded from this machine:
+
+      http://localhost:8643/ardens.html?pkg=game/PocketStage.arduboy
+
+  Add mute=1 to keep it silent (nothing reaches the speakers).
+  Add record=1 for recording (tools/post_media.py serves the page that way): the emulator
+  starts with nothing saved, and record.js can take its clock over (window.rec).
+  Any other URL parameter is passed through to the emulator (for example g=none, p=default).
+  Set app=Ardens to load the full debugger instead of the player.
+  (The same page as Small Theft Auto's tools/web/ardens.html.)
+-->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pocket Stage in Ardens</title>
+  <style>
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #1a1a1a; }
+    #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; display: block;
+              image-rendering: pixelated; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
+  <script>
+    // Browsers stop animation frames (and slow timers) for pages that are not
+    // visible, which would freeze the emulator whenever this pane is in the
+    // background. Drive frames from a worker's timer instead: those keep running.
+    (function () {
+      const src = 'setInterval(function () { postMessage(0); }, 16);';
+      const worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+      let queue = [];
+      let nextId = 0;
+      // run what waits for a frame (record.js calls this itself once it has the clock)
+      window.runFrames = function (now) {
+        const run = queue;
+        queue = [];
+        for (const [, cb] of run) { try { cb(now); } catch (e) { console.error(e); } }
+      };
+      worker.onmessage = function () {
+        if (window.rec && window.rec.manual) return;
+        window.runFrames(performance.now());
+      };
+      window.requestAnimationFrame = function (cb) { queue.push([++nextId, cb]); return nextId; };
+      window.cancelAnimationFrame = function (id) { queue = queue.filter(e => e[0] !== id); };
+    })();
+
+    const BASE = 'https://tiberiusbrown.github.io/Ardens/';
+    const query = new URLSearchParams(location.search);
+
+    // mute=1: nothing reaches the speakers (for testing while someone listens
+    // to something else): no sound node may connect to the output, and every
+    // audio context stays suspended
+    if (query.get('mute') === '1') {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      const connect = AudioNode.prototype.connect;
+      AudioNode.prototype.connect = function (dest, ...rest) {
+        if (dest instanceof AudioDestinationNode) return dest;
+        return connect.call(this, dest, ...rest);
+      };
+      if (AC) {
+        AC.prototype.resume = function () { return Promise.resolve(); };
+        const Muted = function (...args) { const c = new AC(...args); c.suspend(); return c; };
+        Muted.prototype = AC.prototype;
+        window.AudioContext = window.webkitAudioContext = Muted;
+      }
+    }
+    const app = query.get('app') || 'ArdensPlayer';
+    window.ardensStatus = 'starting';
+
+    var Module = {
+      canvas: document.getElementById('canvas'),
+      locateFile: function (path) { return BASE + path; }
+    };
+    Module.canvas.addEventListener('click', () => Module.canvas.focus());
+
+    function loadFile(param, fname, fdata) {
+      const ptr = Module._malloc(fdata.length);
+      Module.HEAPU8.set(fdata, ptr);
+      const r = Module.ccall('load_file', 'number', ['string', 'string', 'number', 'number'],
+                             [param, fname, ptr, fdata.length]);
+      Module._free(ptr);
+      return r;
+    }
+
+    async function fetchLocal(path) {
+      const rsp = await fetch(path + '?t=' + Date.now());
+      if (!rsp.ok) throw new Error(path + ': HTTP ' + rsp.status);
+      return new Uint8Array(await rsp.arrayBuffer());
+    }
+
+    // The emulator takes one file per frame, and loading flash data resets the
+    // machine, so: program first, let a few frames pass, then the flash data.
+    function frames(n) {
+      return new Promise(resolve => {
+        let left = n;
+        const tick = () => { if (--left <= 0) resolve(); else requestAnimationFrame(tick); };
+        requestAnimationFrame(tick);
+      });
+    }
+
+    async function reloadGame() {
+      const files = [];
+      const order = (query.get('order') || 'pkg,hex,bin').split(',');
+      for (const key of order) {
+        const f = query.get(key);
+        if (f) files.push([f, await fetchLocal(f)]);
+      }
+      // let the emulator finish starting up (it restores its own settings
+      // asynchronously and resets the machine when that completes)
+      await frames(90);
+      const loaded = [];
+      for (const [f, data] of files) {
+        loadFile('file', f.split('/').pop(), data);
+        loaded.push(f + ' (' + data.length + ' bytes)');
+        await frames(4);
+      }
+      window.ardensStatus = 'loaded: ' + loaded.join(', ');
+      return window.ardensStatus;
+    }
+
+    Module.onRuntimeInitialized = function () {
+      for (const [k, v] of query) {
+        if (['hex', 'bin', 'pkg', 'app', 'v', 'r', 'order', 'mute', 'record'].includes(k)) continue;
+        Module.ccall('setparam', null, ['string', 'string'], [k, v]);
+      }
+      reloadGame().catch(e => { window.ardensStatus = 'error: ' + e.message; });
+    };
+
+    function addScript(src) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = () => reject(new Error(src));
+        document.body.appendChild(s);
+      });
+    }
+
+    // record=1: the emulator keeps what a game saves (the FX chip's save area,
+    // the EEPROM) in the browser; wipe that first, so that every recording
+    // starts with the game's defaults (sound on, DEMO off, no scores)
+    async function start() {
+      if (query.get('record') === '1') {
+        try { localStorage.clear(); } catch (e) { }
+        if (indexedDB.databases) {
+          for (const d of await indexedDB.databases()) indexedDB.deleteDatabase(d.name);
+        }
+        await addScript('record.js');
+      }
+      await addScript(BASE + app + '.js');
+    }
+    start().catch(e => { window.ardensStatus = 'error: ' + e.message; });
+  </script>
+</body>
+</html>

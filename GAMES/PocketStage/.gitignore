@@ -1,0 +1,7 @@
+# downloaded toolchain and everything generated
+.toolchain
+build/
+post/
+__pycache__/
+*.pyc
+.DS_Store
