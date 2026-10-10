@@ -2,13 +2,14 @@
 ESPboy LED class
 for www.ESPboy.com project by RomanS
 */
-#pragma once
+
+#ifndef ESPboy_LED_H
+#define ESPboy_LED_H
 
 #include <Arduino.h>
 #include "ESPboyMCP.h" //to control LED lock
 
-#ifndef ESPboy_LED
-#define ESPboy_LED
+
 
 #define LEDPIN D4
 #define LEDLOCK 9
