@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escaper Droid — TEAM a.r.g.</title>
+  <meta name="description" content="Escaper Droid (ID-20) is an isometric puzzle-adventure for Arduboy by TEAM a.r.g. Play it in the browser, read the manual, and download the .hex.">
+  <link rel="icon" href="https://t-arg.github.io/images/TEAMarg.gif">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fefefd;
+      color: #5d4c4b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #fefefd;
+      border-bottom: 3px solid #5d4c4b;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(93, 76, 75, 0.15);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      width: 121px;
+      height: 46px;
+    }
+
+    .logo img {
+      width: 121px;
+      height: 46px;
+      display: block;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .content-section {
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 4px 8px rgba(93, 76, 75, 0.15);
+    }
+
+    h1 {
+      color: #5d4c4b;
+      font-size: 32px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .game-id {
+      color: #5d4c4b;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .game-banner {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto 32px;
+      border: 2px solid #5d4c4b;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #5d4c4b;
+    }
+
+    .game-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    h2 {
+      color: #5d4c4b;
+      font-size: 22px;
+      margin-top: 36px;
+      margin-bottom: 14px;
+    }
+
+    h2:first-of-type { margin-top: 8px; }
+
+    p, li {
+      line-height: 1.8;
+      color: #5d4c4b;
+    }
+
+    p { margin-bottom: 14px; }
+
+    a {
+      color: #5d4c4b;
+      font-weight: 600;
+    }
+
+    a:hover { color: #5d4c4b; opacity: 0.75; }
+
+    .play-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 8px 0 8px;
+    }
+
+    /* Arduboy community / Ardens player chrome */
+    .pabeholder {
+      background: #fefefd;
+      padding: 10px 20px 8px 20px;
+      display: block;
+      width: 560px;
+      max-width: 100%;
+      margin: 8px auto 16px;
+      border-radius: 20px;
+      border: 2px solid #5d4c4b;
+      box-shadow:
+        inset 0 -1px 10px rgba(93, 76, 75, 0.18),
+        0 1px 0 #5d4c4b,
+        0 6px 1px rgba(93, 76, 75, 0.12),
+        0 10px 16px rgba(93, 76, 75, 0.2);
+    }
+
+    .promo-video { height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+    .play-gate { position: relative; }
+    .play-overlay {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      background: #5d4c4b; color: #fefefd; border: 0; cursor: pointer;
+      font-family: inherit; font-size: 28px; letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .play-overlay:hover, .play-overlay:focus-visible { background: #7a6563; }
+
+    .pabe {
+      display: block;
+      width: 512px;
+      height: 256px;
+      max-width: 100%;
+      margin: 10px auto 5px;
+      border: 4px solid #5d4c4b;
+      border-radius: 3px;
+      box-shadow: 3px 3px 6px rgba(93, 76, 75, 0.35);
+      background: #5d4c4b;
+    }
+
+    .hexlinkholder {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 28px;
+      margin-left: 3px;
+      gap: 8px;
+    }
+
+    .hexlink,
+    .fullscreenlink {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      flex: 0 0 auto;
+      color: #5d4c4b;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 18px;
+    }
+
+    .hexlink svg,
+    .fullscreenlink svg {
+      display: block;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .ardutitle {
+      color: #5d4c4b;
+      font-size: .8706em;
+      line-height: 24px;
+      font-weight: bold;
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .smallbuttons {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      display: block;
+    }
+
+    .bmc-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .kbd-hint {
+      font-size: 13px;
+      color: #5d4c4b;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .kbd-hint kbd {
+      display: inline-block;
+      background: #fefefd;
+      border: 1px solid #5d4c4b;
+      border-bottom-width: 2px;
+      border-radius: 3px;
+      padding: 0 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: #5d4c4b;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px 18px;
+      margin: 16px 0 8px;
+    }
+
+    .controls dt {
+      font-weight: 700;
+      color: #5d4c4b;
+    }
+
+    .controls dd { color: #5d4c4b; }
+
+    .sprite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .sprite-card {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 5px;
+      padding: 12px 14px;
+    }
+
+    .sprite-thumb {
+      flex: 0 0 88px;
+      width: 88px;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        linear-gradient(45deg, rgba(93, 76, 75, 0.12) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(93, 76, 75, 0.12) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(93, 76, 75, 0.12) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(93, 76, 75, 0.12) 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+      background-color: #fefefd;
+      border: 1px solid #5d4c4b;
+      border-radius: 3px;
+    }
+
+    .sprite-thumb img {
+      max-width: 80px;
+      max-height: 80px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .sprite-card h3 {
+      color: #5d4c4b;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .sprite-card p {
+      font-size: 14px;
+      line-height: 1.45;
+      margin: 0;
+      color: #5d4c4b;
+    }
+
+    .links-row {
+      margin-top: 28px;
+      font-size: 14px;
+    }
+
+    footer {
+      background: #fefefd;
+      border-top: 3px solid #5d4c4b;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 15px 0;
+    }
+
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 50%;
+      color: #5d4c4b;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: #5d4c4b;
+      color: #fefefd;
+      transform: translateY(-3px);
+    }
+
+    footer p {
+      color: #5d4c4b;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .content-section { padding: 22px 16px; }
+      h1 { font-size: 24px; }
+      .pabeholder { width: 100%; padding: 8px 10px; }
+      .pabe { width: 100%; height: auto; aspect-ratio: 2 / 1; }
+      .controls { grid-template-columns: 1fr; gap: 4px; }
+      .controls dt { margin-top: 8px; }
+    }
+  
+    /* PayPal donate button */
+    .bmc-wrap{flex-wrap:wrap;gap:10px}
+    .pp-btn{min-width:200px;height:auto;min-height:48px;align-self:stretch;box-sizing:border-box;margin:0;padding:0 20px;border-radius:12px;background:#5d4c4b;color:#fefefd!important;font-family:"Cookie",cursive;font-size:24px;line-height:1;text-decoration:none!important;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+    .pp-btn .pp-ico{width:22px;height:22px;fill:#fefefd;flex:none}
+    .pp-btn span{margin-left:8px;white-space:nowrap}
+    
+</style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a class="logo" href="https://t-arg.github.io/" title="TEAM a.r.g.">
+        <img src="https://t-arg.github.io/images/TEAMarg.gif" alt="TEAM a.r.g." width="121" height="46">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="content-section">
+      <h1>Escaper Droid</h1>
+      <p class="game-id">ID-20 · Arduboy · TEAM a.r.g.</p>
+
+      <div class="game-banner">
+        <img
+          src="images/banner-ID-20.png"
+          alt="Escaper Droid banner">
+      </div>
+
+      <div class="pabeholder promo-holder">
+        <video class="pabe promo-video" controls preload="metadata" playsinline title="Escaper Droid — promo video">
+          <source src="media/promo5_gold.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <div class="play-wrap">
+        <div class="bmc-wrap">
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="TEAMarg" data-color="#5d4c4b" data-emoji="☕" data-font="Cookie" data-text="Cool game? Buy us a coffee" data-outline-color="#fefefd" data-font-color="#fefefd" data-coffee-color="#FFDD00"></script>
+          <a class="pp-btn" target="_blank" rel="noopener noreferrer" href="https://paypal.me/TEAMargJO3RI" title="Donate with PayPal"><svg class="pp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg><span>Donate with PayPal</span></a>
+        </div>
+        <div class="pabeholder">
+          <div class="pabe play-gate" id="play-wrap">
+            <button type="button" class="play-overlay" id="play-btn" aria-label="Click to play">Click to play</button>
+          </div>
+          <template id="player-tpl">
+            <iframe
+              class="pabe"
+              title="Escaper Droid — Arduboy Simulator"
+              src="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-20-Escaper-Droid/refs/heads/master/ESCD_AB/build/arduino.avr.leonardo/ESCD_AB.ino.hex&amp;g=none&amp;z=1"
+              allow="fullscreen; autoplay"></iframe>
+          </template>
+          <div class="hexlinkholder">
+            <a
+              class="hexlink"
+              id="hex-download"
+              title="Download ESCD_AB.ino.hex"
+              href="https://raw.githubusercontent.com/T-arg/ID-20-Escaper-Droid/refs/heads/master/ESCD_AB/build/arduino.avr.leonardo/ESCD_AB.ino.hex"
+              download="ESCD_AB.ino.hex">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#5d4c4b" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1zm-7 14a1 1 0 0 1 1 1v2h12v-2a1 1 0 1 1 2 0v3H4v-3a1 1 0 0 1 1-1z"/>
+              </svg>
+              download
+            </a>
+            <a
+              class="ardutitle"
+              href="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-20-Escaper-Droid/refs/heads/master/ESCD_AB/build/arduino.avr.leonardo/ESCD_AB.ino.hex&amp;g=none&amp;z=1"
+              target="_blank"
+              rel="noopener"
+              title="Created by brow1067">Arduboy Simulator</a>
+            <a
+              class="fullscreenlink"
+              href="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-20-Escaper-Droid/refs/heads/master/ESCD_AB/build/arduino.avr.leonardo/ESCD_AB.ino.hex&amp;g=none&amp;z=1"
+              target="_blank"
+              rel="noopener"
+              title="Play fullscreen">
+              fullscreen
+              <svg class="smallbuttons" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#5d4c4b" d="M4 4h7v2H6v5H4V4zm9 0h7v7h-2V6h-5V4zM4 13h2v5h5v2H4v-7zm14 0h2v7h-7v-2h5v-5z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <p class="kbd-hint">
+          <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> move ·
+          <kbd>A</kbd> / <kbd>Z</kbd> pause ·
+          <kbd>B</kbd> / <kbd>S</kbd> / <kbd>X</kbd> action
+        </p>
+        <div class="bmc-wrap">
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="TEAMarg" data-color="#5d4c4b" data-emoji="☕" data-font="Cookie" data-text="Cool game? Buy us a coffee" data-outline-color="#fefefd" data-font-color="#fefefd" data-coffee-color="#FFDD00"></script>
+          <a class="pp-btn" target="_blank" rel="noopener noreferrer" href="https://paypal.me/TEAMargJO3RI" title="Donate with PayPal"><svg class="pp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg><span>Donate with PayPal</span></a>
+        </div>
+      </div>
+
+      <h2>The game</h2>
+      <p>
+        Escaper Droid is an isometric puzzle-adventure for the Arduboy. You are a small
+        droid that has stolen the Deadstar plans and must slip out of a locked-down
+        facility one room at a time.
+      </p>
+      <p>
+        Each stage is a cluster of isometric rooms linked by doors. Walk the diamond
+        floor, push crates, trip switches, ride teleporters, and deal with the guards
+        that still patrol the halls. Find the white and black keycards, open the path
+        to the exit room, stand on its centre tile, and press <strong>B</strong> to escape.
+      </p>
+      <p>
+        Objective: clear every stage. Pick up chips and cards for score, keep your
+        batteries charged, and do not let the facility catch you.
+      </p>
+
+      <h2>Buttons</h2>
+      <p>
+        The title ticker is <strong>CONF · SDFX · INFO · PLAY</strong>. Use the d-pad
+        to highlight a word and <strong>B</strong> to confirm.
+        <strong>CONF</strong> swaps the two walking schemes.
+        <strong>SDFX</strong> cycles music+SFX, music only, SFX only, and mute.
+        <strong>INFO</strong> shows the credits. <strong>PLAY</strong> starts the game.
+      </p>
+      <dl class="controls">
+        <dt>D-pad</dt>
+        <dd>
+          Walk one isometric step (north, east, south, west). Scheme A maps the
+          physical pad onto those directions directly. Scheme B rotates the pad so
+          Left is north, Up is east, Right is south, and Down is west — handy if you
+          think in screen axes instead of room axes.
+        </dd>
+        <dt>A</dt>
+        <dd>Pause. From the pause screen you can resume or return to the menu.</dd>
+        <dt>B</dt>
+        <dd>
+          Context action, in this order:<br>
+          • On the centre tile of the exit room — leave the stage.<br>
+          • Facing a door on the tile in front of it — try to open it (white card for
+          a normal lock, black card for the door that leads into the exit room).<br>
+          • Facing a teleporter — beam to its partner.<br>
+          • Facing a switch — flip it. That latches the room and toggles whatever
+          objects that switch is wired to in its target room.<br>
+          • Facing a crate — push it one tile if the landing tile is free.<br>
+          • Otherwise — fire a shot if you still have ammo.
+        </dd>
+      </dl>
+
+      <h2>You</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/droid-s.png" alt="Escaper droid"></div>
+          <div>
+            <h3>Escaper droid</h3>
+            <p>That’s you. Three lives, a few shots, and whatever cards you can swipe. Contact with most enemies costs a life. After a hit you flicker and are immune for a short moment.</p>
+          </div>
+        </article>
+      </div>
+
+      <h2>Enemies</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/enemy-boxer.png" alt="Boxer"></div>
+          <div>
+            <h3>Boxer</h3>
+            <p>When he faces you on a neighbouring tile he kicks you one step in that direction. The kick itself does not hurt — landing on spikes or on another enemy does.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/enemy-flyer.png" alt="Flyer"></div>
+          <div>
+            <h3>Flyer</h3>
+            <p>Drifts the room and turns left whenever he reaches the centre of a tile. Touching him costs a life. A shot puts him down.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/enemy-mover.png" alt="Mover"></div>
+          <div>
+            <h3>Mover</h3>
+            <p>Hunts you. At each tile centre he turns toward your tile if that step is free, otherwise he reverses. Contact hurts.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/enemy-shooter.png" alt="Shooter"></div>
+          <div>
+            <h3>Shooter</h3>
+            <p>Patrols and fires a shot along his facing. His bolt uses the same isometric step as walking. Dodge it or lose a life.</p>
+          </div>
+        </article>
+      </div>
+
+      <h2>Pickups &amp; devices</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-white-card.png" alt="White card"></div>
+          <div>
+            <h3>White card</h3>
+            <p>Opens an ordinary locked door. It will not open the door that leads into the exit room.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-black-card.png" alt="Black card"></div>
+          <div>
+            <h3>Black card</h3>
+            <p>Opens the level door — the closed door whose destination is the exit room. Without it you can wander the stage forever.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-battery.png" alt="Battery"></div>
+          <div>
+            <h3>Battery</h3>
+            <p>Spare life. Extra batteries still score if you are already full.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-bullet.png" alt="Bullet pack"></div>
+          <div>
+            <h3>Bullet pack</h3>
+            <p>Adds a shot to the three-shot magazine.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-chip.png" alt="Chip"></div>
+          <div>
+            <h3>Chip</h3>
+            <p>Stolen data. Worth the most of the small pickups. Grab them when you can.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-teleport.png" alt="Teleporter"></div>
+          <div>
+            <h3>Teleporter</h3>
+            <p>Stand facing it and press B to ride the beam to the linked pad. Useful for skipping pits and locked corners.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-switch-off.png" alt="Switch off"></div>
+          <div>
+            <h3>Switch (off)</h3>
+            <p>Press B while facing it to flip the switch. That latches this room and toggles the objects it influences in the target room.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/obj-switch-on.png" alt="Switch on"></div>
+          <div>
+            <h3>Switch (on)</h3>
+            <p>The latched state. Flip it again to undo the mask on the target room.</p>
+          </div>
+        </article>
+      </div>
+
+      <h2>Floor</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/floor-normal.png" alt="Floor tile"></div>
+          <div>
+            <h3>Floor</h3>
+            <p>Empty isometric tile. Walk it, shoot across it, nothing else happens.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/floor-box.png" alt="Crate"></div>
+          <div>
+            <h3>Crate</h3>
+            <p>Blocks walking and bullets. Face it and press B to shove it one tile onto a free square.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/floor-spike.png" alt="Spikes"></div>
+          <div>
+            <h3>Spikes</h3>
+            <p>Hurt the droid and block shots. A boxer’s kick that lands you here also costs a life.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/floor-pyramid.png" alt="Pyramid"></div>
+          <div>
+            <h3>Pyramid</h3>
+            <p>Solid cover. A shot that hits it destroys the pyramid and stops there.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/floor-pit.png" alt="Pit"></div>
+          <div>
+            <h3>Pit</h3>
+            <p>A hole in the floor. Shots pass over it. The droid no longer falls in — use pits as safe lanes for bullets.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="links-row">
+        Source and hex:
+        <a href="https://github.com/T-arg/ID-20-Escaper-Droid">T-arg/ID-20-Escaper-Droid</a>
+        · Level editor:
+        <a href="https://github.com/T-arg/ESCD-Level-Editor">ESCD-Level-Editor</a>
+        · Simulator:
+        <a href="https://github.com/tiberiusbrown/Ardens">Ardens</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="social-links">
+        <a href="https://github.com/T-arg" title="GitHub">GH</a>
+        <a href="https://twitter.com/TEAMarg_org" title="Twitter">𝕏</a>
+      </div>
+      <p>© 2026 TEAM a.r.g. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var link = document.getElementById('hex-download');
+      if (!link) return;
+      var hexUrl = 'https://raw.githubusercontent.com/T-arg/ID-20-Escaper-Droid/refs/heads/master/ESCD_AB/build/arduino.avr.leonardo/ESCD_AB.ino.hex';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        fetch(hexUrl)
+          .then(function (res) { if (!res.ok) throw new Error('hex'); return res.blob(); })
+          .then(function (blob) {
+            var url = URL.createObjectURL(new Blob([blob], { type: 'application/octet-stream' }));
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'ESCD_AB.ino.hex';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+          })
+          .catch(function () {
+            window.location.href = hexUrl;
+          });
+      });
+    })();
+  </script>
+  <script>
+    document.getElementById('play-btn').addEventListener('click', function () {
+      var wrap = document.getElementById('play-wrap');
+      var frame = document.getElementById('player-tpl').content.firstElementChild.cloneNode(true);
+      wrap.replaceWith(frame);
+      frame.focus();
+    });
+  </script>
+</body>
+</html>

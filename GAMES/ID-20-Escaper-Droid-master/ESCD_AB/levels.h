@@ -1,0 +1,778 @@
+#ifndef LEVELS_H
+#define LEVELS_H
+
+#define MAX_AMOUNT_OF_ROOMS                       32
+#define MAX_AMOUNT_OF_INFLUENCING_OBJECTS         16
+#define MAX_AMOUNT_OF_TRANSPORTERS                16
+#define AMOUNT_OF_ROOMS_AT_BYTE                   0
+#define AMOUNT_OF_TRANSPORTERS_AT_BYTE            1
+#define AMOUNT_OF_INFLUENCING_OBJECTS_AT_BYTE     2
+#define LEVEL_DOOR_DATA_START_AT_BYTE             3
+#define LEVEL_ROOM_DATA_START_AT_BYTE             4
+#define ROOMS_DATA_START_AT_BYTE                  5
+#define DOORS_DATA_START_AT_BYTE                  ROOMS_DATA_START_AT_BYTE + 1
+#define ELEMENTS_DATA_START_AT_BYTE               ROOMS_DATA_START_AT_BYTE + 5            
+#define BYTES_USED_FOR_EVERY_ROOM                 13
+
+// ROOM ORDER OF TILES
+//                 /\
+//                /  \
+//               / 00 \
+//              /\    /\
+//             /  \  /  \
+//            / 01 \/ 05 \
+//            \    /\    /
+// NORTH       \  /  \  /         EAST
+//           02 \/ 06 \/ 10  
+//        /\    /\    /\    /\
+//       /  \  /  \  /  \  /  \
+//      / 03 \/ 07 \/ 11 \/ 15 \
+//     /\    /\    /\    /\    /\
+//    /  \  /  \  /  \  /  \  /  \
+//   / 04 \/ 08 \/ 12 \/ 16 \/ 20 \
+//   \    /\    /\    /\    /\    /
+//    \  /  \  /  \  /  \  /  \  /
+//     \/ 09 \/ 13 \/ 17 \/ 21 \/
+//      \    /\    /\    /\    /
+//       \  /  \  /  \  /  \  /
+//        \/ 14 \/ 18 \/ 22 \/
+//              /\    /\    
+// WEST        /  \  /  \         SOUTH
+//            / 19 \/ 23 \
+//            \    /\    /
+//             \  /  \  /
+//              \/ 24 \/
+//               \    /
+//                \  /
+//                 \/
+
+
+//const unsigned char PROGMEM centerOfTiles[][2] =
+//{
+//  { 58, 18}, {46, 24}, {34, 30}, {22, 36}, {10, 42}, // Tile  0  1  2  3  4
+//  { 70, 24}, {58, 30}, {46, 36}, {34, 42}, {22, 48}, // Tile  5  6  7  8  9
+//  { 82, 30}, {70, 36}, {58, 42}, {46, 48}, {34, 54}, // Tile 10 11 12 13 14
+//  { 94, 36}, {82, 42}, {70, 48}, {58, 54}, {46, 60}, // Tile 15 16 17 18 19
+//  {106, 42}, {94, 48}, {82, 56}, {70, 60}, {58, 66}, // Tile 20 21 22 23 24
+//};
+
+// ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+//0b00000001,
+//  |||||||└->  \  these 2 bits are used to determine what door is the next level door, make sure it exists
+//  ||||||└-->  /. NORTH = 0B00000000; EAST = 0B00000001; SOUTH = 0B00000010; WEST : 0B00000011
+//  |||||└--->  \ 
+//  ||||└---->   |
+//  |||└----->   | these 6 bits are used to set in which room the next level door is leading to the exit room
+//  ||└------>   |
+//  |└------->   |
+//  └-------->  / 
+
+// NEXT LEVEL ROOM
+//0b00000001,
+//  |||||||└--->  \ 
+//  ||||||└---->   |
+//  |||||└----->   | these 6 bits are used to set in which room the next level TILE is leading to the next level
+//  ||||└------>   |
+//  |||└------->   |
+//  ||└-------->  / 
+//  |└--------->  NOT USED
+//  └---------->  NOT USED
+
+// ALL THE DATA FOR EACH ROOM AND EACH ROOM HAS 13 BYTES
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+//0b11001110, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    ||||||||
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    |||||||└->0  \  these 3 bits are used to determine kind of sprite used for the floor
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    ||||||└-->1   | 0 = none; 1 = box; 2 = spike; 3 = piramide; 4 = pit; 5 = ; 6 =; 7= LEVEL UP
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    |||||└--->2  /
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    ||||└---->3  \
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    |||└----->4   | if the floor is 
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    ||└------>5   | these 5 bits are used to determine on what floor tile the element is
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    |└------->6   |
+//  ||||||||    ||||||||                                        ||||||||                ||||||||    └-------->7  /  if all 8 bits == 0 => no floor element
+//  ||||||||    ||||||||                                        ||||||||                ||||||||
+//  ||||||||    ||||||||                                        ||||||||                |||||||└->0  \   these 3 bits are used to determine kind of sprite used for the object
+//  ||||||||    ||||||||                                        ||||||||                ||||||└-->1   |  0 = black card; 1 = white card; 2 = battery; 3 = bullet; 4 = chip; 5 = teleport, 6 = switch OFF, 7 switch = ON,
+//  ||||||||    ||||||||                                        ||||||||                |||||└--->2  /
+//  ||||||||    ||||||||                                        ||||||||                ||||└---->3  \
+//  ||||||||    ||||||||                                        ||||||||                |||└----->4   |
+//  ||||||||    ||||||||                                        ||||||||                ||└------>5   |  these 5 bits are used to determine on what floor tile the object is
+//  ||||||||    ||||||||                                        ||||||||                |└------->6   |
+//  ||||||||    ||||||||                                        ||||||||                └-------->7  /   if all 8 bits == 0 => no object
+//  ||||||||    ||||||||                                        |||||||| 
+//  ||||||||    ||||||||                                        |||||||└->0  \   hese 3 bits are used to determine kind of sprite used for the enemy
+//  ||||||||    ||||||||                                        ||||||└-->1   |  0 = BOX; 1 = FLYER; 2 = MOVER; 3 = SHOOTER;
+//  ||||||||    ||||||||                                        |||||└--->2  /
+//  ||||||||    ||||||||                                        ||||└---->3  \
+//  ||||||||    ||||||||                                        |||└----->4   |
+//  ||||||||    ||||||||                                        ||└------>5   |  these 5 bits are used to determine on what floor tile the enemy is
+//  ||||||||    ||||||||                                        |└------->6   |
+//  ||||||||    ||||||||                                        └-------->7  /   if all 8 bits == 0 => no enemy
+//  ||||||||    ||||||||
+//  ||||||||    |||||||└->0  \  these 2 bits are used to determine what door you'll go to
+//  ||||||||    ||||||└-->1  /
+//  ||||||||    |||||└--->2  \
+//  ||||||||    ||||└---->3   |
+//  ||||||||    |||└----->4   | these 6 bits are used for the roomnumber you'll go to
+//  ||||||||    ||└------>5   |
+//  ||||||||    |└------->6   |
+//  ||||||||    └-------->7  /
+//  ||||||||
+//  |||||||└->0  DOOR NORTH  is closed (0 = false / 1 = true)
+//  ||||||└-->1  DOOR EAST   is closed (0 = false / 1 = true)
+//  |||||└--->2  DOOR SOUTH  is closed (0 = false / 1 = true)
+//  ||||└---->3  DOOR WEST   is closed (0 = false / 1 = true)
+//  |||└----->4  DOOR NORTH  exists    (0 = false / 1 = true)
+//  ||└------>5  DOOR EAST   exists    (0 = false / 1 = true)
+//  |└------->6  DOOR SOUTH  exists    (0 = false / 1 = true)
+//  └-------->7  DOOR WEST   exists    (0 = false / 1 = true)
+//
+//
+//
+// transporters data, the order of the data is by ascending numbers (ROOM X, ROOM Y, ROOM Z , ...)
+// GOTO ROOM
+//0b00000001,
+//  |||||||└->0  \
+//  ||||||└-->1   |
+//  |||||└--->2   | these 6 bits are used for the roomnumber you'll go to
+//  ||||└---->3   |
+//  |||└----->4   |
+//  ||└------>5  /
+//  |└------->6 NOT USED
+//  └-------->7 NOT USED
+//
+//
+//
+// influence record is 2 bytes (old unused middle "from room" byte removed)
+// ELEMENTS      WHAT
+//  IN ROOM    ELEMENTS
+//0b00000011, 0b00011111,
+//  ||||||||    ||||||||
+//  ||||||||    |||||||└->0 FLOOR  5 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    ||||||└-->1 FLOOR  4 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    |||||└--->2 FLOOR  3 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    ||||└---->3 FLOOR  2 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    |||└----->4 FLOOR  1 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    ||└------>5 OBJECT 3 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    |└------->6 ENEMY  2 INFLUENCED (0 = false / 1 = true)
+//  ||||||||    └-------->7 ENEMY  1 INFLUENCED (0 = false / 1 = true)
+//  ||||||||
+//  |||||||└->0  \
+//  ||||||└-->1   |
+//  |||||└--->2   | these 6 bits are the room whose elements get toggled
+//  ||||└---->3   |
+//  |||└----->4   |
+//  ||└------>5  /
+//  |└------->6 NOT USED
+//  └-------->7 NOT USED
+//
+//
+
+const unsigned char PROGMEM level01[] =
+{
+  3,          // amount of rooms
+  0,          // amount of transporters
+  0,          // amount of rooms with influenceable objects
+
+  0b00000101,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b11000011, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room0 BULLET t24
+  0b10100010, 0b00000000, 0b00001011, 0b00000000, 0b00000001, 0b10100011, 0b00000000, 0b11001000, 0b01111100, 0b00101100, 0b10010100, 0b01000100, 0b01100100, // room1 BLACK CARD t0
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00000101, 0b00000000, 0b00000000, 0b01010100, 0b00100010, 0b01011010, 0b10000010, 0b00110010, 0b11000010, // room2 CHIP t10
+  // transporters
+
+  // influence
+};
+// LAYOUT 0:40,40 1:180,40 2:320,40
+
+const unsigned char PROGMEM level02[] =
+{
+  3,          // amount of rooms
+  1,          // amount of transporters
+  0,          // amount of rooms with influenceable objects
+
+  0b00000010,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01010100, 0b00000110, 0b00000000, 0b00001000, 0b00000000, 0b10100000, 0b11001000, 0b01010101, 0b01011100, 0b00111001, 0b01101100, 0b01110100, 0b10001001, // room0 TELEPORT t10
+  0b01000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b11001000, 0b01110010, 0b01101010, 0b01100010, 0b01011010, 0b01010001, // room1 BLACK CARD t0
+  0b00010000, 0b00000010, 0b00000000, 0b00000000, 0b00000000, 0b10101011, 0b00000000, 0b00000100, 0b00101011, 0b00001011, 0b00111011, 0b11000011, 0b00011011, // room2 CHIP t0
+
+  // transporters
+  0b00000001, // T0
+
+  // influence
+};
+// LAYOUT 0:40,200 1:40,60 2:40,340
+// INF 
+
+
+
+const unsigned char PROGMEM level03[] =
+{
+  3,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00000011,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b10101000, 0b00000000, 0b00000111, 0b00000000, 0b00001001, 0b00100001, 0b01110001, 0b11000000, 0b10011100, 0b10000100, 0b10111100, 0b01011100, 0b00110100, // room0 BLACK CARD t24
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00000001, 0b01010011, 0b00000000, 0b01011110, 0b00010011, 0b10110011, 0b10001011, 0b01101011, 0b00111011, // room1 SWITCH OFF t11
+  0b00100000, 0b00000000, 0b00000011, 0b00000000, 0b00000000, 0b11000000, 0b10100000, 0b01000100, 0b00111001, 0b00011001, 0b01101001, 0b01001001, 0b10001001, // room2 CHIP t8
+
+  // transporters
+
+  // influence
+  0b00000000, 0b00011111, // I0
+};
+// LAYOUT 0:260,40 1:400,40 2:120,40
+// INF 1>0 F1 F2 F3 F4 F5
+
+
+const unsigned char PROGMEM level04[] =
+{
+  4,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00000000,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b10111011, 0b00001010, 0b00000111, 0b00000000, 0b00001101, 0b00000000, 0b00000000, 0b10110001, 0b10001001, 0b10111001, 0b10101001, 0b00000000, 0b00000000, // room0 WHITE CARD t22
+  0b10100000, 0b00000000, 0b00001111, 0b00000000, 0b00000001, 0b00100000, 0b10100000, 0b11001000, 0b00101100, 0b00110100, 0b00111100, 0b01000100, 0b01001100, // room1 BLACK CARD t0
+  0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00100001, 0b00000001, 0b10100011, 0b10011011, 0b10010011, 0b10001011, 0b10000011, 0b01111011, // room2 BULLET t20
+  0b10100000, 0b00000000, 0b00000011, 0b00000000, 0b00000101, 0b00000010, 0b11000010, 0b01100110, 0b10001001, 0b01101001, 0b00111001, 0b01011001, 0b00000000, // room3 SWITCH OFF t12
+
+  // transporters
+
+  // influence
+  0b00000001, 0b00001010, // I0
+};
+// LAYOUT 0:180,180 1:320,180 2:180,40 3:40,180
+// INF 3>1 F2 F4
+
+const unsigned char PROGMEM level05[] =
+{
+  4,          // amount of rooms
+  0,          // amount of transporters
+  0,          // amount of rooms with influenceable objects
+
+  0b00001111,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00100011, 0b01001001, 0b01101001, 0b00111001, 0b00110001, 0b00101001, // room0 BULLET t4
+  0b11000000, 0b00000000, 0b00000000, 0b00001100, 0b00000001, 0b00000011, 0b00000000, 0b11000000, 0b10111011, 0b10010011, 0b10011011, 0b00000000, 0b00000000, // room1 BLACK CARD t24
+  0b00100000, 0b00000000, 0b00001111, 0b00000000, 0b00000000, 0b10101000, 0b00001000, 0b01110100, 0b10001011, 0b00111011, 0b01011011, 0b10111011, 0b00011011, // room2 CHIP t14
+  0b10011000, 0b00000110, 0b00000000, 0b00000000, 0b00001001, 0b00000001, 0b11000001, 0b10000010, 0b01100010, 0b00110010, 0b10010010, 0b10100010, 0b00000000, // room3 BATTERY t16
+
+  // transporters
+
+  // influence
+};
+// LAYOUT 0:40,40 1:180,40 2:40,180 3:180,180
+// INF 
+
+const unsigned char PROGMEM level06[] =
+{
+  4,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00001001,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000011,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b11000010, 0b00000000, 0b00100000, 0b10011001, 0b01101001, 0b00111001, 0b01000100, 0b00001001, // room0 BLACK CARD t4
+  0b11000000, 0b00000000, 0b00000000, 0b00001000, 0b00000001, 0b11000000, 0b00000000, 0b00110110, 0b01010011, 0b01011011, 0b00111011, 0b00010011, 0b01100010, // room1 SWITCH OFF t6
+  0b00110010, 0b00000110, 0b00001111, 0b00000000, 0b00000000, 0b11000011, 0b00000000, 0b01100011, 0b00111100, 0b01011100, 0b01101100, 0b10001001, 0b00000000, // room2 BULLET t12
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00001001, 0b00010001, 0b00000000, 0b10110100, 0b10111011, 0b10101011, 0b00001011, 0b00011011, 0b10001011, // room3 CHIP t22
+
+  // transporters
+
+  // influence
+  0b00000000, 0b00000010, // I0
+};
+// LAYOUT 0:40,40 1:180,40 2:180,180 3:320,180
+// INF 1>0 F4
+
+
+const unsigned char PROGMEM level07[] =
+{
+  4,          // amount of rooms
+  1,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00001011,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000011,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b10100001, 0b00000000, 0b00100101, 0b00111001, 0b01101001, 0b01000100, 0b01110100, 0b00010100, // room0 TELEPORT t4
+  0b11010101, 0b00001010, 0b00000000, 0b00001000, 0b00000001, 0b01010010, 0b00000000, 0b01100110, 0b01011001, 0b10001001, 0b01101001, 0b00111001, 0b00000000, // room1 SWITCH OFF t12
+  0b11011000, 0b00000110, 0b00000000, 0b00000100, 0b00001101, 0b10100000, 0b00000000, 0b11001000, 0b00100100, 0b01000100, 0b01010100, 0b01100100, 0b01011100, // room2 BLACK CARD t0
+  0b00100000, 0b00000000, 0b00001011, 0b00000000, 0b00000000, 0b00100001, 0b11000001, 0b01110100, 0b10011001, 0b01101001, 0b01001001, 0b10000011, 0b00110011, // room3 CHIP t14
+
+  // transporters
+  0b00000010, // T0
+
+  // influence
+  0b00000000, 0b00000100, // I0
+};
+// LAYOUT 0:40,40 1:180,40 2:180,180 3:40,180
+// INF 1>0 F3
+
+
+const unsigned char PROGMEM level08[] =
+{
+  5,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00000100,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000011,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b00000001, 0b00000000, 0b00011011, 0b00010001, 0b01011100, 0b00110100, 0b00100001, 0b01000001, // room0 BULLET t3
+  0b11110001, 0b00001110, 0b00001011, 0b00010000, 0b00000001, 0b00100001, 0b00000000, 0b00000010, 0b00111100, 0b00110100, 0b00101100, 0b01000100, 0b01001100, // room1 BATTERY t0
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00000101, 0b00000010, 0b10100010, 0b01010110, 0b01111011, 0b00101011, 0b01011011, 0b00110011, 0b10000011, // room2 SWITCH OFF t10
+  0b01000000, 0b00000000, 0b00000000, 0b00000100, 0b00000000, 0b00100000, 0b00000000, 0b00010100, 0b01101011, 0b01011011, 0b01110011, 0b01010011, 0b00000000, // room3 CHIP t2
+  0b00010000, 0b00000110, 0b00000000, 0b00000000, 0b00000000, 0b01010000, 0b01110000, 0b10110000, 0b00101100, 0b01001100, 0b11000100, 0b10100100, 0b10001100, // room4 BLACK CARD t22
+
+  // transporters
+
+  // influence
+  0b00000001, 0b00010000, // I0
+};
+// LAYOUT 0:40,180 1:180,180 2:320,180 3:180,40 4:180,320
+// INF 2>1 F1
+
+const unsigned char PROGMEM level09[] =
+{
+  5,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00000111,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00110010, 0b00000110, 0b00010011, 0b00000000, 0b00000000, 0b11000001, 0b00000000, 0b00000011, 0b01011100, 0b00110100, 0b00111100, 0b10101100, 0b01001100, // room0 BULLET t0
+  0b11101000, 0b00000000, 0b00001111, 0b00000000, 0b00001001, 0b00001001, 0b00101001, 0b10100000, 0b11000100, 0b10010100, 0b01100100, 0b00110100, 0b00000100, // room1 BLACK CARD t20
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b00100011, 0b11000011, 0b01110100, 0b10011011, 0b01101011, 0b01001011, 0b00010001, 0b10110001, // room2 CHIP t14
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00000101, 0b00100000, 0b11000000, 0b10100001, 0b10101011, 0b01111011, 0b01101011, 0b10011011, 0b01001011, // room3 WHITE CARD t20
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00000001, 0b10100011, 0b00000011, 0b01010110, 0b01011011, 0b01111011, 0b00101011, 0b10000011, 0b00110011, // room4 SWITCH OFF t10
+
+  // transporters
+
+  // influence
+  0b00000001, 0b00001100, // I0
+};
+// LAYOUT 0:320,180 1:320,40 2:180,40 3:460,40 4:460,180
+// INF 4>1 F2 F3
+
+const unsigned char PROGMEM level10[] =
+{
+  5,          // amount of rooms
+  0,          // amount of transporters
+  1,          // amount of rooms with influenceable objects
+
+  0b00001101,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000100,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b11000000, 0b00000000, 0b00100011, 0b00011100, 0b01001100, 0b01011100, 0b10000100, 0b00110100, // room0 BULLET t4
+  0b11110000, 0b00001010, 0b00001011, 0b00001000, 0b00000001, 0b00100001, 0b00000000, 0b10100000, 0b11000010, 0b10010010, 0b01100010, 0b00110010, 0b00000010, // room1 BLACK CARD t20
+  0b11110000, 0b00000110, 0b00001111, 0b00000100, 0b00000101, 0b11000001, 0b00000000, 0b00000110, 0b00100010, 0b01000010, 0b01100010, 0b10000010, 0b10100010, // room2 SWITCH OFF t0
+  0b10100010, 0b00000000, 0b00010011, 0b00000000, 0b00001001, 0b01010010, 0b00000000, 0b00000010, 0b01111011, 0b10000011, 0b00101011, 0b00110011, 0b01100011, // room3 BATTERY t0
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00001101, 0b10100011, 0b00100000, 0b00000100, 0b01101011, 0b00101011, 0b00001011, 0b01111011, 0b10101011, // room4 CHIP t0
+
+  // transporters
+
+  // influence
+  0b00000000, 0b00011000, // I0
+};
+// LAYOUT 0:40,40 1:180,40 2:320,40 3:460,40 4:600,40
+// INF 2>0 F1 F2
+
+const unsigned char PROGMEM level11[] =
+{
+  6,          // amount of rooms
+  1,          // amount of transporters
+  2,          // amount of rooms with influenceable objects
+
+  0b00001000,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000101,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01100000, 0b00000000, 0b00010011, 0b00000100, 0b00000000, 0b01001001, 0b11000011, 0b01000011, 0b01101100, 0b01110100, 0b10001100, 0b01111100, 0b10000001, // room0 BULLET t8
+  0b00110000, 0b00000010, 0b00001011, 0b00000000, 0b00000000, 0b11000010, 0b10100001, 0b01101110, 0b01100100, 0b01000100, 0b00000000, 0b00000000, 0b00000000, // room1 SWITCH OFF t13
+  0b10110001, 0b00010110, 0b00001111, 0b00000000, 0b00000101, 0b00000000, 0b00000000, 0b01011110, 0b00101100, 0b01111100, 0b10011100, 0b01101100, 0b01001100, // room2 SWITCH OFF t11
+  0b10010000, 0b00010010, 0b00000000, 0b00000000, 0b00001001, 0b11000000, 0b00000010, 0b10100000, 0b10110011, 0b10000011, 0b01010011, 0b01110011, 0b00111011, // room3 BLACK CARD t20
+  0b11000000, 0b00000000, 0b00000000, 0b00001100, 0b00000001, 0b00000001, 0b00000000, 0b10010101, 0b01101100, 0b10011100, 0b10111100, 0b10001100, 0b00110011, // room4 TELEPORT t18
+  0b01000000, 0b00000000, 0b00000000, 0b00001000, 0b00000000, 0b00000001, 0b11000001, 0b00100100, 0b10101011, 0b10111011, 0b10001011, 0b00011011, 0b01001011, // room5 CHIP t4
+
+  // transporters
+  0b00000000, // T0
+
+  // influence
+  0b00000010, 0b00000111, // I0
+  0b00000100, 0b00001100, // I1
+};
+// LAYOUT 0:180,40 1:180,180 2:320,180 3:460,180 4:460,40 5:320,40
+// INF 1>2 F3 F4 F5  2>4 F2 F3
+
+const unsigned char PROGMEM level12[] =
+{
+  6,          // amount of rooms
+  1,          // amount of transporters
+  2,          // amount of rooms with influenceable objects
+
+  0b00000000,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000101,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b10111001, 0b00010110, 0b00000111, 0b00000000, 0b00010001, 0b10110010, 0b00000000, 0b00001000, 0b00010001, 0b00101001, 0b00110001, 0b00111001, 0b10001001, // room0 BLACK CARD t1
+  0b10101000, 0b00000000, 0b00001011, 0b00000000, 0b00000001, 0b10110011, 0b00000000, 0b00001101, 0b00101100, 0b00110100, 0b00111100, 0b00010100, 0b10001100, // room1 TELEPORT t1
+  0b10101000, 0b00000000, 0b00001111, 0b00000000, 0b00000101, 0b00000001, 0b11000000, 0b01100110, 0b01011011, 0b10001011, 0b00111011, 0b01101011, 0b00000000, // room2 SWITCH OFF t12
+  0b10101000, 0b00000000, 0b00010011, 0b00000000, 0b00001001, 0b10100000, 0b11000000, 0b10110011, 0b10101100, 0b10111100, 0b10001100, 0b01100100, 0b00111100, // room3 BULLET t22
+  0b10101000, 0b00000000, 0b00000011, 0b00000000, 0b00001101, 0b00000000, 0b00000000, 0b10001110, 0b10000001, 0b10110010, 0b01100010, 0b10010010, 0b00110010, // room4 SWITCH OFF t17
+  0b01000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b11000001, 0b10100000, 0b00010100, 0b01001011, 0b01000011, 0b00111011, 0b00110011, 0b00101011, // room5 CHIP t2
+
+  // transporters
+  0b00000000, // T0
+
+  // influence
+  0b00000001, 0b00010000, // I0
+  0b00000011, 0b00000100, // I1
+};
+// LAYOUT 0:200,180 1:340,180 2:480,180 3:620,180 4:60,180 5:200,40
+// INF 2>1 F1  4>3 F3
+
+
+const unsigned char PROGMEM level13[] =
+{
+  8,          // amount of rooms
+  2,          // amount of transporters
+  2,          // amount of rooms with influenceable objects
+
+  0b00010010,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b11100000, 0b00000000, 0b00011111, 0b00000100, 0b00011101, 0b11001000, 0b11000001, 0b00100101, 0b10111100, 0b10001100, 0b01011100, 0b00101100, 0b01000100, // room0 TELEPORT t4
+  0b10110000, 0b00000010, 0b00011011, 0b00000000, 0b00011001, 0b00000000, 0b00000000, 0b10110001, 0b00100100, 0b01000100, 0b01100100, 0b10000100, 0b10100100, // room1 WHITE CARD t22
+  0b00010000, 0b00010010, 0b00000000, 0b00000000, 0b00000000, 0b01110010, 0b00000000, 0b00100100, 0b00011100, 0b01000100, 0b01101100, 0b10010100, 0b10001100, // room2 CHIP t4
+  0b00100000, 0b00000000, 0b00010011, 0b00000000, 0b00000000, 0b00100000, 0b11000000, 0b01110110, 0b10011100, 0b01101001, 0b01001100, 0b10010100, 0b01000100, // room3 SWITCH OFF t14
+  0b11100100, 0b00000000, 0b00010111, 0b00001000, 0b00001101, 0b10110001, 0b00000000, 0b00111110, 0b10111011, 0b10101011, 0b10000011, 0b10001011, 0b10010011, // room4 SWITCH OFF t7
+  0b10010000, 0b00011010, 0b00000000, 0b00000000, 0b00010001, 0b10100010, 0b00000000, 0b10000000, 0b01010100, 0b10110100, 0b10001100, 0b01100100, 0b01011100, // room5 BLACK CARD t16
+  0b11110100, 0b00011110, 0b00000111, 0b00010100, 0b00000101, 0b00000000, 0b00000000, 0b00100101, 0b11000010, 0b10010010, 0b01100010, 0b00110010, 0b00000010, // room6 TELEPORT t4
+  0b11100000, 0b00000000, 0b00000011, 0b00011000, 0b00000001, 0b11000001, 0b00000000, 0b00000011, 0b10100100, 0b10000100, 0b01100100, 0b01000100, 0b00100100, // room7 BULLET t0
+
+  // transporters
+  0b00000111, // T0
+  0b00000001, // T1
+
+  // influence
+  0b00000101, 0b00011010, // I0
+  0b00000011, 0b00000011, // I1
+};
+// LAYOUT 0:40,40 1:40,180 2:180,460 3:40,320 4:180,320 5:320,320 6:320,180 7:320,40
+// INF 3>5 F1 F2 F4  4>3 F4 F5
+
+const unsigned char PROGMEM level14[] =
+{
+  9,          // amount of rooms
+  1,          // amount of transporters
+  3,          // amount of rooms with influenceable objects
+
+  0b00010101,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01100000, 0b00000000, 0b00000111, 0b00010100, 0b00000000, 0b00100000, 0b10100000, 0b11000010, 0b10001100, 0b01011100, 0b00000000, 0b00000000, 0b00000000, // room0 BATTERY t24
+  0b10100010, 0b00000000, 0b00001111, 0b00000000, 0b00000001, 0b10101000, 0b10111000, 0b01100101, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room1 TELEPORT t12
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00010101, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room2
+  0b11100000, 0b00000000, 0b00011011, 0b00010000, 0b00000101, 0b11000010, 0b00000000, 0b00000110, 0b00001011, 0b00110011, 0b00101011, 0b10011100, 0b10111100, // room3 SWITCH OFF t0
+  0b01010000, 0b00001110, 0b00000000, 0b00100000, 0b00000000, 0b10100011, 0b00000000, 0b11000011, 0b01110001, 0b01101001, 0b01100001, 0b01011001, 0b01010001, // room4 BULLET t24
+  0b01110010, 0b00000010, 0b00001011, 0b00011000, 0b00000000, 0b00100001, 0b00000000, 0b10100110, 0b01100010, 0b10010010, 0b11000010, 0b00110010, 0b00000010, // room5 SWITCH OFF t20
+  0b10110000, 0b00010110, 0b00011111, 0b00000000, 0b00001101, 0b00000000, 0b00000000, 0b10100000, 0b00111100, 0b01101100, 0b10011100, 0b01110100, 0b00001100, // room6 BLACK CARD t20
+  0b10101000, 0b00000000, 0b00100011, 0b00000000, 0b00011001, 0b00100000, 0b10100010, 0b10110110, 0b10001001, 0b01011001, 0b01111001, 0b01101001, 0b10011001, // room7 SWITCH OFF t22
+  0b10010000, 0b00010010, 0b00000000, 0b00000000, 0b00011101, 0b01111001, 0b10101001, 0b10100001, 0b01010100, 0b10110100, 0b10000100, 0b01100001, 0b01000001, // room8 WHITE CARD t20
+
+  // transporters
+  0b00000101, // T0
+
+  // influence
+  0b00001000, 0b00011100, // I0
+  0b00000110, 0b00000010, // I1
+  0b00000011, 0b00000011, // I2
+};
+// LAYOUT 0:40,40 1:180,40 2:180,180 3:320,40 4:320,180 5:40,180 6:40,320 7:180,320 8:320,320
+// INF 3>8 F1 F2 F3  5>6 F4  7>3 F4 F5
+
+
+
+const unsigned char PROGMEM level15[] =
+{
+  9,          // amount of rooms
+  2,          // amount of transporters
+  2,          // amount of rooms with influenceable objects
+
+  0b00001010,  // NEXT LEVEL DOOR
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b11110001, 0b00001010, 0b00000111, 0b00010100, 0b00001101, 0b00000001, 0b00000000, 0b11000011, 0b10011100, 0b10111100, 0b10010100, 0b00001011, 0b00101011, // room0
+  0b10100000, 0b00000000, 0b00010011, 0b00000000, 0b00000001, 0b01011001, 0b00000000, 0b10100010, 0b00010100, 0b00111100, 0b01100100, 0b10001100, 0b10110100, // room1
+  0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00100010, 0b00000000, 0b00000100, 0b01100111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room2
+  0b00100000, 0b00000000, 0b00000011, 0b00000000, 0b00000000, 0b01001011, 0b10111010, 0b01100110, 0b10010011, 0b01101011, 0b00111011, 0b01000011, 0b00000000, // room3
+  0b11000100, 0b00000000, 0b00000000, 0b00011100, 0b00000101, 0b10100000, 0b00100000, 0b01100110, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room4
+  0b00010000, 0b00000010, 0b00000000, 0b00000000, 0b00000000, 0b01000001, 0b10000001, 0b11000001, 0b01100011, 0b00000011, 0b00100011, 0b10100011, 0b00000000, // room5
+  0b01010000, 0b00011110, 0b00000000, 0b00100000, 0b00000000, 0b00100000, 0b00000000, 0b11000000, 0b01110010, 0b01100010, 0b01101010, 0b01011010, 0b01010010, // room6
+  0b01010100, 0b00010010, 0b00000000, 0b00011000, 0b00000000, 0b11000010, 0b00000000, 0b01100101, 0b01101100, 0b01011100, 0b00000000, 0b00000000, 0b00000000, // room7
+  0b00010000, 0b00011010, 0b00000000, 0b00000000, 0b00000000, 0b10101011, 0b00000000, 0b01100101, 0b01101100, 0b01011100, 0b00000000, 0b00000000, 0b00000000, // room8
+
+  // transporters
+  0b00000110, // T0
+  0b00000110, // T1
+
+  // influence
+  0b00000001, 0b00010001, // I0
+  0b00000000, 0b00011100, // I1
+};
+// LAYOUT 0:160,160 1:300,160 2:160,20 3:20,160 4:440,160 5:160,300 6:440,440 7:440,300 8:440,580
+
+
+
+const unsigned char PROGMEM level16[] =
+{
+  9,          // amount of rooms
+  1,          // amount of transporters
+  3,          // amount of rooms with influenceable objects
+
+  0b00001111,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01100100, 0b00000000, 0b00000111, 0b00001100, 0b00000000, 0b11000001, 0b00000000, 0b00100100, 0b01010001, 0b00011011, 0b01001011, 0b01000011, 0b10010100, // room0 CHIP t4
+  0b11000000, 0b00000000, 0b00000000, 0b00010000, 0b00000001, 0b11000000, 0b00000001, 0b01011001, 0b00010001, 0b01100001, 0b01010001, 0b10000001, 0b01000001, // room1 WHITE CARD t11
+  0b00100000, 0b00000000, 0b00001111, 0b00000000, 0b00000000, 0b11000001, 0b00000000, 0b00100100, 0b01001011, 0b00011011, 0b01111011, 0b01011011, 0b00101011, // room2 CHIP t4
+  0b10111000, 0b00000010, 0b00010011, 0b00000000, 0b00001001, 0b00000000, 0b00000000, 0b00000101, 0b10100100, 0b10000100, 0b01100100, 0b01000100, 0b00100100, // room3 TELEPORT t0
+  0b11111000, 0b00000110, 0b00011011, 0b00010100, 0b00001101, 0b10011011, 0b00000000, 0b01011011, 0b11000100, 0b10010100, 0b01100100, 0b00110100, 0b00000100, // room4 BULLET t11
+  0b00010000, 0b00010010, 0b00000000, 0b00000000, 0b00000000, 0b11000011, 0b00000000, 0b01100110, 0b00111100, 0b00110100, 0b01011100, 0b00000000, 0b00000000, // room5 SWITCH OFF t12
+  0b11100000, 0b00000000, 0b00100011, 0b00011100, 0b00010001, 0b00101000, 0b00001000, 0b00000110, 0b00010100, 0b00111100, 0b01100100, 0b01011100, 0b01010100, // room6 SWITCH OFF t0
+  0b00010000, 0b00011010, 0b00000000, 0b00000000, 0b00000000, 0b01100010, 0b00000000, 0b10000110, 0b00110100, 0b00111100, 0b10010100, 0b01101100, 0b01000100, // room7 SWITCH OFF t16
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00011001, 0b10100011, 0b00000010, 0b01100000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room8 BLACK CARD t12
+
+  // transporters
+  0b00000100, // T0
+
+  // influence
+  0b00000110, 0b00011111, // I0
+  0b00000100, 0b00000100, // I1
+  0b00000011, 0b00000100, // I2
+};
+// LAYOUT 0:220,40 1:360,40 2:80,180 3:220,180 4:360,180 5:360,320 6:500,180 7:500,320 8:640,180
+// INF 5>6 F1 F2 F3 F4 F5  6>4 F3  7>3 F3
+
+
+const unsigned char PROGMEM level17[] =
+{
+  9,          // amount of rooms
+  1,          // amount of transporters
+  3,          // amount of rooms with influenceable objects
+
+  0b00000011,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00001000,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b10101000, 0b00000000, 0b00000111, 0b00000000, 0b00100001, 0b10011001, 0b00000001, 0b10100000, 0b01110100, 0b01111100, 0b10101100, 0b00111100, 0b10001100, // room0 BLACK CARD t20
+  0b10100000, 0b00000000, 0b00001011, 0b00000000, 0b00000001, 0b10100000, 0b00100000, 0b00000010, 0b01101010, 0b01100010, 0b01011010, 0b10001010, 0b00111010, // room1 BATTERY t0
+  0b10100000, 0b00000000, 0b00001111, 0b00000000, 0b00000101, 0b10110011, 0b00000000, 0b00100110, 0b01001100, 0b01000100, 0b00111100, 0b00110100, 0b00000000, // room2 SWITCH OFF t4
+  0b10100000, 0b00000000, 0b00010011, 0b00000000, 0b00001001, 0b00000001, 0b00000000, 0b11000110, 0b10011011, 0b10010011, 0b10001011, 0b01100011, 0b00111011, // room3 SWITCH OFF t24
+  0b10100000, 0b00000000, 0b00010111, 0b00000000, 0b00001101, 0b11000000, 0b10100000, 0b01100011, 0b01101100, 0b01011100, 0b00000000, 0b00000000, 0b00000000, // room4 BULLET t12
+  0b10100000, 0b00000000, 0b00011011, 0b00000000, 0b00010001, 0b10100011, 0b00000000, 0b00000001, 0b00101010, 0b00110010, 0b00010001, 0b01111100, 0b10101100, // room5 WHITE CARD t0
+  0b10100010, 0b00000000, 0b00011111, 0b00000000, 0b00010101, 0b10100010, 0b00000000, 0b00000101, 0b00101010, 0b01111010, 0b11000010, 0b00100010, 0b01100010, // room6 TELEPORT t0
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00011001, 0b11000000, 0b11001000, 0b10100110, 0b10110010, 0b10001010, 0b00111010, 0b00010010, 0b01100001, // room7 SWITCH OFF t20
+  0b00100000, 0b00000000, 0b00000011, 0b00000000, 0b00000000, 0b01110011, 0b11000001, 0b10100100, 0b01111100, 0b10000100, 0b10010100, 0b10011100, 0b10001100, // room8 CHIP t20
+
+  // transporters
+  0b00000101, // T0
+
+  // influence
+  0b00000000, 0b00010000, // I0
+  0b00001000, 0b00000001, // I1
+  0b00000000, 0b00011100, // I2
+};
+// LAYOUT 0:200,40 1:340,40 2:480,40 3:620,40 4:760,40 5:900,40 6:1040,40 7:1180,40 8:60,40
+// INF 2>0 F1  3>8 F5  7>0 F1 F2 F3
+
+const unsigned char PROGMEM level18[] =
+{
+  12,          // amount of rooms
+  4,          // amount of transporters
+  4,          // amount of rooms with influenceable objects
+
+  0b00000111,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00000010,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b11110000, 0b00001110, 0b00010111, 0b00010000, 0b00000101, 0b11000000, 0b10100000, 0b00000010, 0b10000010, 0b00110010, 0b01000010, 0b10010010, 0b00000000, // room0 BATTERY t0
+  0b11111010, 0b00011010, 0b00000011, 0b00100000, 0b00001001, 0b00000000, 0b00000000, 0b00000110, 0b10111100, 0b10010100, 0b01101100, 0b01000100, 0b00011100, // room1 SWITCH OFF t0
+  0b00100000, 0b00000000, 0b00000111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000100, 0b00101011, 0b00110011, 0b01011011, 0b10000011, 0b01111011, // room2 CHIP t0
+  0b11100100, 0b00000000, 0b00011111, 0b00000000, 0b00011001, 0b00110010, 0b00000000, 0b11001000, 0b00101100, 0b00001100, 0b01100100, 0b01011100, 0b00111100, // room3 BLACK CARD t0
+  0b10110001, 0b00000010, 0b00100111, 0b00000000, 0b00100001, 0b00000001, 0b00000000, 0b11000110, 0b10111011, 0b10010011, 0b10011011, 0b00000000, 0b00000000, // room4 SWITCH OFF t24
+  0b11011000, 0b00011110, 0b00000000, 0b00100100, 0b00000001, 0b00000000, 0b00000000, 0b01100110, 0b10010100, 0b10000001, 0b00110100, 0b01000001, 0b00000000, // room5 SWITCH OFF t12
+  0b11100000, 0b00000000, 0b00001111, 0b00000100, 0b00101001, 0b11000000, 0b00000000, 0b01100101, 0b10010100, 0b01101100, 0b00111100, 0b00110100, 0b10000100, // room6 TELEPORT t12
+  0b11000000, 0b00000000, 0b00000000, 0b00010100, 0b00001101, 0b11000000, 0b00000000, 0b01100101, 0b00111100, 0b01011100, 0b10000100, 0b01000100, 0b10010100, // room7 TELEPORT t12
+  0b10110000, 0b00000110, 0b00010011, 0b00000000, 0b00101101, 0b11000001, 0b00000000, 0b01100101, 0b01101100, 0b10001100, 0b10000100, 0b01000100, 0b00110100, // room8 TELEPORT t12
+  0b10010000, 0b00010110, 0b00000000, 0b00000000, 0b00010001, 0b11000000, 0b00000000, 0b01100101, 0b10010100, 0b10001100, 0b01011100, 0b00110100, 0b01000100, // room9 TELEPORT t12
+  0b00100000, 0b00000000, 0b00011011, 0b00000000, 0b00000000, 0b00000000, 0b11000011, 0b01100110, 0b10001001, 0b00111001, 0b01011001, 0b10110001, 0b00010001, // room10 SWITCH OFF t12
+  0b00100000, 0b00000000, 0b00100011, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01100011, 0b10001100, 0b01011100, 0b00111100, 0b01101100, 0b01110100, // room11 BULLET t12
+
+  // transporters
+  0b00000000, // T0
+  0b00000000, // T1
+  0b00000000, // T2
+  0b00000000, // T3
+
+  // influence
+  0b00000011, 0b00000111, // I0
+  0b00000001, 0b00011111, // I1
+  0b00000011, 0b00011000, // I2
+  0b00001011, 0b00000010, // I3
+};
+// LAYOUT 0:320,280 1:180,280 2:40,280 3:320,140 4:320,420 5:460,280 6:180,140 7:460,140 8:180,420 9:460,420 10:40,140 11:40,420
+// INF 1>3 F3 F4 F5  4>1 F1 F2 F3 F4 F5  5>3 F1 F2  10>11 F4
+
+
+const unsigned char PROGMEM levelSemiFinal[] =
+{
+  24,          // amount of rooms
+  4,          // amount of transporters
+  2,          // amount of rooms with influenceable objects
+
+  0b00111111,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00001110,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01100000, 0b00000000, 0b00000111, 0b00011000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00011001, 0b01000001, 0b01001001, 0b10100001, 0b00000000, // room0
+  0b10100000, 0b00000000, 0b00001011, 0b00000000, 0b00000001, 0b00000000, 0b00000000, 0b01100011, 0b01101100, 0b01011100, 0b00000000, 0b00000000, 0b00000000, // room1 BULLET t12
+  0b10100000, 0b00000000, 0b00001111, 0b00000000, 0b00000101, 0b10100011, 0b11000011, 0b10110010, 0b01111010, 0b10101010, 0b10111010, 0b10011010, 0b00000000, // room2 BATTERY t22
+  0b11100000, 0b00000000, 0b00010011, 0b00100100, 0b00001001, 0b01100001, 0b00000000, 0b00000011, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room3 BULLET t0
+  0b10100000, 0b00000000, 0b00010111, 0b00000000, 0b00001101, 0b00000000, 0b00000000, 0b01100001, 0b10001001, 0b01101001, 0b00111001, 0b01011001, 0b00000000, // room4 WHITE CARD t12
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00010001, 0b11000001, 0b00000001, 0b01100101, 0b10001100, 0b00111100, 0b00000000, 0b00000000, 0b00000000, // room5 TELEPORT t12
+  0b01110000, 0b00000010, 0b00011111, 0b00110000, 0b00000000, 0b00000000, 0b00000000, 0b01100110, 0b00110011, 0b01011011, 0b10000011, 0b00111011, 0b01000011, // room6 SWITCH OFF t12
+  0b10100000, 0b00000000, 0b00100011, 0b00000000, 0b00011001, 0b10100000, 0b11000000, 0b00000110, 0b00111001, 0b01100001, 0b10001001, 0b10110001, 0b00010001, // room7 SWITCH OFF t0
+  0b10100010, 0b00000000, 0b00100111, 0b00000000, 0b00011101, 0b00000000, 0b00000000, 0b00000001, 0b10011100, 0b01101100, 0b00001100, 0b01001100, 0b00101100, // room8 WHITE CARD t0
+  0b11110010, 0b00001110, 0b00101011, 0b00111100, 0b00100001, 0b00000000, 0b00000000, 0b01100010, 0b10001001, 0b01101100, 0b00111001, 0b01011100, 0b00000000, // room9 BATTERY t12
+  0b10100000, 0b00000000, 0b00101111, 0b00000000, 0b00100101, 0b00000000, 0b00000000, 0b01100101, 0b10000011, 0b10010011, 0b00110011, 0b01000011, 0b00000000, // room10 TELEPORT t12
+  0b11000000, 0b00000000, 0b00000000, 0b01000100, 0b00101001, 0b10100010, 0b00100010, 0b00000100, 0b00101011, 0b00110011, 0b00001011, 0b11000011, 0b00000000, // room11 CHIP t0
+  0b00110000, 0b00011010, 0b00110111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b10010010, 0b01100011, 0b10000011, 0b01000011, 0b00000011, 0b11000011, // room12 BATTERY t18
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00110001, 0b00000000, 0b00000000, 0b01100001, 0b10001011, 0b01011011, 0b00111011, 0b01101011, 0b00000000, // room13 WHITE CARD t12
+  0b00100000, 0b00000000, 0b00111111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room14
+  0b10111000, 0b00100110, 0b01000011, 0b00000000, 0b00111001, 0b00000000, 0b00000000, 0b00000000, 0b00111001, 0b00001100, 0b00011100, 0b01100100, 0b00000000, // room15
+  0b10100000, 0b00000000, 0b01000111, 0b00000000, 0b00111101, 0b01100011, 0b00000000, 0b00000000, 0b10001100, 0b01101100, 0b00111100, 0b01011100, 0b00000000, // room16
+  0b11010100, 0b00101110, 0b00000000, 0b01011100, 0b01000001, 0b00000000, 0b00000000, 0b11001000, 0b00100010, 0b01000010, 0b01100010, 0b10000010, 0b10100010, // room17 BLACK CARD t0
+  0b00100000, 0b00000000, 0b01001111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01100101, 0b10001100, 0b10110100, 0b00111100, 0b00010100, 0b00000000, // room18 TELEPORT t12
+  0b10100000, 0b00000000, 0b01010011, 0b00000000, 0b01001001, 0b00000000, 0b00000000, 0b01011101, 0b10000100, 0b00110100, 0b01101100, 0b00000000, 0b00000000, // room19 TELEPORT t11
+  0b10100000, 0b00000000, 0b01010111, 0b00000000, 0b01001101, 0b00100001, 0b00000000, 0b11000001, 0b01011100, 0b00110100, 0b00101100, 0b01111001, 0b10000001, // room20 WHITE CARD t24
+  0b10100000, 0b00000000, 0b01011011, 0b00000000, 0b01010001, 0b10100001, 0b11000001, 0b00010010, 0b01001011, 0b01000011, 0b01100011, 0b00110011, 0b00101011, // room21 BATTERY t2
+  0b10100000, 0b00000000, 0b01011111, 0b00000000, 0b01010101, 0b00000000, 0b00000000, 0b10100100, 0b01101010, 0b10110010, 0b00010010, 0b01011010, 0b00000000, // room22 CHIP t20
+  0b10010001, 0b01000110, 0b00000000, 0b00000000, 0b01011001, 0b00000000, 0b00000000, 0b10000011, 0b01011011, 0b01100011, 0b10001011, 0b00010011, 0b10100011, // room23 BULLET t16
+
+  // transporters
+  0b00010010, // T0
+  0b00000000, // T1
+  0b00000101, // T2
+  0b00000000, // T3
+
+  // influence
+  0b00001000, 0b00000101, // I0
+  0b00001000, 0b00011010, // I1
+};
+// LAYOUT 0:40,40 1:180,40 2:320,40 3:460,40 4:600,40 5:740,40 6:40,180 7:180,180 8:320,180 9:460,180 10:600,180 11:740,180 12:40,320 13:180,320 14:320,320 15:460,320 16:600,320 17:740,320 18:40,460 19:180,460 20:320,460 21:460,460 22:600,460 23:740,460
+// INF 6>8 F3 F5  7>8 F1 F2 F4
+
+const unsigned char PROGMEM levelFinal[] =
+{
+  32,          // amount of rooms
+  8,          // amount of transporters
+  5,          // amount of rooms with influenceable objects
+
+  0b01111110,  // ROOM AND DOOR LEADING TO NEXT LEVEL ROOM
+  0b00011011,  // NEXT LEVEL ROOM
+
+//DOOR+STATE  NORTH GOTO  EAST  GOTO  SOUTH GOTO  WEST  GOTO   ENEMY 1      ENEMY 2    OBJECT 3     FLOOR 1     FLOOR 2     FLOOR 3     FLOOR 4     FLOOR 5
+  0b01000000, 0b00000000, 0b00000000, 0b00001000, 0b00000000, 0b00000000, 0b00000000, 0b00010011, 0b01101001, 0b00101001, 0b01001001, 0b01011001, 0b00111001, // room0 BULLET t2
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b00001001, 0b11001000, 0b10100000, 0b01100110, 0b00110010, 0b10010001, 0b01101001, 0b01000001, 0b10000010, // room1 SWITCH OFF t12
+  0b11110100, 0b00000010, 0b00000111, 0b00010000, 0b00001101, 0b00000000, 0b00000000, 0b00000001, 0b00101100, 0b00001100, 0b10001100, 0b10101100, 0b10111100, // room2 WHITE CARD t0
+  0b00100000, 0b00000000, 0b00001011, 0b00000000, 0b00000000, 0b11000001, 0b00000000, 0b01100110, 0b10101011, 0b10000011, 0b01011011, 0b00110011, 0b00001011, // room3 SWITCH OFF t12
+  0b01110000, 0b00001010, 0b00010111, 0b00011000, 0b00000000, 0b01001011, 0b00000000, 0b11000110, 0b00100010, 0b01000010, 0b01100010, 0b10000010, 0b10100010, // room4 SWITCH OFF t24
+  0b11000000, 0b00000000, 0b00000000, 0b00011100, 0b00010001, 0b10111010, 0b00000000, 0b00000001, 0b00001011, 0b00110011, 0b00101011, 0b11000011, 0b10010011, // room5 WHITE CARD t0
+  0b00110001, 0b00010010, 0b00011111, 0b00000000, 0b00000000, 0b00110001, 0b10000001, 0b11000010, 0b00101001, 0b01011001, 0b01111001, 0b01101001, 0b10111001, // room6 BATTERY t24
+  0b11110000, 0b00010110, 0b00100011, 0b00100100, 0b00011001, 0b10100010, 0b00000000, 0b00000000, 0b11000010, 0b10010010, 0b01100100, 0b00110010, 0b00000010, // room7
+  0b11000000, 0b00000000, 0b00000000, 0b00101000, 0b00011101, 0b01010010, 0b00000000, 0b01100011, 0b01101001, 0b10111001, 0b00011001, 0b00110001, 0b10000001, // room8 BULLET t12
+  0b00110000, 0b00011110, 0b00101011, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01100101, 0b10001011, 0b01011011, 0b00111011, 0b01101011, 0b00000000, // room9 TELEPORT t12
+  0b10011000, 0b00100010, 0b00000000, 0b00000000, 0b00100101, 0b00000010, 0b00000000, 0b10100010, 0b10101011, 0b10000011, 0b01111011, 0b00101011, 0b00001011, // room10 BATTERY t20
+  0b00100000, 0b00000000, 0b00110011, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000101, 0b00110010, 0b01100010, 0b10000010, 0b10100010, 0b00000000, // room11 TELEPORT t0
+  0b10100000, 0b00000000, 0b00110111, 0b00000000, 0b00101101, 0b11000001, 0b00000001, 0b00000000, 0b10110011, 0b10001011, 0b01100011, 0b00111011, 0b00010011, // room12
+  0b11110000, 0b00111010, 0b00111011, 0b00111000, 0b00110001, 0b00100000, 0b00000000, 0b10100011, 0b11000010, 0b10010010, 0b01100010, 0b00110010, 0b00000010, // room13 BULLET t20
+  0b11110000, 0b00110110, 0b00111111, 0b00110100, 0b00110101, 0b11001000, 0b00000000, 0b11000100, 0b00100010, 0b01000010, 0b01100010, 0b10000010, 0b10100010, // room14 CHIP t24
+  0b10100000, 0b00000000, 0b01000011, 0b00000000, 0b00111001, 0b10001011, 0b00000000, 0b10110010, 0b10111100, 0b10101100, 0b10000100, 0b10010100, 0b01100001, // room15 BATTERY t22
+  0b10100000, 0b00000000, 0b01000111, 0b00000000, 0b00111101, 0b10001011, 0b00000000, 0b10110000, 0b10101100, 0b10111100, 0b10000100, 0b10010100, 0b01100001, // room16 BLACK CARD t22
+  0b10000000, 0b00000000, 0b00000000, 0b00000000, 0b01000001, 0b10100010, 0b00000010, 0b01011101, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room17 TELEPORT t11
+  0b01100000, 0b00000000, 0b01001111, 0b01100100, 0b00000000, 0b00000000, 0b00000000, 0b00100010, 0b01110001, 0b01000001, 0b00010001, 0b10001001, 0b01011001, // room18 BATTERY t4
+  0b11100100, 0b00000000, 0b01010011, 0b01101000, 0b01001001, 0b00000000, 0b00000000, 0b01100101, 0b11000010, 0b00100010, 0b00000010, 0b10100010, 0b00000000, // room19 TELEPORT t12
+  0b11000000, 0b00000000, 0b00000000, 0b01010100, 0b01001101, 0b00000000, 0b00000000, 0b00000110, 0b00001100, 0b00110100, 0b00101100, 0b00000000, 0b00000000, // room20 SWITCH OFF t0
+  0b11011000, 0b01010010, 0b00000000, 0b01011000, 0b01101001, 0b00000000, 0b00000000, 0b01100101, 0b11000001, 0b00100001, 0b00000001, 0b10100001, 0b00000000, // room21 TELEPORT t12
+  0b10010000, 0b01010110, 0b00000000, 0b00000000, 0b01011101, 0b10111011, 0b00000000, 0b10100001, 0b10011100, 0b01111100, 0b10000100, 0b10001100, 0b10010100, // room22 WHITE CARD t20
+  0b10110001, 0b01101010, 0b01011011, 0b00000000, 0b01100001, 0b10110010, 0b00000000, 0b01100101, 0b11000011, 0b10100011, 0b00000011, 0b00100011, 0b00000000, // room23 TELEPORT t12
+  0b00110000, 0b01100110, 0b01011111, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00110110, 0b00111011, 0b01011011, 0b01100011, 0b00000000, 0b00000000, // room24 SWITCH OFF t6
+  0b01110010, 0b01001010, 0b01101011, 0b01100000, 0b00000000, 0b00000000, 0b00000000, 0b01100101, 0b11000100, 0b10100100, 0b00000100, 0b00100100, 0b00000000, // room25 TELEPORT t12
+  0b11110000, 0b01001110, 0b01010111, 0b01011100, 0b01100101, 0b00000001, 0b00000000, 0b01100101, 0b10001100, 0b01011100, 0b01000100, 0b10100100, 0b00000000, // room26 TELEPORT t12
+  0b00010000, 0b01111110, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b10110100, 0b10001011, 0b10101011, 0b10111011, 0b00000000, 0b00000000, // room27 CHIP t22
+  0b01100000, 0b00000000, 0b01110111, 0b01111100, 0b00000000, 0b10100010, 0b00000000, 0b01100010, 0b10001010, 0b01011010, 0b00000000, 0b00000000, 0b00000000, // room28 BATTERY t12
+  0b11000000, 0b00000000, 0b00000000, 0b01111000, 0b01110001, 0b00000000, 0b00000000, 0b00110011, 0b10110011, 0b10001011, 0b10111011, 0b10101011, 0b00000001, // room29 BULLET t6
+  0b10010000, 0b01110110, 0b00000000, 0b00000000, 0b01111101, 0b01100000, 0b00000000, 0b10000100, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, // room30 CHIP t16
+  0b01110100, 0b01110010, 0b01111011, 0b01101100, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b11000010, 0b10010010, 0b01100010, 0b00110010, 0b00000010, // room31
+
+  // transporters
+  0b00000000, // T0
+  0b00001001, // T1
+  0b00010010, // T2
+  0b00010111, // T3
+  0b00011001, // T4
+  0b00010011, // T5
+  0b00010101, // T6
+  0b00011111, // T7
+
+  // influence
+  0b00000010, 0b00000111, // I0
+  0b00000010, 0b00011000, // I1
+  0b00000111, 0b00000100, // I2
+  0b00010110, 0b00011111, // I3
+  0b00010100, 0b00011111, // I4
+};
+// LAYOUT 0:180,40 1:320,180 2:180,180 3:40,180 4:180,320 5:320,320 6:180,460 7:320,460 8:460,460 9:320,600 10:460,600 11:40,740 12:180,740 13:320,740 14:460,740 15:600,740 16:740,740 17:880,740 18:40,880 19:180,880 20:320,880 21:320,1020 22:320,1160 23:180,1160 24:40,1160 25:40,1020 26:180,1020 27:600,1160 28:600,880 29:740,880 30:740,1020 31:600,1020
+// INF 1>2 F3 F4 F5  3>2 F1 F2  4>7 F3  20>22 F1 F2 F3 F4 F5  24>20 F1 F2 F3 F4 F5
+
+
+
+
+
+// pointer table in flash too — 2 bytes per level, no SRAM copy
+const unsigned char * const PROGMEM levels[] =
+{
+  level01, level02, level03, level04, level05, level06, level07, level08, level09, level10, level11, level12, level13, level14, level15, level16, level17, level18, levelSemiFinal, levelFinal,
+};
+
+#define AMOUNT_OF_LEVELS  (sizeof(levels) / sizeof(levels[0]))
+
+#endif
