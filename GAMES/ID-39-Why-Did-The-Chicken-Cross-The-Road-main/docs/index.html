@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Did the Chicken Cross the Road — TEAM a.r.g.</title>
+  <meta name="description" content="Why Did the Chicken Cross the Road (ID-39) is an endless road-crossing hopper for Arduboy by TEAM a.r.g. Play it in the browser and download the .hex.">
+  <link rel="icon" href="https://t-arg.github.io/images/TEAMarg.gif">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fefefd;
+      color: #5d4c4b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #fefefd;
+      border-bottom: 3px solid #5d4c4b;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(93, 76, 75, 0.15);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      width: 121px;
+      height: 46px;
+    }
+
+    .logo img {
+      width: 121px;
+      height: 46px;
+      display: block;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .content-section {
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 4px 8px rgba(93, 76, 75, 0.15);
+    }
+
+    h1 {
+      color: #5d4c4b;
+      font-size: 32px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .game-id {
+      color: #5d4c4b;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .game-banner {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto 32px;
+      border: 2px solid #5d4c4b;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #5d4c4b;
+    }
+
+    .game-banner img {
+      width: 100%;
+      height: auto;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    h2 {
+      color: #5d4c4b;
+      font-size: 22px;
+      margin-top: 36px;
+      margin-bottom: 14px;
+    }
+
+    h2:first-of-type { margin-top: 8px; }
+
+    p, li {
+      line-height: 1.8;
+      color: #5d4c4b;
+    }
+
+    p { margin-bottom: 14px; }
+
+    a {
+      color: #5d4c4b;
+      font-weight: 600;
+    }
+
+    a:hover { color: #5d4c4b; opacity: 0.75; }
+
+    .play-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 8px 0 8px;
+    }
+
+    /* Arduboy community / Ardens player chrome */
+    .pabeholder {
+      background: #fefefd;
+      padding: 10px 20px 8px 20px;
+      display: block;
+      width: 560px;
+      max-width: 100%;
+      margin: 8px auto 16px;
+      border-radius: 20px;
+      border: 2px solid #5d4c4b;
+      box-shadow:
+        inset 0 -1px 10px rgba(93, 76, 75, 0.18),
+        0 1px 0 #5d4c4b,
+        0 6px 1px rgba(93, 76, 75, 0.12),
+        0 10px 16px rgba(93, 76, 75, 0.2);
+    }
+
+    .play-gate { position: relative; }
+    .play-overlay {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      background: #5d4c4b; color: #fefefd; border: 0; cursor: pointer;
+      font-family: inherit; font-size: 28px; letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .play-overlay:hover, .play-overlay:focus-visible { background: #7a6563; }
+
+    .pabe {
+      display: block;
+      width: 512px;
+      height: 256px;
+      max-width: 100%;
+      margin: 10px auto 5px;
+      border: 4px solid #5d4c4b;
+      border-radius: 3px;
+      box-shadow: 3px 3px 6px rgba(93, 76, 75, 0.35);
+      background: #5d4c4b;
+    }
+
+    .hexlinkholder {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 28px;
+      margin-left: 3px;
+      gap: 8px;
+    }
+
+    .hexlink,
+    .fullscreenlink {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      flex: 0 0 auto;
+      color: #5d4c4b;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 18px;
+    }
+
+    .hexlink svg,
+    .fullscreenlink svg {
+      display: block;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .ardutitle {
+      color: #5d4c4b;
+      font-size: .8706em;
+      line-height: 24px;
+      font-weight: bold;
+      flex: 1;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .smallbuttons {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      display: block;
+    }
+
+    .bmc-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .kbd-hint {
+      font-size: 13px;
+      color: #5d4c4b;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .kbd-hint kbd {
+      display: inline-block;
+      background: #fefefd;
+      border: 1px solid #5d4c4b;
+      border-bottom-width: 2px;
+      border-radius: 3px;
+      padding: 0 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      color: #5d4c4b;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px 18px;
+      margin: 16px 0 8px;
+    }
+
+    .controls dt {
+      font-weight: 700;
+      color: #5d4c4b;
+    }
+
+    .controls dd { color: #5d4c4b; }
+
+    .sprite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .sprite-card {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 5px;
+      padding: 12px 14px;
+    }
+
+    .sprite-thumb {
+      flex: 0 0 88px;
+      width: 88px;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        linear-gradient(45deg, rgba(93, 76, 75, 0.12) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(93, 76, 75, 0.12) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(93, 76, 75, 0.12) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(93, 76, 75, 0.12) 75%);
+      background-size: 12px 12px;
+      background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+      background-color: #fefefd;
+      border: 1px solid #5d4c4b;
+      border-radius: 3px;
+    }
+
+    /* mid-tone backdrop so both the white fill and the black outline of the sprites show */
+    .sprite-thumb { background: #a89a98; }
+    .sprite-thumb img {
+      max-width: 80px;
+      max-height: 80px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+
+    .sprite-card h3 {
+      color: #5d4c4b;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .sprite-card p {
+      font-size: 14px;
+      line-height: 1.45;
+      margin: 0;
+      color: #5d4c4b;
+    }
+
+    .links-row {
+      margin-top: 28px;
+      font-size: 14px;
+    }
+
+    footer {
+      background: #fefefd;
+      border-top: 3px solid #5d4c4b;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 15px 0;
+    }
+
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #fefefd;
+      border: 2px solid #5d4c4b;
+      border-radius: 50%;
+      color: #5d4c4b;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: #5d4c4b;
+      color: #fefefd;
+      transform: translateY(-3px);
+    }
+
+    footer p {
+      color: #5d4c4b;
+      font-size: 14px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .content-section { padding: 22px 16px; }
+      h1 { font-size: 24px; }
+      .pabeholder { width: 100%; padding: 8px 10px; }
+      .pabe { width: 100%; height: auto; aspect-ratio: 2 / 1; }
+      .controls { grid-template-columns: 1fr; gap: 4px; }
+      .controls dt { margin-top: 8px; }
+    }
+  
+    /* PayPal donate button */
+    .bmc-wrap{flex-wrap:wrap;gap:10px}
+    .pp-btn{min-width:200px;height:auto;min-height:48px;align-self:stretch;box-sizing:border-box;margin:0;padding:0 20px;border-radius:12px;background:#5d4c4b;color:#fefefd!important;font-family:"Cookie",cursive;font-size:24px;line-height:1;text-decoration:none!important;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}
+    .pp-btn .pp-ico{width:22px;height:22px;fill:#fefefd;flex:none}
+    .pp-btn span{margin-left:8px;white-space:nowrap}
+    
+</style>
+<script data-goatcounter="https://teamarg.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <a class="logo" href="https://t-arg.github.io/" title="TEAM a.r.g.">
+        <img src="https://t-arg.github.io/images/TEAMarg.gif" alt="TEAM a.r.g." width="121" height="46">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="content-section">
+      <h1>Why Did the Chicken Cross the Road</h1>
+      <p class="game-id">ID-39 · Arduboy · TEAM a.r.g.</p>
+
+      <div class="game-banner">
+        <img
+          src="images/banner-ID-39.png"
+          alt="Why Did the Chicken Cross the Road banner">
+      </div>
+
+      <div class="play-wrap">
+        <div class="bmc-wrap">
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="TEAMarg" data-color="#5d4c4b" data-emoji="☕" data-font="Cookie" data-text="Cool game? Buy us a coffee" data-outline-color="#fefefd" data-font-color="#fefefd" data-coffee-color="#FFDD00"></script>
+          <a class="pp-btn" target="_blank" rel="noopener noreferrer" href="https://paypal.me/TEAMargJO3RI" title="Donate with PayPal"><svg class="pp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg><span>Donate with PayPal</span></a>
+        </div>
+        <div class="pabeholder">
+          <div class="pabe play-gate" id="play-wrap">
+            <button type="button" class="play-overlay" id="play-btn" aria-label="Click to play">Click to play</button>
+          </div>
+          <template id="player-tpl">
+            <iframe
+              class="pabe"
+              title="Why Did the Chicken Cross the Road — Arduboy Simulator"
+              src="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road/refs/heads/main/WCCR_AB/build/arduino.avr.leonardo/WCCR_AB.ino.hex&amp;g=none&amp;z=1"
+              allow="fullscreen; autoplay"></iframe>
+          </template>
+          <div class="hexlinkholder">
+            <a
+              class="hexlink"
+              id="hex-download"
+              title="Download WCCR_AB.ino.hex"
+              href="https://raw.githubusercontent.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road/refs/heads/main/WCCR_AB/build/arduino.avr.leonardo/WCCR_AB.ino.hex"
+              download="WCCR_AB.ino.hex">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#5d4c4b" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1zm-7 14a1 1 0 0 1 1 1v2h12v-2a1 1 0 1 1 2 0v3H4v-3a1 1 0 0 1 1-1z"/>
+              </svg>
+              download
+            </a>
+            <a
+              class="ardutitle"
+              href="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road/refs/heads/main/WCCR_AB/build/arduino.avr.leonardo/WCCR_AB.ino.hex&amp;g=none&amp;z=1"
+              target="_blank"
+              rel="noopener"
+              title="Created by brow1067">Arduboy Simulator</a>
+            <a
+              class="fullscreenlink"
+              href="https://T-arg.github.io/ardens-web/?fg=fefefd&amp;bg=5d4c4b&amp;blah=https://raw.githubusercontent.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road/refs/heads/main/WCCR_AB/build/arduino.avr.leonardo/WCCR_AB.ino.hex&amp;g=none&amp;z=1"
+              target="_blank"
+              rel="noopener"
+              title="Play fullscreen">
+              fullscreen
+              <svg class="smallbuttons" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#5d4c4b" d="M4 4h7v2H6v5H4V4zm9 0h7v7h-2V6h-5V4zM4 13h2v5h5v2H4v-7zm14 0h2v7h-7v-2h5v-5z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <p class="kbd-hint">
+          <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> hop ·
+          <kbd>A</kbd> / <kbd>B</kbd> / <kbd>Z</kbd> / <kbd>X</kbd> pause
+        </p>
+        <div class="bmc-wrap">
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="TEAMarg" data-color="#5d4c4b" data-emoji="☕" data-font="Cookie" data-text="Cool game? Buy us a coffee" data-outline-color="#fefefd" data-font-color="#fefefd" data-coffee-color="#FFDD00"></script>
+          <a class="pp-btn" target="_blank" rel="noopener noreferrer" href="https://paypal.me/TEAMargJO3RI" title="Donate with PayPal"><svg class="pp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z"/></svg><span>Donate with PayPal</span></a>
+        </div>
+      </div>
+
+      <h2>The game</h2>
+      <p>
+        Why Did the Chicken Cross the Road is an endless hopper for the Arduboy. Your
+        chicken hops forward, one tile at a time, through a world that is built as you
+        go: grassy meadows with bushes, busy roads with cars and trucks, rivers with
+        floating logs and sinking leaves, and even a runway where a plane crosses.
+      </p>
+      <p>
+        The screen keeps scrolling. Stay ahead of the edge: if the black catches up
+        with you, the chicken bursts into feathers. Get hit, drown, or fall behind and
+        it is game over.
+      </p>
+      <p>
+        Objective: get as far as you can and collect as much corn as possible.
+      </p>
+
+      <h2>Buttons</h2>
+      <p>
+        The title shows <strong>INFO · PLAY · CONF</strong>. Use <strong>Left</strong> and
+        <strong>Right</strong> to highlight a word and <strong>A</strong> or <strong>B</strong>
+        to confirm. <strong>INFO</strong> shows the credits, <strong>PLAY</strong> starts the game.
+        In <strong>CONF</strong> press <strong>Left</strong> for sound on and
+        <strong>Right</strong> for sound off.
+      </p>
+      <dl class="controls">
+        <dt>D-pad</dt>
+        <dd>Hop one tile up, left, down or right. A hop pressed while the chicken is still in the air is remembered, so you can chain hops.</dd>
+        <dt>A / B</dt>
+        <dd>Pause, and press either button again to go on.</dd>
+        <dt>Game over</dt>
+        <dd><strong>A</strong> goes back to the title, <strong>B</strong> plays again.</dd>
+      </dl>
+
+      <h2>You</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/chicken.png" alt="Chicken"></div>
+          <div>
+            <h3>Chicken</h3>
+            <p>That’s you. Hop forward, sideways or back, one tile at a time. Keep ahead of the black at the bottom of the screen.</p>
+          </div>
+        </article>
+      </div>
+
+      <h2>On the road</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/bush.png" alt="Bush"></div>
+          <div>
+            <h3>Bush</h3>
+            <p>Blocks your way on the grass. Hop around it.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/car.png" alt="Car"></div>
+          <div>
+            <h3>Car</h3>
+            <p>Crosses the road at speed. Get hit and it is over.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/truck.png" alt="Truck"></div>
+          <div>
+            <h3>Truck</h3>
+            <p>Longer and slower than a car, but just as deadly.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/log.png" alt="Log"></div>
+          <div>
+            <h3>Log</h3>
+            <p>Floats on the water. Hop on and ride it across the river.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/leaf.png" alt="Leaf"></div>
+          <div>
+            <h3>Leaf</h3>
+            <p>A stepping stone on the water. It sinks after a while, so keep moving.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/plane.png" alt="Plane"></div>
+          <div>
+            <h3>Plane</h3>
+            <p>Crosses the runway from left to right. Watch the windsocks.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/windsock.png" alt="Windsock"></div>
+          <div>
+            <h3>Windsock</h3>
+            <p>Limp when the runway is quiet, flying when a plane is coming.</p>
+          </div>
+        </article>
+      </div>
+
+      <h2>Pickups</h2>
+      <div class="sprite-grid">
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/corn.png" alt="Corn"></div>
+          <div>
+            <h3>Corn</h3>
+            <p>Worth 5 points.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/egg.png" alt="Golden egg"></div>
+          <div>
+            <h3>Golden egg</h3>
+            <p>An extra life.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/hourglass.png" alt="Hourglass"></div>
+          <div>
+            <h3>Hourglass</h3>
+            <p>The screen stops scrolling for about 5 seconds.</p>
+          </div>
+        </article>
+        <article class="sprite-card">
+          <div class="sprite-thumb"><img src="images/magnet.png" alt="Magnet"></div>
+          <div>
+            <h3>Magnet</h3>
+            <p>Pulls in the corn around you for about 10 seconds.</p>
+          </div>
+        </article>
+      </div>
+
+      <p class="links-row">
+        Source and hex:
+        <a href="https://github.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road">T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road</a>
+        · Simulator:
+        <a href="https://github.com/tiberiusbrown/Ardens">Ardens</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="social-links">
+        <a href="https://github.com/T-arg" title="GitHub">GH</a>
+        <a href="https://twitter.com/TEAMarg_org" title="Twitter">𝕏</a>
+      </div>
+      <p>© 2026 TEAM a.r.g. All rights reserved.</p>
+    </div>
+  </footer>
+  <script>
+    (function () {
+      var link = document.getElementById('hex-download');
+      if (!link) return;
+      var hexUrl = 'https://raw.githubusercontent.com/T-arg/ID-39-Why-Did-The-Chicken-Cross-The-Road/refs/heads/main/WCCR_AB/build/arduino.avr.leonardo/WCCR_AB.ino.hex';
+
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        fetch(hexUrl)
+          .then(function (res) { if (!res.ok) throw new Error('hex'); return res.blob(); })
+          .then(function (blob) {
+            var url = URL.createObjectURL(new Blob([blob], { type: 'application/octet-stream' }));
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'WCCR_AB.ino.hex';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+          })
+          .catch(function () {
+            window.location.href = hexUrl;
+          });
+      });
+    })();
+  </script>
+  <script>
+    document.getElementById('play-btn').addEventListener('click', function () {
+      var wrap = document.getElementById('play-wrap');
+      var frame = document.getElementById('player-tpl').content.firstElementChild.cloneNode(true);
+      wrap.replaceWith(frame);
+      frame.focus();
+    });
+  </script>
+</body>
+</html>

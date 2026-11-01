@@ -24,7 +24,6 @@ void stateGameNew()
   EEPROM.write(OFFSET_BUTTONS,buttonSchemeOffset);
   EEPROM.write(OFFSET_ESCD_END,GAME_ID);
   gameState = STATE_GAME_NEXT_LEVEL;
-  EEPROM.commit();
 }
 
 void stateGameContinue()
@@ -143,7 +142,6 @@ void stateGameNextLevel()
   bool finished = (level > AMOUNT_OF_LEVELS);
   if (finished) level = 0;               // game completed: the saved progress goes back to the start
   EEPROM.write(OFFSET_LEVEL,level);
-  EEPROM.commit();
   if (finished)
   {
     loadAndFillMessage(7);

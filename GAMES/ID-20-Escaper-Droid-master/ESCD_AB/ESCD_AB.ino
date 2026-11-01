@@ -14,15 +14,18 @@
 
 //determine the game
 #define GAME_ID 20
+#define bitToggle(value, bit) ((value) ^= (1UL << (bit)))
 
 #include "globals.h"
 #include "menu.h"
 #include "game.h"
 #include "room.h"
+
 #include "elements.h"
 #include "inputs.h"
 #include "player.h"
 #include "song.h"
+
 
 
 typedef void (*FunctionPointer) ();
@@ -48,7 +51,6 @@ const FunctionPointer PROGMEM  mainGameLoop[] =
 
 void setup()
 {
-  Serial.begin(115200);
   arduboy.boot();
   arduboy.audio.begin();
   arduboy.setFrameRate(45);
@@ -66,3 +68,4 @@ void loop() {
   ((FunctionPointer) pgm_read_dword (&mainGameLoop[gameState]))();
   arduboy.display();
 };
+

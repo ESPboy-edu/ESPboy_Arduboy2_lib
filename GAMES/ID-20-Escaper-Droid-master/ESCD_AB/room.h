@@ -395,7 +395,7 @@ void drawTicker(byte setTicker)
     {
       for (byte z = 0; z < 2; z++)
       {
-        sprites.drawSelfMasked(x, currentRoomY + 38 - y, fnt, charBox[x]);
+        sprites.drawSelfMasked(x, currentRoomY + 38 - y, font_, charBox[x]);
         x++;
       }
       (w < 29) ? y++ : y--;
@@ -579,7 +579,7 @@ void drawNumbers(byte x, byte y, byte numbers, byte width)
   {
     byte fr = digits[charLen - 1 - i] * 3 + 1;
     for (byte c = 0; c < 3; c++)
-      sprites.drawSelfMasked(x + (4 * i) + c, y, fnt, fr + c);
+      sprites.drawSelfMasked(x + (4 * i) + c, y, font, fr + c);
   }
 }
 

@@ -9,7 +9,7 @@
 // frame 1+  = 3 column bitmaps per character, starting at ASCII 48
 // charBox[] stores FRAME indexes, not the column pixels.
 
-PROGMEM const unsigned char fnt[] =
+PROGMEM const unsigned char font_[] =
 {
   1, 8,
   0,   // frame 0 = empty column

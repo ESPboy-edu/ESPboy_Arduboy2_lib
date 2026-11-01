@@ -30,8 +30,6 @@
 #define SHOT_STEPS_PER_TILE  6
 #define SCORE_ENEMY_HIT      75
 
-#define bitToggle(value, bit) ((value) ^= (1UL << (bit)))
-
 struct EscaperDroid
 {
   public:
