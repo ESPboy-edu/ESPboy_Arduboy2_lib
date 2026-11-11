@@ -162,6 +162,10 @@ constexpr uint8_t dcmReverse = (1 << dcfReverseBlack);
 constexpr uint8_t dcmMasked  = (1 << dcfMasked);
 constexpr uint8_t dcmProportional = (1 << dcfProportional);
 
+#define SFC_READ  0x03
+#define SFC_WRITE 0x02
+#define SFC_ERASE 0x20
+
 #define uint24_t uint32_t
 #define sizeof_uint24_t 3
 
@@ -212,13 +216,19 @@ class FX {
     static void drawCharOld(int16_t x, int16_t y, uint8_t c, uint8_t color, uint8_t bg, uint8_t size);
     static void drawStringOld(int16_t x, int16_t y, uint8_t color, const char* buffer);
     static void readAudioBytes(uint24_t address, uint8_t* buffer, size_t length);
-  
+
+
     [[gnu::always_inline]] static inline void enableOLED() {};
     [[gnu::always_inline]] static inline void disableOLED() {};
     [[gnu::always_inline]] static inline void enable() {};
     [[gnu::always_inline]] static inline void disable() {};
     [[gnu::always_inline]] static inline void wait() {};
-
+    [[gnu::always_inline]] static inline void waitWhileBusy() {};
+    [[gnu::always_inline]] static inline void writeEnable() {};
+    [[gnu::always_inline]] static inline void seekCommand(uint8_t command, uint24_t address) {
+    seekData(address); 
+    };
+  
     static uint8_t writeByte(uint8_t data);
 
     [[gnu::always_inline]] static inline void writeByteBeforeWait(uint8_t data){ writeByte(data); }
