@@ -1,0 +1,96 @@
+# Side chapter 19X: only if the party visited the hermit's hut in the marsh (flag 7).
+# Oda, the last bellwright, joins at the start. He kept the bronze of the cathedral
+# bells King Aldric had melted down, and he will cast the great sealing bell if the
+# party holds the ruined foundry while it pours. Survive 7 turns; the cult has seen
+# the smoke and comes from the west door, the east door and the river side in turn.
+# The bronze goes in on turn 7 (flag 14): in Ch 22 Nhal's spawns stop for good.
+event west: turn 2 every 5 ; spawn 1 ; demon
+event east: turn 4 ; spawn 2
+event river: turn 6 ; spawn 3
+event pour: turn 7 ; set 14
+
+title: THE GREAT BELL
+goal: HOLD THE FOUNDRY
+label: 19X
+requires: flag 7
+joins: ODA
+objective: survive 7
+deploy: 8
+
+map:
+~~~TT.....hh.....TT..~~~
+~~T.......hh........T.~~
+~T....###########.....T~
+~....#____C______#.....~
+~....#_###___###_#.....~
+.....#_#_______#_#......
+.....G___________G......
+.....#_#___K___#_#......
+.....#_#_______#_#......
+~....#_###___###_#.....~
+~....#_____V_____#.....~
+~T...#####___#####....T~
+~~T.......___.........~~
+~~~TT.....h.h.....TT~~~~
+~~~~~~T...........~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+11 8
+10 7
+12 7
+11 6
+10 8
+12 8
+9 6
+13 6
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+ZEALOT      KNIGHT    1  5 15  32 12   7   5  13   ambush1      SILVER LANCE
+CULTIST     MAGE      1  6 15  27 11   9   8   5   ambush1      MIRE
+HORNED      HORROR   22  5 15  33 12   8   8   9   ambush2      CLAWS
+DROWNED     HORROR   22  6 15  31 11   7   7   7   ambush2      CLAWS, VULNERARY*
+WATCHMAN    ARCHER   22  7 15  25 10  11   9   6   ambush2      STEEL BOW
+BELLWRAITH  WRAITH   10 14 15  29 11   8   8   6   ambush3      CLAWS
+BELLWRAITH  WRAITH   12 14 15  29 11   8   8   6   ambush3      CLAWS, ELIXIR*
+CULTIST     MAGE      9 13 15  27 11   9   8   5   ambush3      THUNDER
+
+scene open:
+ODA: SO YOU LIVED./GOOD. I NEED/HANDS, AND YOU/HAVE SWORDS.
+BRANNOCK: YOU SAID A BELL./WHAT KIND OF BELL/SHUTS A GATE?
+ODA: THE KIND THEY/MELTED. KING/ALDRIC HAD EVERY/CATHEDRAL BELL/BROKEN UP.
+ODA: I WAS HIS/BELLWRIGHT. I/KEPT THE BRONZE./ALL OF IT. I/KNEW WHY HE DID.
+[AELIS] AELIS: MY FATHER... NO./THE THING THAT/WORE HIM. IT/FEARED THE BELLS.
+ODA: IT FEARS THIS ONE/MOST. THE GREAT/SEALING BELL.
+ODA: THE FURNACE IS/LIT. THE CULT/SEES THE SMOKE./HOLD THE DOORS/TILL IT POURS.
+
+scene west:
+BRANNOCK: THE WEST DOOR!/THEY'RE HERE!
+
+scene east:
+BRANNOCK: EAST DOOR! DON'T/LET THEM NEAR/THE FURNACE!
+
+scene river:
+BRANNOCK: FROM THE RIVER!/THEY'RE COMING/UP THE BANK!
+
+scene pour:
+ODA: NOW! THE BRONZE/IS IN THE MOULD!/ONE MORE TURN!/HOLD THEM!
+
+chest 10 3:
+ODA: MY OLD/APPRENTICE'S. HE/NEVER CAME BACK/FOR IT. TAKE IT.
+gift: HERO CREST
+
+village 11 10:
+ODA: THE BELLCASTER'S/BENCH. MY TOOLS,/MY MOULDS.../AND A SALVE FOR/THE BURNS.
+gift: ELIXIR
+
+scene win:
+ODA: ...THERE. LISTEN/TO IT COOL. IT'S/SINGING ALREADY.
+BRANNOCK: IT'S HUGE. HOW DO/WE CARRY THAT TO/THE CATHEDRAL?
+ODA: ON A CART, AND ON/YOUR BACKS. IT'LL/BE WORTH EVERY/STEP.
+[MAREN] MAREN: THE GREAT BELL./I NEVER THOUGHT/I'D HEAR IT.
+[THANE] THANE: THE OLD HYMN/WAS WRITTEN FOR/A BELL LIKE THIS.
+
+scene lose:
+BRANNOCK: THE FURNACE IS/LOST! GET ODA/OUT OF HERE!

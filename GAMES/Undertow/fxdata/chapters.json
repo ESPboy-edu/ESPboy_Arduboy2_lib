@@ -1,0 +1,304 @@
+[
+ {
+  "title": "DROWNED FORD",
+  "goal": "SEIZE THE KEEP",
+  "file": "01_drowned_ford.txt",
+  "label": "1",
+  "requires": 0,
+  "number": 1,
+  "sets": []
+ },
+ {
+  "title": "THE QUIET MILL",
+  "goal": "DEFEAT VARGA",
+  "file": "02_quiet_mill.txt",
+  "label": "2",
+  "requires": 0,
+  "number": 2,
+  "sets": []
+ },
+ {
+  "title": "RED PALISADE",
+  "goal": "DEFEAT KELL",
+  "file": "03_red_palisade.txt",
+  "label": "3",
+  "requires": 0,
+  "number": 3,
+  "sets": [
+   1
+  ]
+ },
+ {
+  "title": "THE GREY ROAD",
+  "goal": "DEFEAT VOSS",
+  "file": "04_grey_road.txt",
+  "label": "3X",
+  "requires": 1,
+  "number": 3,
+  "sets": [
+   8
+  ]
+ },
+ {
+  "title": "BORDER TROUBLE",
+  "goal": "DEFEAT CAPTAIN",
+  "file": "05_border_troubles.txt",
+  "label": "4",
+  "requires": 0,
+  "number": 4,
+  "sets": [
+   17
+  ]
+ },
+ {
+  "title": "THE PASS",
+  "goal": "SEIZE THE PASS",
+  "file": "06_the_pass.txt",
+  "label": "5",
+  "requires": 0,
+  "number": 5,
+  "sets": [
+   2
+  ]
+ },
+ {
+  "title": "THE LODGE",
+  "goal": "DEFEAT CORVANE",
+  "file": "07_real_leader.txt",
+  "label": "5X",
+  "requires": 2,
+  "number": 5,
+  "sets": [
+   9
+  ]
+ },
+ {
+  "title": "THE DAIN ARMY",
+  "goal": "DEFEAT GERAULT",
+  "file": "08_dain_army.txt",
+  "label": "6",
+  "requires": 0,
+  "number": 6,
+  "sets": []
+ },
+ {
+  "title": "DAINHOLT",
+  "goal": "SEIZE THE GATE",
+  "file": "09_dainholt.txt",
+  "label": "7",
+  "requires": 0,
+  "number": 7,
+  "sets": [
+   3
+  ]
+ },
+ {
+  "title": "DROWNED VAULTS",
+  "goal": "SEIZE THE ALTAR",
+  "file": "10_drowned_vaults.txt",
+  "label": "7X",
+  "requires": 3,
+  "number": 7,
+  "sets": [
+   10
+  ]
+ },
+ {
+  "title": "DAIN CASTLE",
+  "goal": "SEIZE THE THRONE",
+  "file": "11_dain_castle.txt",
+  "label": "8",
+  "requires": 0,
+  "number": 8,
+  "sets": []
+ },
+ {
+  "title": "BLACK WATER",
+  "goal": "SURVIVE 10 TURNS",
+  "file": "12_black_water.txt",
+  "label": "9",
+  "requires": 0,
+  "number": 9,
+  "sets": []
+ },
+ {
+  "title": "THE HIDEOUT",
+  "goal": "DEFEAT SILT",
+  "file": "13_hideout.txt",
+  "label": "10",
+  "requires": 0,
+  "number": 10,
+  "sets": [
+   4
+  ]
+ },
+ {
+  "title": "THE SEA STACK",
+  "goal": "SEIZE THE TOWER",
+  "file": "14_sea_stack.txt",
+  "label": "10X",
+  "requires": 4,
+  "number": 10,
+  "sets": [
+   11
+  ]
+ },
+ {
+  "title": "SALTMARCH",
+  "goal": "SEIZE THE HALL",
+  "file": "15_saltmarch.txt",
+  "label": "11",
+  "requires": 0,
+  "number": 11,
+  "sets": []
+ },
+ {
+  "title": "BLACK SAILS",
+  "goal": "SURVIVE 8 TURNS",
+  "file": "16_black_sails.txt",
+  "label": "12",
+  "requires": 0,
+  "number": 12,
+  "sets": [
+   18
+  ]
+ },
+ {
+  "title": "STRANGE SHORES",
+  "goal": "SEIZE THE FORT",
+  "file": "17_strange_shores.txt",
+  "label": "13",
+  "requires": 0,
+  "number": 13,
+  "sets": [
+   5
+  ]
+ },
+ {
+  "title": "WHISPERINGS",
+  "goal": "DEFEND THE HALL",
+  "file": "18_whisperings.txt",
+  "label": "13X",
+  "requires": 5,
+  "number": 13,
+  "sets": [
+   12
+  ]
+ },
+ {
+  "title": "CLIFF VILLAGE",
+  "goal": "SURVIVE 8 TURNS",
+  "file": "19_cliff_village.txt",
+  "label": "14",
+  "requires": 0,
+  "number": 14,
+  "sets": []
+ },
+ {
+  "title": "THE REBELLION",
+  "goal": "RING THE BELL",
+  "file": "20_rebellion.txt",
+  "label": "15",
+  "requires": 0,
+  "number": 15,
+  "sets": []
+ },
+ {
+  "title": "DESERT SILENCE",
+  "goal": "ROUT THE ENEMY",
+  "file": "21_desert_silence.txt",
+  "label": "16",
+  "requires": 0,
+  "number": 16,
+  "sets": []
+ },
+ {
+  "title": "THE DEMON GATE",
+  "goal": "SLAY THE KEEPER",
+  "file": "22_demon_gate.txt",
+  "label": "17",
+  "requires": 0,
+  "number": 17,
+  "sets": [
+   6,
+   17
+  ]
+ },
+ {
+  "title": "SECRETS BELOW",
+  "goal": "SEIZE THE STONE",
+  "file": "23_secrets_below.txt",
+  "label": "17X",
+  "requires": 6,
+  "number": 17,
+  "sets": [
+   13
+  ]
+ },
+ {
+  "title": "THE COAST ROAD",
+  "goal": "SURVIVE 10 TURNS",
+  "file": "24_coast_road.txt",
+  "label": "18",
+  "requires": 0,
+  "number": 18,
+  "sets": []
+ },
+ {
+  "title": "SWAMP OF DEATH",
+  "goal": "CROSS THE MARSH",
+  "file": "25_swamp_of_death.txt",
+  "label": "19",
+  "requires": 0,
+  "number": 19,
+  "sets": [
+   7
+  ]
+ },
+ {
+  "title": "THE GREAT BELL",
+  "goal": "HOLD THE FOUNDRY",
+  "file": "26_legendary_hope.txt",
+  "label": "19X",
+  "requires": 7,
+  "number": 19,
+  "sets": [
+   14
+  ]
+ },
+ {
+  "title": "THE LONG RAIN",
+  "goal": "SURVIVE 10 TURNS",
+  "file": "27_slog_of_despair.txt",
+  "label": "20",
+  "requires": 0,
+  "number": 20,
+  "sets": [
+   18
+  ]
+ },
+ {
+  "title": "BLOOD FORTRESS",
+  "goal": "SLAY THE KING",
+  "file": "28_fortress_of_blood.txt",
+  "label": "21",
+  "requires": 0,
+  "number": 21,
+  "sets": [
+   18
+  ]
+ },
+ {
+  "title": "DEMON PORTAL",
+  "goal": "SEAL THE PORTAL",
+  "file": "29_demon_portal.txt",
+  "label": "22",
+  "requires": 0,
+  "number": 22,
+  "sets": [
+   17,
+   19,
+   20
+  ]
+ }
+]

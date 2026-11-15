@@ -1,0 +1,81 @@
+# Chapter 16: the salt flats, where sound dies a few steps out. Rout. The Horned
+# are strongest here. Hesk walks the flats killing anything that moves; Thane can
+# talk him round (he holds his ground on the flats, striking whatever comes close). A cairn in the far south-east hides a hare's foot.
+event cairns: tile 15 8 ; wake 1 ; demon
+event hesk: talk THANE to HESK ; join
+
+title: DESERT SILENCE
+goal: ROUT THE ENEMY
+objective: rout
+deploy: 8
+
+map:
+........................
+...h..........T.........
+........................
+.......##...........h...
+..h.....................
+...........h............
+.T......................
+.......h........###.....
+..................#.....
+...h....................
+.............h..........
+..........T.........##..
+....h...................
+.....................#.#
+...........h.........#C#
+.....................###
+
+slots:
+1 1
+2 1
+0 1
+1 2
+0 2
+2 2
+1 0
+2 0
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+HORNED      HORROR    6  4 14  32 11   6   7   8   -            CLAWS
+HORNED      HORROR   10  7 14  32 11   6   7   8   -            CLAWS
+HORNED      HORROR   13  3 14  32 11   6   7   8   -            CLAWS
+HORNED      HORROR   18  9 15  34 12   7   7   9   reserve1     CLAWS
+HORNED      HORROR   20 12 15  34 12   7   7   9   reserve1     CLAWS, VULNERARY*
+HORNED      HORROR   15 12 15  34 12   7   7   9   reserve1     CLAWS
+BELLWRAITH  WRAITH    8 11 14  28 10   8   8   6   -            CLAWS
+BELLWRAITH  WRAITH   17  5 14  28 10   8   8   6   -            CLAWS
+HESK        REAVER   12 10  4  40 17  10  10   9   hold         SILVER AXE, HAND AXE
+CULTIST     MAGE     22 10 15  28 11   9   8   5   hold         THUNDER, HERO CREST*
+
+scene open:
+BRANNOCK: ...
+BRANNOCK: I SAID, STAY/CLOSE! YOU CAN'T/HEAR A THING/OUT HERE.
+[THANE] THANE: THE SILENCE. NO/BELL HAS EVER/RUNG HERE. THEIR/STRONGEST GROUND.
+BRANNOCK: AND A MAN. ALONE,/WITH AN AXE,/WALKING STRAIGHT/AT THE DEMONS.
+[THANE] THANE: HESK. HE WAS A/FISHERMAN. THEY/TOOK HIS FAMILY./LET ME TALK/TO HIM.
+[!THANE] BRANNOCK: WHOEVER HE IS,/HE'LL CUT US DOWN/TOO. CAREFUL.
+
+scene cairns:
+BRANNOCK: THE STONES.../MORE OF THEM,/BEHIND THE/CAIRNS!
+
+scene hesk:
+THANE: HESK. HESK! IT'S/THANE. FROM THE/CHAPEL.
+HESK: ...THANE. THE/BELLS RANG. I/HEARD THEM, EVEN/OUT HERE.
+THANE: THE ISLAND'S UP./COME HOME. COME/AND FIGHT THEM/WITH US.
+HESK: HOME. ...ALL/RIGHT. POINT ME/AT THEM.
+
+chest 22 14:
+BRANNOCK: A CAIRN, HOLLOWED/OUT. A HARE'S/FOOT ON A LEATHER/CORD, LEFT FOR/SOMEONE.
+gift: HARE'S FOOT
+
+scene win:
+BRANNOCK: THAT'S THE LAST/OF THEM.
+[HESK] HESK: NORTH OF THE/FLATS, A RING OF/STONES OVER A/CHASM.
+[HESK] HESK: THAT'S WHERE/THEY COME FROM.
+[!HESK] BRANNOCK: THE TRACKS LEAD/NORTH. TOWARD THE/CHASM.
+
+scene lose:
+BRANNOCK: BACK TO THE/DUNES!

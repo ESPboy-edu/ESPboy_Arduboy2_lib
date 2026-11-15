@@ -1,0 +1,103 @@
+# Chapter 15: the old town's bell tower. Ring it (seize it) and the island rises.
+# The garrison sleeps in three street groups that wake as you cross each street.
+# With the rebels' trust (flag 12, 13X), the cellar under the fish market (the
+# portal in the south-west) leads straight up into the market square.
+# A walled-off counting house in the north-east holds the winged boots.
+event market: tile 2 13 ; warp 12 7 ; needs 12
+event cellar: tile 2 13 ; needs !12
+event lane: tile 5 11 ; wake 1
+event square: tile 12 8 ; wake 2
+event steps: tile 12 4 ; wake 3
+
+title: THE REBELLION
+goal: RING THE BELL
+objective: seize 12 1
+deploy: 8
+
+map:
+####..#####_#####...##.C
+#..#..#.........#...##..
+#..#..#.........#.......
+####..###.....###.......
+......T.....h.....#####.
+..V.......#...#.........
+#####..#.........#..####
+........................
+.#####...........#####..
+...........##...........
+.......##...........V...
+####..........######.###
+.......T....##..........
+..O.....................
+###...######....#####...
+........................
+
+slots:
+1 15
+2 15
+0 15
+3 15
+4 15
+3 14
+5 15
+4 14
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+VEY         WARDEN   12  1 15  40 12   9   6  11   boss hold    SILVER LANCE*, STEEL AXE, ELIXIR
+ZEALOT      LANCER    9 11 13  29 10   9   8   7   reserve1     STEEL LANCE
+ZEALOT      KNIGHT    5  9 13  33 10   6   4  11   reserve1     STEEL LANCE
+WATCHMAN    ARCHER   13 10 13  26  9  10   8   4   reserve2     STEEL BOW
+ZEALOT      LANCER   11  6 13  29 10   9   8   7   reserve2     STEEL LANCE, VULNERARY*
+WATCHMAN    ARCHER   15  5 13  26  9  10   8   4   reserve2     STEEL BOW
+CULTIST     MAGE      9  4 13  28 10   9   7   3   reserve3     MIRE
+ZEALOT      KNIGHT   10  2 14  34 10   6   4  12   reserve3     STEEL LANCE
+CULTIST     MAGE     14  2 14  29 11   9   7   3   reserve3     MIRE
+ZEALOT      LANCER   21  2 14  30 10   9   8   7   hold         STEEL LANCE
+
+scene open:
+BRANNOCK: THE OLD TOWN. THE/BELL TOWER'S AT/THE TOP OF THE/HILL.
+[THANE] THANE: RING IT THREE/TIMES. EVERY/ISLANDER KNOWS/WHAT THAT MEANS.
+[12] BRIGID: THE FISH MARKET/CELLAR, WEST OF/YOU. IT COMES UP/IN THE SQUARE./GO QUIET.
+[!12] BRANNOCK: STREET BY STREET,/THEN. THE WHOLE/GARRISON WILL/HEAR US COME.
+
+scene cellar:
+BRANNOCK: A CELLAR DOOR,/BOLTED FROM THE/OTHER SIDE.
+
+scene market:
+BRANNOCK: UP THROUGH THE/FISH STALLS./RIGHT IN THE/SQUARE!
+
+scene lane:
+BRANNOCK: THE LOWER STREET/WAKES UP.
+
+scene square:
+BRANNOCK: THE SQUARE! THEY/KNOW WE'RE HERE.
+
+scene steps:
+BRANNOCK: THE TOWER STEPS./THEIR CAPTAIN'S/GUARD!
+
+scene boss:
+VEY: THE ISLAND PAYS./IT HAS ALWAYS/PAID. NO OUTSIDER/CHANGES THAT.
+
+village 2 5:
+BRANNOCK: A COOPER'S YARD./THE OLD MAN HANDS/US A SILVER AXE./HE SWEARS HE/NEVER STOLE IT.
+gift: SILVER AXE
+
+village 20 10:
+BRANNOCK: A HEALER'S SHOP,/SHUTTERED. SHE/OPENS IT FOR US.
+gift: ELIXIR
+
+chest 23 0:
+BRANNOCK: THE COUNTING/HOUSE STRONGBOX./COIN, TRIBUTE/ROLLS...
+BRANNOCK: AND A PAIR OF/BOOTS, FEATHERED/AT THE HEEL. THEY/WEIGH NOTHING.
+gift: WINGED BOOTS
+
+scene win:
+BRANNOCK: RING IT!
+BRIGID: ONE... TWO.../THREE. LISTEN.
+BRIGID: THAT'S EVERY BELL/ON VAEL,/ANSWERING.
+BRIGID: THE ISLAND'S/AWAKE. WE'RE/DONE PAYING.
+[THANE] THANE: THEY'LL RUN/INLAND. TO THE/SALT FLATS, WHERE/NO BELL CAN/REACH.
+
+scene lose:
+BRANNOCK: BACK TO THE/HARBOUR!

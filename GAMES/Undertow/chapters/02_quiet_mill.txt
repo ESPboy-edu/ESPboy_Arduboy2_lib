@@ -1,0 +1,84 @@
+# Chapter source -- see chapters/README.txt for every keyword.
+# The mill bell has gone silent: Varga's raiders took Maren, the mill's
+# priestess, who rang it every hour for reasons nobody remembers. The villages tell you where she is and how long you have.
+
+title: THE QUIET MILL
+goal: DEFEAT VARGA
+objective: boss
+deploy: 4
+captive: MAREN 11 3 leaves 8
+
+map:
+TTT.....hh.......TT~~TTT
+TT.V......h.......T~~.TT
+T.........####......~~..
+..........#..#......~~..
+....T.....#.........~~..
+....TT....####..h...~~..
+...........~~.......~~..
+..h........~~.......==..
+...........~~.....h.~~..
+......T.............~~..
+.....TT.....T.......~~..
+..........TTT...h...~~..
+.......V............~~..
+..h.........h.......~~.T
+TT................TT~~TT
+TTT..............TTT~~TT
+
+slots:
+1 7
+2 8
+2 6
+1 9
+
+enemies:
+# name   class    x  y  lv hp str skl spd def flags      items
+SPEAR    LANCER  12  4  3  20  5   4   4   4   -          IRON LANCE
+RAIDER   FIGHTER  8  2  2  19  5   2   4   3   -          IRON AXE
+BOWMAN   ARCHER  16  5  2  16  3   4   3   1   -          IRON BOW
+RAIDER   FIGHTER  9  9  2  19  5   2   4   3   -          HAND AXE, VULNERARY
+RAIDER   FIGHTER 14 11  2  19  5   2   4   3   -          IRON AXE
+BOWMAN   ARCHER  18 12  2  16  3   4   3   1   -          IRON BOW
+VARGA    FIGHTER 22  7  5  26  6   5   4   4   boss hold  IRON AXE, HAND AXE, VULNERARY*
+
+scene open:
+BRANNOCK: OSK'S MEN FLED/NORTH, UP THE/MILL ROAD.
+WREN: LISTEN. NO BELL./THE MILL BELL/RINGS EVERY HOUR./NOT TODAY.
+HALE: THEN SOMEONE/STOPPED RINGING/IT. LET'S ASK/WHO.
+IDRA: FOLK LIVE OUT/HERE. ASK AT THE/HOUSES. THEY'LL/KNOW WHAT'S UP.
+
+village 3 1:
+OLD TAM: RAIDERS TOOK/MAREN, OUR/PRIESTESS. TO THE/MILL, THEY WENT.
+OLD TAM: THEY CART HER/OFF AT DUSK. BY/THE EIGHTH TURN/OF THE GLASS/SHE'S GONE.
+OLD TAM: SHE MENDS THE/SICK. TAKE OUR/PURSE, AND BRING/HER HOME.
+gold: 300
+
+village 7 12:
+GOODY ASH: VARGA LEADS 'EM./HE SITS ON THE/EAST FORD LIKE A/TOLL-MAN.
+GOODY ASH: MY BOY'S OLD/BLADE. HE WON'T/BE NEEDING IT.
+gift: STEEL SWORD
+
+scene recruit:
+MAREN: YOU'RE NOT/VARGA'S MEN.../WHO SENT YOU?
+BRANNOCK: NOBODY. WE HEARD/THE BELL STOP./CAN YOU WALK?
+MAREN: I CAN DO BETTER/THAN WALK. LET/ME SEE TO YOUR/WOUNDED.
+MAREN: AND SOMEONE/RING MY BELL. I/WAS TAUGHT NEVER/TO LET IT LAPSE.
+WREN: WHY?
+MAREN: NOBODY EVER/TOLD ME.
+
+scene warn:
+VARGA: SUN'S GOING DOWN!/GET THE PRIEST/ON THE CART!
+
+scene taken:
+VARGA: SHE'S GONE DOWN/THE RIVER. YOU'RE/TOO LATE.
+IDRA: WE LOST HER./WE LOST HER.
+
+scene boss:
+VARGA: TOLL'S STEEP ON/THIS FORD. COME/AND PAY IT.
+
+scene win:
+BRANNOCK: THE ROAD NORTH/IS OPEN. WE REST/TONIGHT.
+
+scene lose:
+IDRA: BRANNOCK...!/FALL BACK!

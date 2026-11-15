@@ -1,0 +1,87 @@
+# Chapter 13: Vael at last. The Drowned stand in small groups on the strand and don't move
+# until someone comes close (each group has its own tripwire), so you choose the fights.
+# A frightened islander hides in the dunes; talking to him (anyone) sets flag 5 (13X).
+event westrow: tile 3 9 ; wake 1
+event midrow: tile 11 10 ; wake 2 ; demon
+event fortrow: tile 11 5 ; wake 3
+event islander: talk anyone to ISLANDER ; set 5
+
+title: STRANGE SHORES
+goal: SEIZE THE FORT
+objective: seize 11 1
+deploy: 8
+
+map:
+......##########........
+..T...#____K___#....T...
+.T....#________#...T....
+......####GG####.....T..
+....V...........hh......
+..hh....................
+...h.....hh......~~~~~~~
+......##.........~#~~~#~
+.............hh..~~~#~~~
+....hh........h..~~~~~~~
+.h.....T.........~~#~~~~
+............T..##~~~~#~~
+.................~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+8 12
+9 12
+7 12
+10 12
+8 11
+9 11
+6 12
+11 12
+
+enemies:
+# name       class      x  y  lv hp str skl spd def flags        items
+DROWNED      HORROR     2  8 11  30 11   5   6   6   reserve1    CLAWS
+DROWNED      HORROR     4  7 11  30 11   5   6   6   reserve1    CLAWS
+DROWNED      HORROR    10  8 11  30 11   5   6   6   reserve2    CLAWS
+DROWNED      HORROR    12  9 11  30 11   5   6   6   reserve2    CLAWS, ELIXIR*
+DROWNED      HORROR     9  4 11  30 11   5   6   6   reserve3    CLAWS
+DROWNED      HORROR    13  4 11  30 11   5   6   6   reserve3    CLAWS
+BELLWRAITH   WRAITH    12  5 12  30 12   7   8   6   reserve3    CLAWS
+CULTIST      MAGE      11  1 12  30 12   9   8   5   hold        THUNDER, HERO CREST*
+CULTIST      MAGE       8  2 11  27 11   8   7   4   -           MIRE
+ISLANDER     FIGHTER    3  6  5  20  4   3   4   2   hold
+
+scene open:
+BRANNOCK: VAEL. GREY SAND,/GREY SKY. NOT A/BIRD ANYWHERE.
+WREN: THERE ARE PEOPLE/ON THE BEACH. IN/LITTLE KNOTS./STANDING. NOT/MOVING.
+HALE: WE KNOW WHAT/STANDS LIKE THAT./LET'S NOT WAKE/THEM ALL AT ONCE.
+[ROOK] ROOK: THAT FORT ON THE/HILL. IF ANYONE/WENT ASHORE AND/LIVED, THEY WENT/THERE.
+
+scene westrow:
+IDRA: THE WEST GROUP'S/TURNING TOWARD/US!
+
+scene midrow:
+WREN: THE ONES ON THE/STRAND! THEY/HEARD US!
+
+scene fortrow:
+HALE: AND THE ONES BY/THE FORT. OF/COURSE.
+
+scene islander:
+ISLANDER: DON'T! I'M NOT/ONE OF THEM!/I'M... I'M FROM/HERE.
+ISLANDER: THEY COME UP AT/LOW TIDE. MOST OF/US HIDE IN THE/OLD HARBOUR TOWN.
+ISLANDER: YOU KILL THEM. I/SAW YOU. THE/OTHERS WILL WANT/TO MEET YOU.
+
+village 4 4:
+IDRA: AN EMPTY HUT./A HUNTER'S. HIS/BOW STILL HANGS/BY THE DOOR. THE/TIPS ARE SILVER.
+[WREN] WREN: THAT'S A BEAUTY./I'LL TAKE GOOD/CARE OF IT.
+gift: SILVER BOW
+
+scene win:
+BRANNOCK: THE FORT. WE HAVE/A FOOTHOLD ON/VAEL.
+[5] WREN: THE ISLANDER SAID/HIS PEOPLE WILL/COME TONIGHT. WE/SHOULD BE READY/TO LISTEN.
+[!5] IDRA: SOMEONE LIVES/HERE. THERE'S/SMOKE FROM THE/OLD TOWN AT DUSK.
+[ROOK] ROOK: SAOIRSE. IF SHE'S/ALIVE, SHE'S OUT/THERE. I'M NOT/LEAVING WITHOUT/HER.
+
+scene lose:
+IDRA: BACK TO THE/SHIP! NOW!

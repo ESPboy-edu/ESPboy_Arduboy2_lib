@@ -1,0 +1,95 @@
+# Side chapter 13X: only if a hero talked to the islander on the strand (flag 5).
+# A night meeting in the ruined harbour town; the cult's watch interrupts. Hold the
+# meeting house for 7 turns while the watch comes from the west lanes, its bowmen
+# from the east and the Drowned up the old docks. At turn 6 Brigid has seen enough:
+# the rebels trust you (flag 12), which opens their hidden way in Chapter 15.
+event lanes: turn 2 every 3 ; spawn 1
+event bows: turn 3 every 3 ; spawn 2
+event docks: turn 4 every 3 ; spawn 3 ; demon
+event trust: turn 6 ; set 12
+
+title: WHISPERINGS
+goal: DEFEND THE HALL
+label: 13X
+requires: flag 5
+objective: survive 7
+deploy: 8
+
+map:
+##..T....##########...TC
+##.......#________#.....
+..V......#________#..##.
+.........#________#..##.
+##....##.####__####.....
+##....##...............T
+..........##....##......
+.T........##....##......
+....##..............##..
+....##......##......##..
+.T..........##..........
+DDDDDDD.......DDDDDDDDDD
+~~~~~~D~~~~~~~D~~~~~~~~~
+~~~~~~D~~~~~~~D~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+13 3
+14 3
+12 3
+15 3
+13 4
+14 4
+11 2
+16 2
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+ZEALOT      LANCER    0  6 12  26  9   8   8   8   ambush1      STEEL LANCE
+ZEALOT      LANCER    0  7 12  26  9   8   8   8   ambush1      STEEL LANCE, VULNERARY*
+ZEALOT      KNIGHT    3  4 12  30  9   6   4  12   -            STEEL LANCE
+WATCHMAN    ARCHER   23  8 12  23  8   9   8   5   ambush2      STEEL BOW
+WATCHMAN    ARCHER   23  9 12  23  8   9   8   5   ambush2      STEEL BOW
+CULTIST     MAGE     21  5 12  25  9   8   7   4   -            MIRE
+DROWNED     HORROR    6 13 12  29 10   5   6   6   ambush3      CLAWS
+DROWNED     HORROR   14 13 12  29 10   5   6   6   ambush3      CLAWS
+DROWNED     HORROR   14 12 12  29 10   5   6   6   ambush3      CLAWS
+BRIGID      FIGHTER  13  1 10  26  8   7   8   5   hold
+
+scene open:
+BRIGID: SO YOU'RE THE/ONES WHO CAME/OVER THE WATER./SIT. SPEAK LOW.
+BRIGID: THE UNDERTOW/FEEDS ON US./EVERY NEW MOON,/THEY TAKE ONE. WE/GIVE THEM ONE.
+BRANNOCK: AND IF YOU STOP/GIVING?
+BRIGID: THEN THEY TAKE/TEN. WORDS ARE/CHEAP, OUTSIDER./SHOW ME YOU/CAN FIGHT THEM.
+[ROOK] ROOK: A WOMAN ON AN/EAGLE. SAOIRSE./HAVE YOU SEEN/HER?
+[ROOK] BRIGID: ...ASK ME AGAIN/IF WE'RE BOTH/ALIVE AT DAWN.
+
+scene lanes:
+BRIGID: THE WATCH! THEY/FOLLOWED SOMEONE/HERE. BAR THE/DOOR!
+
+scene bows:
+BRANNOCK: BOWMEN ON THE/EAST ROOFS!
+
+scene docks:
+BRIGID: THE DOCKS... THEY/WHISTLED UP THE/DROWNED. THEY'D/DROWN US ALL TO/KEEP US QUIET.
+
+scene trust:
+BRIGID: ENOUGH. I'VE SEEN/ENOUGH. YOU HOLD/A LINE LIKE YOU/MEAN IT.
+BRIGID: THE BELL TOWER/IN THE OLD TOWN./THERE'S A WAY IN/UNDER THE FISH/MARKET. USE IT.
+
+village 2 2:
+BRANNOCK: A NET-MENDER'S/HUT. SHE PRESSES/A POUCH ON US/AND SHUTS THE/DOOR AGAIN.
+gold: 800
+
+chest 23 0:
+BRANNOCK: A LOCKBOX IN THE/WATCHTOWER. A/RABBIT'S FOOT ON/A THONG... NO./A HARE'S.
+[CASS] CASS: OLD SOLDIER'S/CHARM. WEAR IT,/AND YOUR FEET/FORGET THEY'RE/TIRED.
+gift: HARE'S FOOT
+
+scene win:
+BRIGID: DAWN. AND WE'RE/ALL STILL HERE./THAT'S NEW.
+BRIGID: THE OTHERS WILL/HEAR OF THIS BY/NOON. WHEN YOU/RING THE BELL,/WE'LL COME.
+[ROOK] BRIGID: YOUR WOMAN. SHE/FLIES FOR THE/CLIFF VILLAGE./NORTH. GO SOON.
+
+scene lose:
+BRIGID: GO! OUT THE/BACK, THROUGH/THE NETS!

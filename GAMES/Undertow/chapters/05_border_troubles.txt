@@ -1,0 +1,79 @@
+# Dain cavalry cross the ford "hunting bandits" and start burning Hollin's
+# farms. Riders come back over the river every 4 turns until their captain
+# falls, and he's the objective. Oren hangs back, unwilling; Brannock can talk him round.
+event tide: turn 4 every 4 ; spawn 2 ; until 17
+event chief: falls CAPTAIN ; set 17
+event turncoat: talk BRANNOCK to OREN ; join
+
+title: BORDER TROUBLE
+goal: DEFEAT CAPTAIN
+objective: boss
+deploy: 5
+shop: VULNERARY, IRON SWORD, IRON LANCE, IRON AXE, IRON BOW, JAVELIN
+
+map:
+TT......h.......~~....TT
+T...V...........~~.....T
+........TT......~~......
+..h.............~~..h...
+................==......
+....TT..........~~......
+..........h.....~~...hh.
+................~~......
+..T.............~~......
+......h.........~~..T...
+.....V..........~~......
+................==......
+..TT............~~......
+..........T.....~~...TT.
+T...............~~....TT
+TT.....h........~~...TTT
+
+slots:
+2 7
+2 8
+1 6
+1 9
+3 7
+
+enemies:
+# name   class     x  y  lv hp str skl spd def flags      items
+SOLDIER  FIGHTER  12  3  4  21  6   3   4   3   -          IRON AXE
+SOLDIER  FIGHTER  11 12  4  21  6   3   4   3   -          HAND AXE, VULNERARY
+RIDER    CAVALIER 20  4  4  21  5   4   5   4   g2         IRON SWORD
+RIDER    CAVALIER 20 11  4  21  5   4   5   4   g2         JAVELIN
+ARCHER   ARCHER   14  9  4  17  4   5   4   2   hold       IRON BOW
+OREN     CAVALIER 14  5  6  24  7   7   7   6   hold       IRON LANCE, JAVELIN
+CAPTAIN  CAVALIER 13  7  6  26  7   6   6   6   boss hold  IRON SWORD
+
+scene open:
+WREN: SMOKE. THE FARMS/BY THE FORD.
+IDRA: DAIN COLOURS./CAVALRY, AND THEY/CAME ACROSS THE/RIVER.
+IDRA: THEY'RE SHOUTING/THAT HOLLIN HIDES/BANDITS. THAT WE/ARE THE BANDITS.
+BRANNOCK: THE COUNCIL'S/ANSWER?
+MAREN: THEY'RE STILL/ARGUING ABOUT/WHETHER TO SEND/ONE.
+BRANNOCK: THEN WE'RE THE/ANSWER. MOUNT UP.
+
+village 4 1:
+MAREN: THE OLD WOMAN/SAYS THE RIDERS/ASKED FOR 'THE/BANDIT LORD.'/THEY MEAN YOU.
+gold: 500
+
+village 5 10:
+HALE: FARMER SAYS ONE/OF THEM SPARED/HIS BARN. TALL/ONE, SCAR, RIDES/A GREY.
+gift: STEEL AXE
+
+scene turncoat:
+OREN: HOLD! I'M DONE/WITH THIS. THEY/BURN FARMS AND/CALL IT JUSTICE.
+BRANNOCK: THEN RIDE WITH/US. I'LL NEED/SOMEONE WHO/KNOWS DAIN.
+[!8] OREN: KNOW THIS FIRST./LORD CORVANE PAYS/THE BANDITS. THE/CROWN PAYS HIM.
+[8] OREN: CORVANE? SO YOU/KNOW ALREADY./THEN YOU KNOW WHO/TO ASK.
+
+scene boss:
+IDRA: THAT'S THEIR/CAPTAIN, BY THE/BURNING FARM./DROP HIM AND THE/RIDERS STOP.
+
+scene win:
+BRANNOCK: HOLLIN WON'T/MARCH. SO WE GO/INTO DAIN AND/ASK CORVANE/OURSELVES.
+[OREN] OREN: THE PASS ROAD./IT'S THE ONLY WAY/IN WITHOUT AN/ARMY.
+
+scene lose:
+IDRA: BRANNOCK...!/BACK ACROSS THE/FIELDS! GO!

@@ -1,0 +1,64 @@
+# Side chapter: only with the courier's orders (flag 2). Corvane's lodge in the
+# woods. Defeat him and he yields, and talks; his sally-port key (flag 9)
+# opens a shortcut in Dainholt (Ch 7).
+event yields: falls CORVANE ; set 9
+
+title: THE LODGE
+goal: DEFEAT CORVANE
+label: 5X
+requires: flag 2
+objective: boss
+deploy: 6
+
+map:
+TTTTTT..TTTTTTTTTTTTTTTT
+TT......TTTTT....TTTTTTT
+T...T.....TT......TTTTTT
+...TT..h......###.#####T
+.......T......#.....K.#T
+..T...........#.......#T
+......TT......####.####T
+...........T..........TT
+..h............T......TT
+.......T.............TTT
+...T........h..........T
+..........T.....TT.....T
+TT..T..............h...T
+TTT.......T......TTTTTTT
+TTTT....TTT.....TTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTT
+
+slots:
+1 7
+2 6
+2 8
+0 6
+1 9
+3 7
+
+enemies:
+# name   class      x  y  lv hp str skl spd def flags        items
+GUARD    LANCER    15  4  5  21  6   5   4   5   -            IRON LANCE
+GUARD    LANCER    18  7  5  21  6   5   4   5   -            IRON LANCE, VULNERARY
+GUARD    LANCER    15  9  5  21  6   5   4   5   -            JAVELIN
+ARCHER   ARCHER    16  2  5  18  5   6   5   2   -            IRON BOW
+ARCHER   ARCHER    18 11  5  18  5   6   5   2   -            IRON BOW
+RIDER    CAVALIER  20 10  5  22  6   5   6   5   -            IRON SWORD
+CORVANE  SWORDSMAN 20  4  7  24  6   9   9   4   boss hold    IRON SWORD, STEEL SWORD*
+
+scene open:
+OREN: CORVANE'S LODGE./HE HUNTS DEER/HERE WHEN HE'S/NOT HUNTING/PEOPLE.
+BRANNOCK: HE PAID THE MEN/WHO TOOK MAREN. I/WANT TO HEAR WHY,/FROM HIM.
+
+scene boss:
+CORVANE: THE BANDIT LORD,/IN MY OWN HALL./YOU DON'T KNOW/WHAT YOU'RE/MEDDLING IN.
+
+scene win:
+CORVANE: ENOUGH! I YIELD./I'LL TALK.
+CORVANE: THE KING ORDERED/THE RAIDS. HE/WANTED CAPTIVES/AS 'TRIBUTE.' I/NEVER ASKED WHY.
+CORVANE: HE CAME BACK FROM/THE FEVER WRONG./COLD. HE HAD THE/CATHEDRAL BELLS/MELTED.
+MAREN: MELTED? WHY/WOULD A KING CARE/ABOUT BELLS?
+CORVANE: TAKE MY KEY. THE/SALLY PORT INTO/DAINHOLT. SEE HIM/FOR YOURSELF.
+
+scene lose:
+IDRA: BRANNOCK...!/INTO THE TREES!/FALL BACK!

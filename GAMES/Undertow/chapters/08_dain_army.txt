@@ -1,0 +1,86 @@
+# Dain's field army on open farmland. The reserve riders behind the line join
+# on turn 4. Cass fights for Dain as a sellsword; only Hale can talk her round.
+# Gerault fills in what Corvane would have said if 5X was skipped (flag 9).
+event reserves: turn 4 ; wake 1
+event oldfriend: talk HALE to CASS ; join
+
+title: THE DAIN ARMY
+goal: DEFEAT GERAULT
+objective: boss
+deploy: 7
+
+map:
+..T......h...........TTT
+.......V.............TT.
+..h.........T...........
+.........h........h.....
+....TT..................
+.............TT.........
+..T.....................
+.........h..........h...
+.....T.........T........
+.................h......
+...h.....TT.............
+..........T......V......
+.TT.................h...
+...........h............
+TT.....T.........TT.....
+TTT..............TTTT...
+
+slots:
+2 7
+2 8
+1 6
+1 9
+3 6
+3 9
+2 5
+
+enemies:
+# name   class      x  y  lv hp str skl spd def flags        items
+SOLDIER  LANCER    10  4  6  22  6   6   5   5   -            IRON LANCE
+SOLDIER  FIGHTER   11  9  6  24  8   4   5   4   -            IRON AXE
+SOLDIER  KNIGHT    13  7  6  26  7   4   2   9   -            IRON LANCE
+ARCHER   ARCHER    15  3  6  19  5   7   5   3   -            IRON BOW
+ARCHER   ARCHER    16 11  6  19  5   7   5   3   -            IRON BOW, VULNERARY*
+RIDER    CAVALIER  14 13  6  23  6   6   6   5   -            IRON SWORD
+CASS     SWORDSMAN 12  2  7  22  6  10  11   4   -            STEEL SWORD, VULNERARY
+RIDER    CAVALIER  20  5  6  23  6   6   6   5   reserve      IRON SWORD
+RIDER    CAVALIER  20 10  6  23  6   6   6   5   reserve      IRON LANCE
+GERAULT  PALADIN   21  7  8  30  8   8   7   8   boss hold    STEEL SWORD, STEEL LANCE*
+
+scene open:
+OREN: THAT'S GERAULT'S/BANNER. THE/KING'S MARSHAL./HE'S A HARD MAN/BUT A FAIR ONE.
+HALE: AND THAT'S CASS/IN HIS LINE. WE/SOLD OUR SWORDS/TOGETHER, YEARS/BACK.
+HALE: LET ME AT HER./SHE OWES ME A/DRINK. AND A/BOOT.
+BRANNOCK: WE BREAK THE/LINE AND REACH/GERAULT. ON MY/SIGNAL.
+
+scene reserves:
+WREN: MORE RIDERS FROM/THE TREES! THEY/HELD THEM BACK!
+
+scene oldfriend:
+CASS: HALE? STILL ALIVE/AND STILL UGLY.
+HALE: STILL PAID BY THE/WRONG SIDE. COME/ON. WE PAY IN/STEW AND JOKES.
+CASS: ...THE STEW HAD/BETTER BE GOOD.
+
+village 7 1:
+OREN: THE FARMER SAYS/THE MARSHAL PAID/FOR EVERY SHEEP/HIS MEN ATE./THAT'S GERAULT.
+gold: 300
+
+village 17 11:
+MAREN: THEY SAY THE/KING HASN'T BEEN/SEEN IN DAYLIGHT/SINCE WINTER.
+gold: 600
+
+scene boss:
+GERAULT: YOU CAME A LONG/WAY TO DIE ON/DAIN FARMLAND,/BOY.
+[!9] GERAULT: MY KING'S ORDERS/STAND. EVEN THE/ONES I DON'T/UNDERSTAND.
+
+scene win:
+GERAULT: ENOUGH. I'M/BEATEN. HEAR ME.
+[!9] GERAULT: THE RAIDS WERE/THE KING'S ORDER./HE HAS NOT BEEN/HIMSELF SINCE/THE FEVER.
+[9] GERAULT: CORVANE TOLD/YOU, THEN. IT'S/ALL TRUE. EVERY/WORD.
+GERAULT: GO TO DAINHOLT./I WON'T STOP YOU./FIND OUT WHAT/SITS ON OUR/THRONE.
+[CASS] CASS: AND WHEN WE/FIND OUT, WHO/PAYS FOR IT?
+
+scene lose:
+IDRA: BRANNOCK...!/BACK! BACK TO/THE PASS!

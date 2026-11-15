@@ -1,0 +1,83 @@
+# Kell's stronghold. One gate, with a bell on it: whoever walks through the
+# gate wakes the garrison (the 'reserve' enemies). Wren's gap in the south
+# fence is the quiet way in. The strongroom chest holds Kell's ledger --
+# opening it sets story flag 1, which opens the side chapter 3X.
+#
+# The gate is a tripwire: crossing it wakes group 1 (the 'reserve' bunks).
+# Striking a sleeper raises the same alarm.
+event alarm: tile 12 6 ; wake 1
+
+title: RED PALISADE
+goal: DEFEAT KELL
+objective: boss
+deploy: 5
+
+map:
+TTT....hh....TTTTTTTTTTT
+TT..........PPPPPPPPPPPT
+T...V.......P....#C#..PT
+............P....#.#..PT
+....T.......P.........PT
+...TT.......P.....K...PT
+............G.........PT
+..h.........P.........PT
+............P...##....PT
+....T.......P...#.....PT
+....hh......P.........PT
+............PPPPP.PPPPPT
+..T................hh..T
+......TT...........hhh.T
+TT..............hhh...TT
+TTT.......TTTT.....TTTTT
+
+slots:
+2 6
+1 7
+2 8
+1 5
+3 7
+
+enemies:
+# name   class    x  y  lv hp str skl spd def flags        items
+BANDIT   FIGHTER  8  4  3  21  6   2   5   3   -            IRON AXE
+BANDIT   FIGHTER  9 12  3  21  6   2   5   3   -            HAND AXE, VULNERARY*
+SPEAR    LANCER  10  7  3  20  5   4   4   4   -            IRON LANCE
+BOWMAN   ARCHER  14  6  3  17  4   4   4   2   hold         IRON BOW
+BANDIT   FIGHTER 17 10  3  21  6   2   5   3   reserve      IRON AXE
+BANDIT   FIGHTER 20  9  3  21  6   2   5   3   reserve      IRON AXE, JAVELIN*
+SPEAR    LANCER  20  6  4  21  5   5   4   4   reserve      IRON LANCE
+BOWMAN   ARCHER  15  3  3  17  4   4   4   2   reserve      IRON BOW
+KELL     FIGHTER 18  5  7  30  8   5   5   5   boss hold    IRON AXE, HAND AXE*
+
+scene open:
+BRANNOCK: VARGA'S CART/ROAD ENDS HERE./THE RED PALISADE.
+MAREN: KELL'S HOLD. HE/BUYS WHAT VARGA/STEALS. PEOPLE,/TOO.
+IDRA: ONE GATE, AND A/BELL ON IT. HIS/WHOLE CREW SLEEPS/BEHIND THAT WALL.
+WREN: OR WE SKIP THE/GATE. THERE'S A/GAP IN THE SOUTH/FENCE. JUST/SAYING.
+HALE: OR WE KICK/THE GATE IN./ALSO JUST SAYING.
+
+scene alarm:
+KELL: THE GATE! UP,/YOU DOGS! OUT OF/YOUR BUNKS, ALL/OF YOU!
+BRANNOCK: THERE'S MORE OF/THEM INSIDE.../STAY TOGETHER!
+
+village 4 2:
+FENN: KELL'S NO COMMON/THIEF. A MAN IN/GREY PAYS HIM IN/SILVER.
+FENN: HE KEEPS A TALLY/IN HIS STRONG-/ROOM. NORTH END,/BY THE KEEP.
+FENN: FIND THAT BOOK,/FIND WHO'S BUYING/OUR PEOPLE.
+gold: 400
+
+chest 18 2:
+BRANNOCK: A LEDGER. NAMES,/DATES... 'SOLD/TO VOSS. THE/GREY ROAD.'
+MAREN: MY NAME'S/IN HERE. 'ONE/PRIEST, FOR THE/RIVER.'
+BRANNOCK: THEN THE GREY/ROAD IS WHERE/WE GO NEXT.
+gift: STEEL LANCE
+flag: 1
+
+scene boss:
+KELL: YOU'RE THE ONES/WHO DROWNED OSK?/I DON'T SINK/SO EASY.
+
+scene win:
+BRANNOCK: THE PALISADE IS/OURS. OPEN THE/PENS. GET THESE/PEOPLE HOME.
+
+scene lose:
+IDRA: BRANNOCK...!/GET HIM OUT OF/HERE! FALL BACK!

@@ -1,0 +1,93 @@
+# Side chapter 7X: only if the prisoners were freed in chapter 7 (flag 3).
+# The vaults under the palace, where the king's "tribute" went into the water.
+# The Drowned stand in rows, asleep, until someone rings the vault bell (the
+# tripwire in the middle of the hall) or strikes one. A cult priest keeps the
+# altar. The register in the west gallery (flag 10) names the taken (17X).
+event bell: tile 11 10 ; wake 2 ; demon
+event deeper: tile 11 6 ; wake 1 ; demon
+event westgal: tile 6 11 ; wake 3
+event eastgal: tile 17 11 ; wake 3
+
+title: DROWNED VAULTS
+goal: SEIZE THE ALTAR
+label: 7X
+requires: flag 3
+objective: seize 11 1
+deploy: 6
+
+map:
+########################
+#C~~~_#____K_____#___~C#
+#_~~__#__________#__~~_#
+#_____#_#__#__#__#_____#
+#__~~_____________~~___#
+#__~~_#_#__#__#__#_~~__#
+#_____#__________#_____#
+###___#_#__#__#__#___###
+#_____#__________#_____#
+#_~~__#_#__#__#__#__~~_#
+#_~~__#__________#__~~_#
+#__________________~~__#
+#~~~__#_#______#_#_____#
+#~~~__#__________#__~~~#
+#~~~~C#__________#_~~~~#
+########################
+
+slots:
+11 13
+10 13
+12 13
+10 14
+12 14
+11 14
+
+enemies:
+# name       class    x  y  lv hp str skl spd def flags          items
+DROWNED      HORROR   9  5  8  25  9   4   5   4   reserve1      CLAWS
+DROWNED      HORROR  12  4  8  25  9   4   5   4   reserve1      CLAWS
+DROWNED      HORROR  15  5  8  25  9   4   5   4   reserve1      CLAWS, ELIXIR*
+DROWNED      HORROR   9  8  7  23  8   4   5   4   reserve2      CLAWS
+DROWNED      HORROR  13  8  7  23  8   4   5   4   reserve2      CLAWS
+DROWNED      HORROR  15  9  7  23  8   4   5   4   reserve2      CLAWS
+DROWNED      HORROR   3  6  7  23  8   4   5   4   reserve3      CLAWS
+DROWNED      HORROR  20  6  7  23  8   4   5   4   reserve3      CLAWS
+ROYAL_GUARD  KNIGHT  13  2  8  28  8   6   3  10   -             STEEL LANCE
+CULTIST      MAGE    11  1  9  24  9   7   6   3   hold          MIRE, MEND*
+
+scene open:
+BRANNOCK: STAIRS DOWN,/UNDER THE PALACE./IT STINKS OF THE/RIVER.
+WREN: THERE ARE PEOPLE/DOWN THERE. IN/ROWS. STANDING/STILL.
+HALE: THOSE AREN'T/PEOPLE. NOT ANY/MORE.
+[MAREN] MAREN: THERE'S A BELL/ON A ROPE IN THE/MIDDLE OF THE/HALL. DON'T TOUCH/IT.
+
+scene bell:
+WREN: THE BELL! IT/RANG ON ITS OWN!/THEY'RE WAKING!
+
+scene deeper:
+IDRA: THE FRONT ROWS/ARE MOVING. STAY/TOGETHER!
+
+scene westgal:
+HALE: SOMETHING IN THE/SIDE GALLERIES,/TOO. OF COURSE.
+
+chest 1 1:
+BRANNOCK: A BOOK. NAMES,/HUNDREDS OF THEM./DATES. VILLAGES./THE LAST PAGE IS/FROM THIS WEEK.
+[MAREN] MAREN: OUR MILL. OLD/TAM'S GRANDSON,/LIR. TAKEN IN/THE RAIDS. HE'S/WRITTEN HERE.
+flag: 10
+
+chest 22 1:
+HALE: THE KING'S/TRIBUTE. COIN,/RINGS, A CREST.
+gift: HERO CREST
+
+chest 5 14:
+BRANNOCK: SOMEONE HID/THIS DOWN HERE./A FEATHER, BOUND/IN SILVER WIRE.
+[WREN] WREN: A HAWK'S. HOLD/IT AND THE WORLD/GOES SHARP./EVERY EDGE.
+gift: HAWK FEATHER
+
+scene win:
+BRANNOCK: THE ALTAR. AND/BEHIND IT, A WELL/STRAIGHT DOWN TO/THE RIVER.
+IDRA: THE TAXES WERE/NEVER COIN. THEY/WERE PEOPLE. FED/TO THE WATER.
+[10] BRANNOCK: WE TAKE THE/REGISTER. EVERY/NAME IN IT IS/OWED AN ANSWER.
+HALE: THE KING. NOW.
+
+scene lose:
+IDRA: BACK UP THE/STAIRS! NOW!

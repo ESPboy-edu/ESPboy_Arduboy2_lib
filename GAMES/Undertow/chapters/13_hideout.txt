@@ -1,0 +1,84 @@
+# Chapter 10: the Undertow's sea caves on the Dain coast. Tidal pools carry you
+# between chambers. Mother Silt calls the Drowned back up every 4 turns. A sealed
+# chest in the west chamber holds the cult's sea chart (flag 4: opens 10X).
+event summon: turn 4 every 4 ; spawn 1 ; demon
+event poolA: tile 2 10 ; warp 4 4
+event poolC: tile 5 4 ; warp 3 10
+event poolB: tile 20 11 ; warp 11 4
+event poolD: tile 10 4 ; warp 19 11
+
+title: THE HIDEOUT
+goal: DEFEAT SILT
+objective: boss
+deploy: 8
+
+map:
+########################
+#C____###___________K__#
+#_~~__###__~~_______~~_#
+#_~~__###______________#
+#____O###_O__~~____#####
+#______##______~~__#####
+###########~~~~~##_#####
+###########~~~~~##_#####
+#########~~~~~~~~#_#####
+##_______#~~~~#_______##
+#_O______#~~~~#_______##
+#________#~~~~#_____O_##
+#______________________#
+#________#~~~~#________#
+#________#~~~~#________#
+########################
+
+slots:
+4 12
+5 12
+3 12
+4 13
+5 13
+6 13
+3 13
+6 12
+
+enemies:
+# name       class    x  y  lv hp str skl spd def flags          items
+MOTHER_SILT  MAGE    20  1 12  34 11   9   8   6   boss hold     MIRE, HERO CREST*
+DROWNED      HORROR  15  3  9  27 10   5   6   5   g1            CLAWS
+DROWNED      HORROR  17  4  9  27 10   5   6   5   g1            CLAWS
+DROWNED      HORROR  12  5  9  27 10   5   6   5   g1            CLAWS
+CULTIST      MAGE     4  2  9  24  8   8   7   4   hold          MIRE
+CULTIST      MAGE    16 13  9  24  8   8   7   4   -             MIRE
+CULTIST      MAGE    20 13  9  24  8   8   7   4   -             MIRE, ELIXIR*
+CULTIST      MAGE    13  1  9  24  8   8   7   4   hold          MIRE
+CULTIST      MAGE    21  3  9  24  8   8   7   4   hold          MIRE
+
+scene open:
+BRANNOCK: SEA CAVES. THE/TIDE COMES RIGHT/IN. YOU CAN HEAR/SINGING.
+[AELIS] AELIS: THE POOLS. THE/TEXTS SAY THE/CALLERS WALK/THROUGH WATER/LIKE DOORS.
+[!AELIS] WREN: THOSE POOLS ARE/WRONG. TOO STILL./STEP IN ONE AND/SEE WHERE IT/GOES?
+HALE: I'LL GO FIRST./I'VE BEEN IN/WORSE WATER.
+
+scene summon:
+MOTHER SILT: RISE, CHILDREN./THE RIVER GAVE/YOU TO ME. RISE.
+
+scene boss:
+MOTHER SILT: HOLLIN. YOU/BROKE OUR KING'S/COAT. HE WAS/FOND OF IT.
+MOTHER SILT: WE DON'T CALL/THEM FOR WAR,/BOY. WE CALL THEM/HOME. THE SEA IS/WAITING.
+BRANNOCK: THE SEA CAN WAIT/A LONG TIME.
+
+chest 1 1:
+BRANNOCK: A SEALED CHART./THE COAST, THE/SEA... AND AN/ISLAND MARKED/WITH A BELL.
+[AELIS] AELIS: THE OLD NAME/FOR IT IS VAEL./AND THIS TOWER,/ON THE SEA STACK,/IS WHERE IT...
+[AELIS] AELIS: ...WHERE THE/FIRST SEALING WAS/WRITTEN DOWN. WE/HAVE TO SEE IT.
+flag: 4
+
+scene win:
+MOTHER SILT: THE TIDE... TURNS/WITHOUT ME.../IT ALWAYS DOES.
+BRANNOCK: SHE'S GONE. WHERE/WERE THEY/CALLING THEM/FROM?
+[!4] BRANNOCK: SHE HAD A CHART./AN ISLAND OVER/THE SEA, MARKED/WITH A BELL.
+[!4] BRANNOCK: VAEL, IT SAYS./THAT'S WHERE THE/CALL COMES FROM.
+[4] IDRA: THE SEA STACK/FIRST, THEN./WHATEVER WAS/WRITTEN THERE.
+HALE: WE'LL NEED A/SHIP. AND A MAD/CAPTAIN.
+
+scene lose:
+IDRA: OUT OF THE CAVES!/THE TIDE!

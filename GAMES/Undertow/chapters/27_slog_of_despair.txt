@@ -1,0 +1,85 @@
+# Chapter 20: rain, mud and a retreat that becomes a stand. Survive 10 turns on open
+# ground with little cover and no villages; the cult's stragglers keep coming from
+# the east, the north and the west in turn. The campaign's low point: Brannock nearly
+# turns back, and whoever is left won't let him.
+event east: turn 2 every 4 ; spawn 1 ; demon
+event north: turn 3 every 4 ; spawn 2
+event west: turn 5 every 4 ; spawn 3
+event dawn: turn 8 ; set 18
+
+title: THE LONG RAIN
+goal: SURVIVE 10 TURNS
+objective: survive 10
+deploy: 8
+
+map:
+........T.......h.......
+..h.............h....T..
+.......T................
+....................h...
+..T.......hh............
+..........hh.......T....
+.....T..............h...
+...................h....
+..h.......T.............
+........................
+.....h.........T........
+.T..............hh......
+........hh..............
+...T....hh.........T....
+................T.......
+.......T................
+
+slots:
+10 5
+11 5
+10 4
+11 4
+9 5
+12 5
+9 4
+12 4
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+HORNED      HORROR   23  4 17  35 13   7   7   8   ambush1      CLAWS
+DROWNED     HORROR   23  6 17  33 12   6   7   7   ambush1      CLAWS
+ZEALOT      KNIGHT   23  8 17  34 12   7   5  12   ambush1      STEEL LANCE, VULNERARY*
+CULTIST     MAGE     10  0 17  29 12   9   8   5   ambush2      MIRE
+WATCHMAN    ARCHER   13  0 17  27 11  11   9   6   ambush2      STEEL BOW
+HORNED      HORROR   11  0 17  35 13   7   7   8   ambush2      CLAWS
+BELLWRAITH  WRAITH    0  7 17  31 12   8   8   6   ambush3      CLAWS
+DROWNED     HORROR    0  9 17  33 12   6   7   7   ambush3      CLAWS, ELIXIR*
+HORNED      HORROR   16 12 17  35 13   7   7   8   -            CLAWS
+
+scene open:
+BRANNOCK: ...ENOUGH. WE'VE/LOST TOO MUCH./WE TURN BACK.
+[IDRA] IDRA: AND GO WHERE?/HOME? THERE IS NO/HOME, IF THIS/ISN'T FINISHED.
+[IDRA] IDRA: YOU DON'T GET TO/QUIT, BRANNOCK./NOT NOW. NOT/AFTER ALL OF IT.
+[FELL:IDRA] BRANNOCK: IDRA WOULD HAVE/HIT ME FOR/SAYING THAT.../AND SHE'D HAVE/BEEN RIGHT.
+[!IDRA][HALE] HALE: TURN BACK? IN/THIS MUD? WE'D/DROWN FASTER/GOING HOME.
+[!IDRA][!HALE][MAREN] MAREN: THE BELL RINGS/FOR EVERYONE WE/LEFT BEHIND. WE/DON'T STOP NOW.
+[FELL:HALE] BRANNOCK: HALE WOULD HAVE/LAUGHED AT THIS/WEATHER. I CAN/ALMOST HEAR HIM.
+[FELL:WREN] BRANNOCK: WREN'S FATHER/ASKED ME TO/BRING HER HOME./I DIDN'T.
+BRANNOCK: ...ALL RIGHT./WE DIG IN. WE/HOLD TILL THE/RAIN STOPS.
+
+scene east:
+BRANNOCK: FROM THE EAST!/OUT OF THE RAIN!
+
+scene north:
+BRANNOCK: THE RIDGE!/THEY'RE COMING/DOWN!
+
+scene west:
+BRANNOCK: WEST! CLOSE UP,/BACK TO BACK!
+
+scene dawn:
+BRANNOCK: THE RAIN'S/EASING. HOLD ON./JUST A LITTLE/LONGER.
+
+scene win:
+BRANNOCK: ...IT'S STOPPED./THE RAIN. AND/THEM.
+[IDRA] IDRA: THERE. THE TOWER/ON THE HEADLAND./THE CATHEDRAL.
+[!IDRA] BRANNOCK: THE TOWER ON THE/HEADLAND. THAT'S/THE CATHEDRAL.
+[AELIS] AELIS: AND THE FORTRESS/ON ITS STEPS. I/KNOW WHO WAITS/THERE.
+
+scene lose:
+BRANNOCK: WE CAN'T HOLD!/BACK... BACK!

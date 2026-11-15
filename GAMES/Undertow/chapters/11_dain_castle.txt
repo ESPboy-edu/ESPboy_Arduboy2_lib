@@ -1,0 +1,87 @@
+# Chapter 8: inside the palace. King Aldric waits on his throne. When he falls
+# the body drops like an empty coat; the Hollow King pours into the well before
+# the throne, and Drowned climb out of it. Then the throne can be seized.
+event guards: turn 3 ; wake 1
+event reveal: falls KING ALDRIC ; spawn 2 ; demon
+
+title: DAIN CASTLE
+goal: SEIZE THE THRONE
+objective: seize 11 1
+deploy: 8
+
+map:
+########################
+#______#___K____#_____C#
+#______#_#____#_#______#
+#______#___~____#______#
+#______#________#______#
+###G######G##G#####G####
+#______________________#
+#___#___#______#___#___#
+#______________________#
+#___#___#______#___#___#
+####_####______####_####
+#______________________#
+#__#________________#__#
+#______________________#
+#______________________#
+########################
+
+slots:
+11 13
+12 13
+10 13
+13 13
+11 14
+12 14
+10 14
+13 14
+
+enemies:
+# name       class    x  y  lv hp str skl spd def flags          items
+KING_ALDRIC  WARDEN  11  1 11  36 12   9   7   9   boss hold     STEEL LANCE, SILVER LANCE*
+ROYAL_GUARD  KNIGHT  10  4  9  30  9   6   3  11   -             IRON LANCE
+ROYAL_GUARD  KNIGHT  13  4  9  30  9   6   3  11   -             IRON LANCE
+ARCHER       ARCHER   4  6  9  24  8   9   7   4   hold          STEEL BOW
+ARCHER       ARCHER  19  6  9  24  8   9   7   4   hold          STEEL BOW
+CULTIST      MAGE    11  6  9  24  8   7   6   3   hold          MIRE, VULNERARY*
+ROYAL_GUARD  LANCER   2  2  9  27  9   8   7   6   reserve1      STEEL LANCE
+ROYAL_GUARD  FIGHTER  5  3  9  29 10   6   6   5   reserve1      STEEL AXE
+DROWNED      HORROR  10  3  9  27 10   5   6   5   ambush2       CLAWS
+DROWNED      HORROR  12  3  9  27 10   5   6   5   ambush2       CLAWS
+
+scene open:
+BRANNOCK: THE PALACE./NOBODY AT THE/DOORS. NO/SERVANTS.
+WREN: IT'S TOO QUIET/FOR A PALACE./WHERE IS/EVERYONE?
+[OREN] OREN: THE THRONE ROOM/IS AT THE TOP OF/THE GREAT HALL./HE'LL BE THERE./HE ALWAYS IS.
+[10] HALE: WE BRING HIM HIS/REGISTER. LET'S/SEE HIM READ IT/OUT LOUD.
+IDRA: WHATEVER SITS/UP THERE, WE/FINISH THIS.
+
+scene guards:
+IDRA: THE GUARDROOM'S/OPEN! MORE OF/THEM ON THE LEFT!
+
+scene boss:
+KING ALDRIC: HOLLIN'S BOY. YOU/HAVE YOUR/FATHER'S FACE.
+KING ALDRIC: ...NO. I DON'T/REMEMBER YOUR/FATHER. I DON'T/REMEMBER MUCH OF/ANYTHING, NOW.
+BRANNOCK: YOU SENT RAIDERS/TO MY FORD. YOU/BOUGHT MY PEOPLE/BY THE CARTLOAD.
+KING ALDRIC: THE RIVER IS/HUNGRY. SOMEONE/HAS TO FEED IT.
+
+scene reveal:
+BRANNOCK: HE FELL... AND/THERE'S NOTHING/IN THE ARMOUR./IT'S EMPTY. LIKE/A COAT.
+HOLLOW KING: THE COAT IS/TORN. NO MATTER./THERE ARE MANY/COATS.
+WREN: IT WENT INTO THE/WELL! SOMETHING/BLACK, LIKE OIL!
+HALE: AND SOMETHING'S/CLIMBING BACK/OUT OF IT!
+
+chest 22 1:
+WREN: THE KING'S/STRONGBOX. GOLD,/AND NOBODY LEFT/TO SPEND IT.
+gold: 1200
+
+scene win:
+BRANNOCK: THE THRONE OF/DAIN. EMPTY.
+[OREN] OREN: THE KING DIED IN/WINTER. WE'VE/BEEN BOWING TO A/CORPSE SINCE.
+IDRA: WHAT WAS IT? AND/WHERE DOES THE/WELL GO?
+WREN: BRANNOCK! A GIRL/IN A BLUE CLOAK,/RUNNING FOR THE/CHAPEL!
+IDRA: AND THE CANALS/ARE RISING. LOOK/AT THE WATER.
+
+scene lose:
+IDRA: GET HIM OUT!/BACK TO THE GATE!

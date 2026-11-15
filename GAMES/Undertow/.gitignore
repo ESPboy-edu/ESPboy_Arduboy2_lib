@@ -1,0 +1,14 @@
+# test harness builds and output
+tools/sim/sim
+tools/sim/sim_asan
+tools/sim/shots/
+tools/sim/test_chapters.bin
+tools/sim/test_fxdata.bin
+tools/emu/drive
+*.pbm
+# generated sound previews
+tools/audio/preview/
+# Python and object files
+__pycache__/
+*.o
+*.elf

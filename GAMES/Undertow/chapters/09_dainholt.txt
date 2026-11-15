@@ -1,0 +1,100 @@
+# Chapter 7: the walls of Dainholt. Seize the gatehouse. Archers hold the two
+# towers; the gate garrison sleeps until someone comes up to the gate.
+# Corvane's key (flag 9, from 5X) opens the sally port in the west wall: stop on
+# it and you're inside. Walk a hero into the river-gate cells (east bank) to
+# free the prisoners (flag 3), which opens 7X.
+event alarm: tile 9 6 ; wake 1
+event riders: turn 4 ; spawn 2
+event cells: tile 21 6 ; set 3
+event sally: tile 1 5 ; warp 2 2 ; needs 9
+event barred: tile 1 5 ; needs !9
+
+title: DAINHOLT
+goal: SEIZE THE GATE
+objective: seize 9 4
+deploy: 8
+shop: VULNERARY, STEEL SWORD, STEEL LANCE, STEEL AXE, STEEL BOW, HAND AXE
+
+map:
+#___##______##___~~#####
+#___##______##_C_~~#####
+#________________~~#####
+#________________~~#####
+#########K#######~~#####
+#G#..K.......K...~~#___#
+..T........h.....~~#___#
+...........h.....~~#___#
+.....T...........~~##G##
+..h........TT....~~.....
+..V.......T......~~..T..
+.....h...........==.....
+...........h.....==..h..
+..TT.............~~....T
+........h........~~...TT
+.T...............~~..TTT
+
+slots:
+5 14
+6 14
+4 14
+5 15
+6 15
+7 15
+4 15
+7 13
+
+enemies:
+# name        class     x  y  lv hp str skl spd def flags          items
+ROYAL_GUARD   KNIGHT    9  4  9  30  9   6   3  11   hold          STEEL LANCE
+ARCHER        ARCHER    5  5  8  22  7   8   6   4   hold          STEEL BOW
+ARCHER        ARCHER   13  5  8  22  7   8   6   4   hold          IRON BOW, STEEL BOW*
+SOLDIER       LANCER    8  8  8  25  8   7   6   6   -             STEEL LANCE
+SOLDIER       FIGHTER  12  9  8  27  9   5   6   5   -             STEEL AXE
+RIDER         CAVALIER 14 11  8  26  8   7   7   6   -             STEEL SWORD
+ROYAL_GUARD   KNIGHT    8  2  8  28  8   6   3  10   reserve1      IRON LANCE
+ROYAL_GUARD   LANCER   10  2  8  25  8   7   6   6   reserve1      JAVELIN, VULNERARY*
+RIDER         CAVALIER 22 13  8  26  8   7   7   6   ambush2       STEEL LANCE
+ROYAL_GUARD   LANCER   21  7  8  25  8   7   6   6   hold          STEEL LANCE
+
+scene open:
+[OREN] OREN: DAINHOLT. I WAS/BORN UNDER THOSE/WALLS.
+WREN: LOOK AT THE/TOWERS. NOTHING/HANGING IN THEM./NOT ONE BELL.
+HALE: AND THE RIVER'S/BLACK AS INK./LOVELY TOWN.
+BRANNOCK: THE GATEHOUSE./TAKE IT AND THE/CITY IS OPEN.
+[9] BRANNOCK: CORVANE'S KEY/FITS THE SALLY/PORT. WEST WALL,/BY THE STONES.
+[OREN] OREN: THE RIVER GATE/HAS CELLS ON THE/FAR BANK. IF/THEY'RE FULL...
+
+scene alarm:
+IDRA: THEY'VE SEEN US/AT THE GATE!/GUARDS INSIDE!
+
+scene riders:
+WREN: RIDERS! OVER THE/FORD, EAST SIDE!
+
+scene cells:
+PRISONER: YOU'RE NOT THE/KING'S MEN...?
+BRANNOCK: NO. YOU'RE FREE./WHO PUT YOU HERE?
+PRISONER: THE KING. WE/OWED TAXES. THE/ONES WHO CAN'T/PAY GO DOWN TO/THE VAULTS.
+PRISONER: NOBODY COMES/BACK UP. WE HEAR/THEM SINGING/DOWN THERE AT/NIGHT.
+
+scene sally:
+BRANNOCK: THE KEY TURNS./CORVANE KEPT HIS/WORD. INSIDE!
+
+scene barred:
+BRANNOCK: A SALLY PORT./BARRED FROM/INSIDE. NO WAY/THROUGH HERE.
+
+village 2 10:
+WREN: THE TANNER SAYS/FOLK WHO CAN'T/PAY THE KING'S/TAX DON'T GO TO/PRISON. THEY GO.
+gold: 800
+
+chest 15 1:
+HALE: THE GATE GUARD'S/PAY CHEST. THE/KING WON'T BE/NEEDING IT.
+gold: 1000
+
+scene win:
+BRANNOCK: THE GATE IS/OURS. DAINHOLT/IS OPEN.
+[3] BRANNOCK: THE PRISONERS/SPOKE OF VAULTS/UNDER THE PALACE./AND SINGING.
+[!3] IDRA: THE PALACE IS/UP THE HILL. THE/KING WILL KNOW/WE'RE COMING.
+HALE: THEN LET'S NOT/KEEP HIM WAITING.
+
+scene lose:
+IDRA: BRANNOCK! PULL/BACK FROM THE/WALLS!

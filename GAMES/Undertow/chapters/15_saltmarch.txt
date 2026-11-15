@@ -1,0 +1,100 @@
+# Chapter 11: Saltmarch, the port. The Undertow runs the docks and every honest ship is
+# impounded. Seize the harbourmaster's hall for his seal. Rook is aboard his own chained
+# ship, fighting anyone who comes near; Wren (or Brannock) can talk him round.
+event hall: tile 18 5 ; wake 1
+event mate: talk WREN to ROOK ; join
+event captain: talk BRANNOCK to ROOK ; join
+
+title: SALTMARCH
+goal: SEIZE THE HALL
+objective: seize 18 1
+deploy: 8
+shop: VULNERARY, ELIXIR, STEEL LANCE, STEEL BOW, FIRE, HEAL
+
+map:
+##.####.###.##..########
+##.#V##.###.##..#_K__###
+##......###.....#____###
+............##..#____#..
+..###..#C#..##..##G###..
+..###..###..##..........
+........................
+......#......#.......#..
+..............#.........
+~~~~DD~~~~DD~~~RRRDRRRRR
+~~~~DD~~~~DD~~~RDDDDDDDR
+~~~~DD~~~~DD~~~RDDDDDDDR
+~~~~DD~~~~DD~~~RDDDRDDDR
+~~~~DD~~~~DD~~~RDDDDDDDR
+~~~~~~~~~~DD~~~RDDDDDDDR
+~~~~~~~~~~~~~~~RRRRRRRRR
+
+slots:
+1 6
+0 6
+1 7
+0 7
+2 6
+2 7
+1 8
+0 8
+
+enemies:
+# name       class     x  y  lv hp str skl spd def flags         items
+DOCKMASTER   KNIGHT   18  1 12  34 12   7   4  10   boss hold    STEEL LANCE, ELIXIR*
+ROOK         FIGHTER  19 11 10  33 12   9   9   7   hold         STEEL AXE, VULNERARY
+DOCKHAND     LANCER   12  6 10  26  9   8   7   7   -            STEEL LANCE
+DOCKHAND     LANCER   16  7 10  26  9   8   7   7   -            JAVELIN
+DOCKHAND     LANCER   21 12 10  26  9   8   7   7   -            STEEL LANCE, VULNERARY*
+CULTIST      MAGE     11  3 10  24  8   8   7   4   -            MIRE
+CULTIST      MAGE     19  6 10  24  8   8   7   4   -            MIRE
+ARCHER       ARCHER   14  2 10  25  9  10   8   4   -            STEEL BOW
+DOCKHAND     LANCER   17  2 10  26  9   8   7   7   reserve1     STEEL LANCE
+DOCKHAND     FIGHTER  20  3 10  29 11   7   7   6   reserve1     STEEL AXE
+
+scene open:
+BRANNOCK: SALTMARCH. EVERY/SHIP IN THE/HARBOUR IS IN/CHAINS.
+WREN: ALL BUT THE ONES/FLYING THE CULT'S/RAG. THEY SAIL/OUT FULL AND COME/BACK EMPTY.
+[AELIS] AELIS: THE HALL ON THE/QUAY. THE/HARBOUR- MASTER'S/SEAL FREES A/SHIP.
+HALE: SOMEONE ON THAT/CHAINED SHIP IS/FIGHTING THE/WHOLE DOCK ALONE./I LIKE HIM.
+[11] BRANNOCK: AND WE HAVE A/BELL THAT NEEDS A/MAST TO HANG ON.
+
+scene boss:
+DOCKMASTER: NO SHIP LEAVES/SALTMARCH WITHOUT/THE MOTHER'S/BLESSING.
+DOCKMASTER: SHE'S DEAD, YOU/SAY? THEN NO SHIP/LEAVES AT ALL.
+
+scene hall:
+IDRA: THE HALL DOORS!/MORE OF THEM/INSIDE!
+
+scene mate:
+ROOK: ANOTHER ONE? COME/ON, THEN. I'VE/GOT AXES TO/SPARE.
+WREN: WE'RE NOT WITH/THEM. WE NEED A/SHIP. ONE THAT'LL/SAIL FOR VAEL.
+ROOK: ...VAEL. NOBODY/ASKS FOR VAEL.
+ROOK: SAOIRSE SAILED/THERE A YEAR AGO./SHE NEVER CAME/BACK.
+ROOK: GET MY SHIP OUT/OF THIS HARBOUR/AND I'LL TAKE YOU/THERE MYSELF.
+
+scene captain:
+ROOK: STAY BACK,/LORDLING. THIS/SHIP'S MINE. THE/CULT CAN HAVE HER/OVER MY BODY.
+BRANNOCK: WE'RE HERE TO/TAKE THE HALL,/NOT YOUR SHIP. WE/NEED IT TO REACH/VAEL.
+ROOK: VAEL? ...SAOIRSE/WENT TO VAEL.
+ROOK: I'VE WAITED A/YEAR FOR SOMEONE/MAD ENOUGH TO GO./I'M IN.
+
+village 4 1:
+WREN: THE FISHWIFE SAYS/THAT CAPTAIN HAS/ASKED EVERY/SAILOR IN PORT/ABOUT A WOMAN.
+WREN: SAOIRSE, HER NAME/WAS. SHE SAILED/FOR THE ISLAND/AND NEVER CAME/HOME.
+gold: 700
+
+chest 8 4:
+HALE: A SMUGGLER'S/STASH UNDER THE/FLOOR. NOBODY'S/COMING BACK FOR/IT.
+gold: 900
+
+scene win:
+BRANNOCK: THE SEAL. WE CAN/FREE A SHIP.
+[ROOK] ROOK: THE DRAKE. MY/SHIP. WE CAST OFF/AT DAWN. VAEL'S/FIVE DAYS OUT, IF/THE SEA LIKES US.
+[!ROOK] IDRA: HER CAPTAIN IS/DEAD. WE SAIL HER/OURSELVES.
+[!ROOK] HALE: I'VE NEVER SAILED/A SHIP IN MY/LIFE.
+[!ROOK] WREN: THEN YOU'LL/LEARN. QUICKLY.
+[11] BRANNOCK: HANG THE BELL ON/THE MAINMAST.
+
+scene lose:
+IDRA: BACK! OFF THE/DOCKS!

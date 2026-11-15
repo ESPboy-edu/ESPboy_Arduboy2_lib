@@ -1,0 +1,59 @@
+title: T PORTAL
+goal: TEST
+objective: rout
+deploy: 4
+event door: tile 4 7 ; warp 18 7
+event gate: tile 6 3 ; wake 1
+event key: tile 4 2 ; warp 18 2 ; needs 5
+event locked: tile 4 2 ; needs !5
+map:
+..........#.............
+..........#.............
+..........#.............
+..........#.............
+..........#.............
+..........#.............
+..........#.............
+....O.....#.............
+..........#.............
+..........#.............
+..........#.............
+..........#.............
+...C......#.............
+..........#.............
+..........#.............
+..........#.............
+
+slots:
+2 7
+2 8
+1 7
+1 8
+
+enemies:
+BANDIT   FIGHTER 20  7  1  15  3   1   1   1   reserve      IRON AXE
+BANDIT   FIGHTER 20  9  1  15  3   1   1   1   reserve      IRON AXE
+
+chest 3 12:
+BRANNOCK: A TEST CHEST.
+gift: HERO CREST
+flag: 2
+
+scene open:
+BRANNOCK: TEST.
+
+scene gate:
+BRANNOCK: GATE TEST.
+[2] IDRA: FLAG TWO IS SET.
+[!2] HALE: FLAG TWO IS NOT.
+[MAREN] MAREN: MAREN IS HERE.
+[!MAREN] WREN: NO MAREN.
+[2][MAREN] CASS: TWO AND MAREN.
+[FELL:HALE] AELIS: HALE FELL.
+[!FELL:HALE] OREN: HALE STANDS.
+
+scene key:
+BRANNOCK: THE KEY FITS.
+
+scene locked:
+BRANNOCK: LOCKED.

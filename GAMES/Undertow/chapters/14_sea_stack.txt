@@ -1,0 +1,86 @@
+# Side chapter 10X: only if the sea chart was found in chapter 10 (flag 4).
+# Climb the sea stack where the first sealing was recorded. Bellwraiths wake on
+# each terrace. The tower's last ward bell (flag 11) will hang on Rook's ship.
+event middle: tile 20 10 ; wake 2
+event summit: tile 16 3 ; wake 1 ; demon
+
+title: THE SEA STACK
+goal: SEIZE THE TOWER
+label: 10X
+requires: flag 4
+objective: seize 13 1
+deploy: 7
+
+map:
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~#C..K..#~~~~~~~
+~~~~~~~~~#..h....~~~~~~~
+~~~~~###########h###~~~~
+~~~~#.....h......h.#~~~~
+~~~~#..T..........h#~~~~
+~~~~#.h............#~~~~
+~~~~#.#############~~~~~
+~~~~#.......h......C#~~~
+~~~~#..h.......T.....#~~
+~~~~#............h...#~~
+~~~#################.#~~
+~~#..................#~~
+~~#....h......h......#~~
+~~#..................#~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+4 13
+5 13
+4 12
+3 13
+5 14
+3 14
+4 14
+
+enemies:
+# name       class    x  y  lv hp str skl spd def flags          items
+BELLWRAITH   WRAITH   9  9 10  24  9   6   7   5   -             CLAWS
+BELLWRAITH   WRAITH  16  8 10  24  9   6   7   5   -             CLAWS
+BELLWRAITH   WRAITH   6  9 10  24  9   6   7   5   reserve2      CLAWS
+BELLWRAITH   WRAITH  12 10 10  24  9   6   7   5   reserve2      CLAWS, ELIXIR*
+BELLWRAITH   WRAITH   8  5 10  24  9   6   7   5   -             CLAWS
+CULTIST      MAGE    11  4  9  24  8   8   7   4   -             MIRE
+BELLWRAITH   WRAITH  11  2 11  28 11   7   7   6   reserve1      CLAWS
+CULTIST      MAGE    15  2  9  24  8   8   7   4   reserve1      MIRE
+BELLWRAITH   WRAITH  13  1 11  32 11   8   8   6   hold          CLAWS
+
+scene open:
+BRANNOCK: THE SEA STACK./A TOWER ON TOP,/AND A WAY UP/CUT IN THE ROCK.
+[AELIS] AELIS: THE BELL-ORDER/BUILT IT. THEY/CAST BELLS THE/DROWNED COULDN'T/CROSS. ONCE.
+WREN: SOMETHING'S UP/THERE. SHAPED/LIKE BELLS./MOVING.
+HALE: OF COURSE IT IS.
+
+scene middle:
+IDRA: MORE ON THIS/LEDGE! THEY WERE/HANGING IN THE/ROCK, WAITING!
+
+scene summit:
+WREN: THE TOP! THEY'RE/RINGING... NO/SOUND COMES OUT!
+
+chest 10 1:
+BRANNOCK: A BELL. SMALL,/GREEN WITH SALT./THERE'S WRITING/ROUND THE RIM.
+[AELIS] AELIS: 'WHILE I RING,/THE DROWNED/SLEEP.' A WARD/BELL. THE LAST/ONE, MAYBE.
+[MAREN] MAREN: IT'S LIKE MINE./LIKE THE MILL/BELL. I NEVER/KNEW WHAT IT/WAS FOR.
+flag: 11
+
+scene win:
+BRANNOCK: THE TOWER. THE/WALLS ARE COVERED/IN WRITING.
+[AELIS] AELIS: VAEL. HALF UNDER/THE SEA. A DOOR/BENEATH ITS/CATHEDRAL, AND/THEY SEALED IT...
+[AELIS] AELIS: ...WITH BELLS./SOMEONE HAS BEEN/OPENING IT/AGAIN.
+[!AELIS] IDRA: THE SAME ISLAND/AS THE CHART./VAEL. AND A DOOR/UNDER IT.
+[11] HALE: AND WE'VE GOT A/BELL. WE JUST/NEED A SHIP TO/HANG IT ON.
+BRANNOCK: SALTMARCH, THEN./THE PORT. WE FIND/A SHIP.
+
+scene lose:
+IDRA: DOWN! GET DOWN/OFF THE ROCK!
+
+chest 19 8:
+BRANNOCK: A HORN, CAPPED/IN BRONZE. SMELLS/LIKE A BYRE.
+[HALE] HALE: OX HORN. MY/GRAN SWORE BY/IT. A SIP AND/YOU CAN LIFT/A CART.
+[!HALE] BRANNOCK: AN OX HORN./A FARMER'S CHARM./MAYBE MORE.
+gift: OX HORN

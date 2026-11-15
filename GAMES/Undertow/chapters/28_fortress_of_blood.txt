@@ -1,0 +1,91 @@
+# Chapter 21: the fortress built on the drowned cathedral's steps. Defeat the Hollow
+# King, who has waited here since Ch 8 still wearing King Aldric's face; Aelis gets
+# his scene. A breach in the south wall lets the army into the courtyard; the
+# barracks either side rouse as the alarm spreads (or as soon as a sleeper is hit),
+# and the king sits in the hall behind the inner gate with his two callers.
+event alarm: turn 4 ; wake 1
+event alarm2: turn 6 ; wake 2
+event hall: tile 11 4 ; set 18
+
+title: BLOOD FORTRESS
+goal: SLAY THE KING
+objective: boss
+deploy: 8
+
+map:
+~~~~#######K#######~~~~~
+~~~~#__C___.___C__#~~~~~
+~~~~#_###_____###_#~~~~~
+~~~~#_#_________#_#~~~~~
+~~~~#######G#######~~~~~
+~~.....h.......h.....~~~
+~~..T.....___.....T..~~~
+~~........___........~~~
+#####G#####___#####G####
+#_____#.........#______#
+#_____#.........#______#
+#__####...h.h...####___#
+.......................=
+..T.....h.....h.....T..=
+...........T...........=
+..h.......=====.........
+
+slots:
+11 15
+12 15
+13 15
+10 14
+12 14
+14 14
+11 13
+13 13
+
+enemies:
+# name       class     x  y  lv hp str skl spd def flags        items
+HOLLOW_KING  WARDEN   11  0 20  48 16  11   8  13   boss hold    SILVER LANCE, HERO CREST*
+ROYAL_GUARD  KNIGHT   11  3 18  36 13   8   5  13   hold         STEEL LANCE
+CULTIST      MAGE      9  1 18  32 13  10   9   6   hold         THUNDER
+CULTIST      MAGE     13  1 18  32 13  10   9   6   hold         MIRE, ELIXIR*
+WATCHMAN     ARCHER    7  5 18  28 11  11   9   6   hold         STEEL BOW
+WATCHMAN     ARCHER   15  5 18  28 11  11   9   6   hold         KILLER BOW
+ROYAL_GUARD  LANCER    3  9 18  34 14   9   9   9   reserve1     STEEL LANCE
+HORNED       HORROR    2 10 18  36 13   8   8   9   reserve1     CLAWS, VULNERARY*
+ROYAL_GUARD  LANCER   19  9 18  34 14   9   9   9   reserve2     JAVELIN
+HORNED       HORROR   21 10 18  36 13   8   8   9   reserve2     CLAWS
+
+scene open:
+BRANNOCK: THE FORTRESS/ON THE STEPS. THE/CATHEDRAL'S UNDER/IT, HALF DROWNED.
+[OREN] OREN: DAIN STONE. THE/OLD KING HAD IT/BUILT. SOMETHING/ELSE MOVED IN.
+[AELIS] AELIS: HE'S IN THERE./THE THING THAT/WORE MY FATHER.
+BRANNOCK: THERE'S A BREACH/IN THE SOUTH/WALL. WE GO IN/THERE. FAST.
+
+scene alarm:
+BRANNOCK: HORNS! THE/BARRACKS ARE/WAKING!
+
+scene hall:
+BRANNOCK: THE THRONE HALL./HE'S JUST.../SITTING THERE./WAITING.
+
+scene boss:
+HOLLOW KING: LITTLE LORD. YOU/CAME ALL THIS/WAY TO KNEEL ON/MY STEPS.
+[AELIS] AELIS: YOU WEAR MY/FATHER'S FACE./YOU DON'T GET/TO KEEP IT.
+[AELIS] HOLLOW KING: DAUGHTER. HE/CALLED FOR YOU/AT THE END./OVER AND OVER.
+[AELIS] AELIS: THEN I'LL/ANSWER HIM.
+[!AELIS] BRANNOCK: ALDRIC'S FACE./ALDRIC'S CROWN./NONE OF IT IS/YOURS.
+
+chest 7 1:
+BRANNOCK: THE ROYAL/ARMOURY. ONE/BLADE STILL ON/THE RACK. SILVER.
+gift: SILVER SWORD
+
+chest 15 1:
+BRANNOCK: A GUARD-CAPTAIN'S/CHEST. HIS SPEAR/IS FINER THAN/HIS KING'S.
+gift: SILVER LANCE
+
+scene win:
+BRANNOCK: IT'S DOWN. THE/CROWN... JUST/ROLLED AWAY.
+[AELIS] AELIS: FATHER. YOU CAN/REST NOW. I'LL/TAKE IT FROM/HERE.
+[FELL:AELIS] BRANNOCK: AELIS SHOULD/HAVE BEEN HERE/TO SEE THIS.
+[14][ODA] ODA: THE BELL GOES/DOWN THOSE STEPS/WITH US. ALL OF/US, TOGETHER.
+BRANNOCK: THE CATHEDRAL/DOORS ARE OPEN./SOMETHING DOWN/THERE IS PULLING.
+
+scene lose:
+BRANNOCK: BACK THROUGH THE/BREACH! GO!

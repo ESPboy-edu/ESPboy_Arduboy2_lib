@@ -1,0 +1,101 @@
+# Chapter 19: the salt marsh between the coast road and the drowned cathedral.
+# Seize the far end of the causeway. Every pool is a tripwire: walk past it and its
+# own small group of Drowned climbs out (and the central pools give them up again
+# every 4 turns). Off the causeway, a hermit's hut: visiting it (flag 7) means
+# meeting Oda, the last bellwright, and opens 19X. A pilgrim's strongbox lies sunk
+# on an islet in the south pool.
+event middle: tile 6 7 ; spawn 1 ; demon
+event south: tile 5 11 ; spawn 2
+event north: tile 7 3 ; spawn 3
+event east: tile 15 7 ; spawn 4
+event stirs: turn 6 every 4 ; spawn 1
+
+title: SWAMP OF DEATH
+goal: CROSS THE MARSH
+objective: seize 23 7
+deploy: 8
+
+map:
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~TT~~~~~~~~~~~V.~~~~~~~
+~T..h~~~~~~~~~T..~~hh..~
+~...TT...===.....~~....~
+~.......~~~~~~~..====..~
+~~..h...~~~~~~~.....T..~
+~~......~~~~~~~...~~...~
+.....=========.........K
+.....~~~~~~~~~~...~~...~
+~~.T.~~~~~~~~~~..h.~~..~
+~.....~~~C~~~~~.....~..~
+~..h..====~~~~~..T.....~
+~......~~~====....~~=..~
+~~.T...~~~~~~~...~~~~..~
+~~~...~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+1 7
+0 7
+2 7
+3 7
+1 8
+2 8
+2 6
+3 6
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+DROWNED     HORROR   10  7 16  33 12   6   7   7   ambush1      CLAWS
+DROWNED     HORROR   12  7 16  33 12   6   7   7   ambush1      CLAWS, VULNERARY*
+DROWNED     HORROR    8 11 16  33 12   6   7   7   ambush2      CLAWS
+BELLWRAITH  WRAITH   11 12 16  31 12   8   8   6   ambush2      CLAWS
+DROWNED     HORROR   10  3 16  33 12   6   7   7   ambush3      CLAWS
+HORNED      HORROR   12  3 16  35 13   7   7   9   ambush3      CLAWS
+HORNED      HORROR   19  4 17  36 13   8   8   9   ambush4      CLAWS, ELIXIR*
+CULTIST     MAGE     22  6 17  30 12   9   8   5   hold         THUNDER*
+CULTIST     MAGE     22  8 17  30 12   9   8   5   hold         MIRE
+WATCHMAN    ARCHER   20  2 17  28 11  11   9   6   hold         KILLER BOW*
+
+scene open:
+BRANNOCK: SALT MARSH. THE/OLD ROAD SINKS/INTO IT AND/COMES UP AGAIN,/MILES ON.
+[WREN] WREN: THE WATER'S/WRONG. NOTHING/MOVES IN IT./NOT EVEN FROGS.
+[THANE] THANE: THE DROWNED SLEEP/IN WATER LIKE/THIS. EVERY POOL/COULD HOLD THEM.
+BRANNOCK: SINGLE FILE./STAY ON THE/STONES, AND/WATCH THE POOLS.
+
+scene middle:
+BRANNOCK: THE POOL! THEY'RE/CLIMBING OUT OF/THE WATER!
+
+scene south:
+BRANNOCK: MORE OF THEM!/THE WHOLE BOG IS/FULL OF THEM!
+
+scene north:
+BRANNOCK: THE NORTH POOL!/WEAPONS UP!
+
+scene east:
+BRANNOCK: ONE OF THE HORNED/IN THE REEDS!/WATCH THE FORD!
+
+scene stirs:
+BRANNOCK: THE WATER'S/STIRRING AGAIN.
+
+village 15 1:
+ODA: WHO'S THAT?/NOBODY COMES OUT/HERE. NOBODY/SANE, ANYHOW.
+BRANNOCK: WE'RE BOUND FOR/THE DROWNED/CATHEDRAL.
+ODA: THEN YOU'RE NOT/SANE EITHER./YOU'LL WANT A/BELL. A REAL ONE.
+ODA: THE OLD FOUNDRY,/EAST, IN THE/REEDS. FIND ME/THERE, IF YOU/LIVE THAT LONG.
+gift: VULNERARY
+flag: 7
+
+chest 9 10:
+BRANNOCK: A STRONGBOX, SUNK/TO THE LID. A/PILGRIM'S, MAYBE./THERE'S SILVER/INSIDE.
+gift: SILVER AXE
+
+scene win:
+BRANNOCK: SOLID GROUND./AT LAST.
+[7] BRANNOCK: THAT HERMIT. A/BELL, HE SAID. A/REAL ONE.
+[7][MAREN] MAREN: A BELL BIG ENOUGH/TO SHUT A GATE?/WE HAVE TO FIND/HIM, BRANNOCK.
+[7][!MAREN][IDRA] IDRA: THEN WE FIND HIS/FOUNDRY. WHAT'S A/DAY, AFTER ALL/THIS?
+[!7] BRANNOCK: SMOKE, BACK IN/THE REEDS./SOMEONE LIVES/OUT HERE.
+[!7] BRANNOCK: NO TIME NOW. THE/CATHEDRAL WON'T/WAIT FOR US.
+
+scene lose:
+BRANNOCK: BACK! BACK TO/THE ROAD!

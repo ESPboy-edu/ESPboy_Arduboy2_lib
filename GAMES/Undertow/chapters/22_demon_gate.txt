@@ -1,0 +1,91 @@
+# Chapter 17: the first gate, a ring of standing stones over a chasm. Defeat the
+# Gatekeeper. A single ford of fallen stones crosses the chasm (the demons' road
+# too); portals on the flanks carry heroes across, and the gate spills a demon
+# group every 3 turns until the Gatekeeper falls (flag 17). One Drowned stands
+# apart and never attacks: if MAREN talks to him (flag 6) he says Old Tam's name,
+# which opens 17X.
+event gate: turn 3 every 3 ; spawn 1 ; until 17 ; demon
+event fallen: falls GATEKEEPER ; set 17
+event westway: tile 3 9 ; warp 4 4 ; repeat
+event eastway: tile 20 9 ; warp 19 4 ; repeat
+event still: talk MAREN to STILL ONE ; set 6
+
+title: THE DEMON GATE
+goal: SLAY THE KEEPER
+objective: boss
+deploy: 8
+
+map:
+######...#######...#####
+#.........#.K.#.........
+#...........h...........
+#.....T....h.h.....T....
+....O..............O....
+~~~~~~~~~~~~=~~~~~~~~~~~
+~~~~~~~~~~~~=~~~~~~~~~~~
+~~~~~~~~~~~~=~~~~~~~~~~~
+........................
+...O................O...
+.....T.....h......T.....
+........................
+..h.........T.......h...
+........................
+....T..............T....
+........................
+
+slots:
+11 14
+12 14
+10 14
+13 14
+11 15
+12 15
+10 15
+13 15
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+GATEKEEPER  HORROR   12  1 17  44 15   9   8  11   boss hold    CLAWS, OX HORN*
+HORNED      HORROR   11  2 15  34 13   7   7   9   ambush1      CLAWS
+HORNED      HORROR   13  2 15  34 13   7   7   9   ambush1      CLAWS
+DROWNED     HORROR   12  3 15  31 12   6   7   7   ambush1      CLAWS
+BELLWRAITH  WRAITH    5  2 15  30 12   8   8   6   -            CLAWS
+BELLWRAITH  WRAITH   18  2 15  30 12   8   8   6   -            CLAWS, ELIXIR*
+CULTIST     MAGE      2  1 15  28 12   9   8   5   hold         THUNDER
+CULTIST     MAGE     22  1 15  28 12   9   8   5   hold         MIRE
+DROWNED     HORROR    6 11 14  30 11   6   6   7   -            CLAWS
+STILL_ONE   HORROR   16 12 12  32 12   7   9   8   hold
+
+scene open:
+BRANNOCK: THE STONES. AND/UNDER THEM, A/CRACK IN THE/WORLD.
+[THANE] THANE: THE FIRST GATE./THE OLD BOOKS/SAID THERE WERE/SEVEN. SEVEN!
+[AELIS] AELIS: THOSE RINGS ON/THE GROUND, BOTH/SIDES OF THE/CHASM. THEY/CARRY YOU ACROSS.
+BRANNOCK: AND ONE ROAD OF/FALLEN STONES/DOWN THE MIDDLE./THEIRS AND OURS.
+[MAREN] MAREN: THAT ONE. THE/DROWNED STANDING/APART. HE ISN'T/MOVING. HE'S.../WATCHING.
+
+scene gate:
+BRANNOCK: THE GATE! MORE/OF THEM, CLIMBING/OUT OF THE DARK!
+
+scene boss:
+GATEKEEPER: SEVEN DOORS,/LITTLE LORD. YOU/WILL NOT LIVE TO/KNOCK ON THE/SECOND.
+
+scene fallen:
+BRANNOCK: IT'S DOWN! THE/STONES ARE/GOING DARK!
+
+scene westway:
+BRANNOCK: ACROSS!
+
+scene still:
+MAREN: YOU. CAN YOU HEAR/ME? I'M MAREN./FROM THE MILL.
+STILL ONE: ...MILL. THE/MILL. GRANDDAD.../TAM. OLD TAM.
+MAREN: LIR? LIR, IS/THAT YOU?
+STILL ONE: ...BELOW. COME/BELOW. I'LL SHOW/YOU HOW THEY/HOLD US.
+
+scene win:
+BRANNOCK: THE GATE'S SHUT./ONE OF SEVEN.
+[6] MAREN: LIR. TAM'S BOY./HE WANTS US TO/FOLLOW HIM DOWN./WE HAVE TO GO.
+[!6] BRANNOCK: THE DROWNED THAT/STOOD APART.../GONE. BACK INTO/THE DARK.
+[HESK] HESK: SIX MORE, THE/MONK SAYS. THEN/WE'D BETTER/START WALKING.
+
+scene lose:
+BRANNOCK: AWAY FROM THE/EDGE! FALL BACK!

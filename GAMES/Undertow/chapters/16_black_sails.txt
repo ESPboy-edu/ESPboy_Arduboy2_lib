@@ -1,0 +1,88 @@
+# Chapter 12: at sea. A cult-crewed galley under black sails runs the ship down and throws
+# boarding planks across. Hold the deck for eight turns until the wind turns. Pirates come
+# over the planks every 3 turns (until Black Marl falls), and things climb out of the sea
+# every 3 turns -- unless the ward bell from 10X hangs on the mast (flag 11).
+event boarders: turn 2 every 3 ; spawn 1 ; until 18
+event horrors: turn 3 every 3 ; spawn 2 ; until 11 ; demon
+event bell: turn 3 ; needs 11
+event marl: falls BLACK MARL ; set 18
+
+title: BLACK SAILS
+goal: SURVIVE 8 TURNS
+objective: survive 8
+deploy: 7
+
+map:
+~~~~~~~~~~~~~~~~~~~~~~~~
+~RRRRRRRRRR~~~~~~~~~~~~~
+~RDDDDDDDDR~~RRRRRRRRRR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDRDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDDDDDDDDDRDDDR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDDDDDDDDDRDDDR~
+~RDDDRDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDR~~RDDDDDDDDR~
+~RDDDDDDDDR~~RRRRRRRRRR~
+~RRRRRRRRRR~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+4 7
+5 7
+4 8
+5 8
+3 6
+3 9
+6 7
+
+enemies:
+# name       class      x  y  lv hp str skl spd def flags        items
+BLACK_MARL   SWORDSMAN 20  7 13  36 13  12  11   8   boss hold   STEEL SWORD, HEART ROOT*
+PIRATE       FIGHTER   16  4 11  30 11   7   8   6   -           STEEL AXE
+PIRATE       FIGHTER   16 11 11  30 11   7   8   6   -           HAND AXE, VULNERARY*
+PIRATE       FIGHTER   14  5 11  30 11   7   8   6   ambush1     STEEL AXE
+PIRATE       FIGHTER   14 10 11  30 11   7   8   6   ambush1     IRON AXE
+PIRATE       ARCHER    20  3 11  26 10  10   8   4   -           STEEL BOW
+PIRATE       ARCHER    20 12 11  26 10  10   8   4   -           STEEL BOW
+SEA_HORROR   HORROR     2  2 11  32 12   6   6   8   ambush2     CLAWS
+SEA_HORROR   HORROR     9 13 11  32 12   6   6   8   ambush2     CLAWS
+SEA_HORROR   HORROR     2 13 11  32 12   6   6   8   ambush2     CLAWS
+
+scene open:
+[ROOK] ROOK: SAIL! OFF THE/STARBOARD BOW. A/GALLEY, BLACK/SAILS. CULT SHIP.
+[!ROOK] WREN: A SHIP! BLACK/SAILS, AND SHE'S/FASTER THAN US.
+HALE: THEY'RE COMING/ALONGSIDE./THEY'RE THROWING/PLANKS ACROSS!
+[ROOK] ROOK: HOLD THE DECK/TILL THE WIND/TURNS. EIGHT/TURNS, NO MORE.
+[!ROOK] IDRA: WE CAN'T OUTRUN/THEM. HOLD THE/DECK UNTIL THE/WIND CHANGES.
+[11] BRANNOCK: THE WARD BELL'S/ON THE MAST./LET'S SEE IF IT/DOES WHAT IT/SAYS.
+
+scene boss:
+BLACK MARL: THE MOTHER'S/DEAD, BUT HER/TIDE STILL PAYS.
+BLACK MARL: YOUR SHIP, YOUR/LIVES. THE SEA/TAKES ALL.
+
+scene boarders:
+WREN: OVER THE PLANKS!/THEY'RE BOARDING!
+
+scene horrors:
+IDRA: SOMETHING'S/CLIMBING THE/HULL! OUT OF THE/WATER!
+
+scene bell:
+BRANNOCK: THE BELL... IT'S/RINGING ON ITS/OWN. AND THE/WATER'S GONE/STILL.
+[AELIS] AELIS: WHATEVER WAS/UNDER US TURNED/AWAY. IT WORKS.
+
+scene marl:
+[ROOK] ROOK: MARL'S DOWN!/THEIR NERVE'S/GONE. NO MORE OF/THEM ON THE/PLANKS!
+[!ROOK] HALE: THEIR CAPTAIN'S/DOWN! THEY'RE NOT/COMING ACROSS/ANY MORE!
+
+scene win:
+[ROOK] ROOK: WIND'S TURNED!/CUT THE PLANKS!/LET HER RUN!
+[!ROOK] IDRA: THE WIND! CUT THE/PLANKS LOOSE!
+BRANNOCK: LAND. GREY SAND,/AND A TOWN UNDER/THE WATER.
+[ROOK] ROOK: VAEL. SHE'S HERE/SOMEWHERE. SHE/HAS TO BE.
+
+scene lose:
+IDRA: BRANNOCK'S DOWN!/GET HIM BELOW!

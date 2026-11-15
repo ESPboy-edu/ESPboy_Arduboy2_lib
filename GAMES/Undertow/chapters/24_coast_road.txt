@@ -1,0 +1,88 @@
+# Chapter 18: the cult's whole host catches the army on the coast road, from three
+# sides. Survive 10 turns. Three ambush groups arrive on turns 2, 4 and 6 from the
+# west, east and north edges and come back while the fight goes on; a horned
+# sentry sleeps in the ruined tollhouse until someone passes it.
+event west: turn 2 every 5 ; spawn 1 ; demon
+event east: turn 4 every 5 ; spawn 2
+event north: turn 6 ; spawn 3
+event toll: tile 12 7 ; wake 4
+
+title: THE COAST ROAD
+goal: SURVIVE 10 TURNS
+objective: survive 10
+deploy: 8
+
+map:
+..T....hh.......hh....T.
+.......hh..T....hh......
+..T..........T..........
+.....##............##...
+..........###...........
+...........#............
+.T........#.#.......T...
+.......h............h...
+.......h.....T......h...
+........................
+...T.........h......T...
+....##...........##.....
+....V...................
+~~~~~~~~~=~~~~~~~=~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+slots:
+12 11
+11 11
+13 11
+12 12
+11 12
+13 12
+10 11
+14 11
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+HORNED      HORROR    0  6 16  35 13   7   7   9   ambush1      CLAWS
+DROWNED     HORROR    0  8 16  33 12   6   7   7   ambush1      CLAWS
+DROWNED     HORROR    0 10 16  33 12   6   7   7   ambush1      CLAWS, VULNERARY*
+HORNED      HORROR   23  6 16  35 13   7   7   9   ambush2      CLAWS
+BELLWRAITH  WRAITH   23  8 16  31 12   8   8   6   ambush2      CLAWS
+DROWNED     HORROR   23 10 16  33 12   6   7   7   ambush2      CLAWS
+CULTIST     MAGE     11  0 16  29 12   9   8   5   ambush3      THUNDER
+ZEALOT      KNIGHT   13  0 16  34 12   7   5  13   ambush3      SILVER LANCE
+WATCHMAN    ARCHER   12  1 16  27 11  11   9   6   ambush3      KILLER BOW
+HORNED      HORROR   11  6 17  36 13   8   8   9   reserve4     CLAWS, ELIXIR*
+
+scene open:
+BRANNOCK: THE COAST ROAD./TWO DAYS TO THE/NEXT GATE, IF/WE PUSH.
+[WREN] WREN: BRANNOCK. THE/BIRDS HAVE GONE/QUIET. ALL OF/THEM.
+[SAOIRSE] SAOIRSE: I SAW THEM FROM/THE AIR. THEY'RE/ALL AROUND US./THE WHOLE HOST.
+[!13][THANE] THANE: THE DROWNED IN/THEIR HOST... I/THINK SOMETHING/CALLS THEM UP. A/BELL? A HYMN?
+[!13][THANE] THANE: IF WE KNEW HOW/IT HELD THEM, WE/COULD LET THEM/GO. BUT I DON'T./NOT YET.
+[!13][!THANE][MAREN] MAREN: THE DROWNED. THEY/WALK LIKE THEY'RE/CALLED. LIKE THE/MILL FOLK TO THE/EVENING BELL.
+BRANNOCK: THEN WE STAND/HERE. BACKS TO/THE SEA. NOBODY/BREAKS.
+
+scene west:
+BRANNOCK: WEST! HERE THEY/COME!
+
+scene east:
+BRANNOCK: EAST SIDE! CLOSE/UP!
+
+scene north:
+BRANNOCK: OFF THE HILLS!/THEY'RE COMING/DOWN FROM THE/NORTH!
+
+scene toll:
+BRANNOCK: THE TOLLHOUSE!/ONE WAS WAITING/INSIDE!
+
+village 4 12:
+BRANNOCK: A FISHING HUT,/ABANDONED. UNDER/THE NETS, WRAPPED/IN OILCLOTH, A/SILVER SWORD.
+gift: SILVER SWORD
+
+scene win:
+BRANNOCK: ...THEY'RE/PULLING BACK./WE HELD.
+[IDRA] IDRA: WE HELD. ALL OF/US, AGAINST ALL/OF THEM.
+[THANE] THANE: THE DROWNED/CATHEDRAL. PAST/THE SALT MARSH,/THE BOOKS SAY./THE LAST GATE.
+BRANNOCK: THEN THROUGH THE/MARSH WE GO.
+
+scene lose:
+BRANNOCK: WE'RE BROKEN!/TO THE BOATS!

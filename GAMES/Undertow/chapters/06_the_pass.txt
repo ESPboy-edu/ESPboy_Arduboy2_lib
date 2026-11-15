@@ -1,0 +1,72 @@
+# The only road into Dain crosses a mountain pass with one gap at the top.
+# Walking through the gap wakes the archers posted on both ridges; on turn 5
+# riders close the road behind. A courier at the far end carries Corvane's
+# orders: kill him before the lord seizes the pass to open 5X.
+event ridges: tile 11 7 ; wake 1
+event behind: turn 5 ; spawn 2
+event orders: falls COURIER ; set 2
+
+title: THE PASS
+goal: SEIZE THE PASS
+objective: seize 23 7
+deploy: 6
+
+map:
+########################
+####hh##########hhh#####
+###hhhh########hhhhh####
+##hh..hh######hh...hh###
+#hh.....h####hh......h##
+#h.......h##h..........#
+..........##............
+........................
+..........##............
+#h.......h##h..........#
+#hh.....h####hh......h##
+##hh..hh######hh...hh###
+###hhhh########hhhhh####
+####hh##########hhh#####
+########################
+########################
+
+slots:
+2 7
+3 6
+3 8
+1 7
+2 6
+2 8
+
+enemies:
+# name   class     x  y  lv hp str skl spd def flags        items
+ARCHER   ARCHER   14  4  5  18  5   6   5   2   hold reserve IRON BOW
+ARCHER   ARCHER   14 10  5  18  5   6   5   2   hold reserve IRON BOW
+RIDER    CAVALIER  0  6  5  22  6   5   6   5   ambush2      IRON SWORD
+RIDER    CAVALIER  0  8  5  22  6   5   6   5   ambush2      IRON LANCE, VULNERARY
+SOLDIER  LANCER   17  7  5  21  6   5   5   5   -            IRON LANCE
+SOLDIER  LANCER   19  6  5  21  6   5   5   5   -            IRON LANCE, STEEL BOW*
+SOLDIER  LANCER   19  9  5  21  6   5   5   5   -            JAVELIN
+COURIER  ARCHER   22  6  5  18  4   6   8   2   hold         IRON BOW, HERO CREST*
+
+scene open:
+OREN: THE PASS. ONE/GAP AT THE TOP,/WIDE ENOUGH FOR/ONE CART.
+HALE: I HATE A GAP./GAPS HAVE PEOPLE/ON BOTH SIDES OF/'EM.
+WREN: THERE'S A RIDER/AT THE FAR END./COURIER'S/COLOURS.
+BRANNOCK: THEN HE'S/CARRYING/SOMEONE'S ORDERS./I WANT THEM.
+
+scene ridges:
+WREN: BOWS! ON THE/RIDGES, BOTH/SIDES!
+
+scene behind:
+IDRA: RIDERS BEHIND US!/THEY'VE CLOSED/THE ROAD!
+
+scene orders:
+BRANNOCK: SEALED WITH/CORVANE'S MARK./'HOLD THE PASS./I AM AT THE/LODGE.'
+OREN: HIS HUNTING/LODGE. A DAY/NORTH OF HERE.
+
+scene win:
+BRANNOCK: THE PASS IS/OURS. DAIN'S/FARMLAND FROM/HERE DOWN.
+[2] IDRA: AND CORVANE'S/LODGE IS NORTH.
+
+scene lose:
+IDRA: BRANNOCK...!/BACK DOWN THE/ROAD! RUN!

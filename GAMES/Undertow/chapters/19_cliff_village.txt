@@ -1,0 +1,106 @@
+# Chapter 14: a cliff village that stopped paying tribute is being made an example
+# of. Survive 8 turns while the Drowned climb the three cliff paths in waves.
+# A sea-eagle rider harries the party, taking them for cultists: only ROOK can
+# talk her down (she's Saoirse, the woman he crossed the sea for). The village
+# monk, Thane, is locked in his own chapel; reach him before turn 6.
+event west: turn 2 every 2 ; spawn 1 ; demon
+event east: turn 3 every 2 ; spawn 2
+event saoirse: talk ROOK to SAOIRSE ; join
+
+title: CLIFF VILLAGE
+goal: SURVIVE 8 TURNS
+objective: survive 8
+deploy: 8
+captive: THANE 9 1 leaves 6
+
+map:
+..T.....###.....T.......
+.V......#_#.........T...
+........#_#........V....
+..T.....#.#.............
+.............T..........
+....##..........##......
+........................
+..T..........T.......T..
+........................
+hhhh.hhhhhhh.hhhhhhh.hhh
+hhhh.hhhhhhh.hhhhhhh.hhh
+####.#######.#######.###
+####.#######.#######.###
+~~~~.~~~~~~~.~~~~~~~.~~~
+~~~~.~~~~~~~.~~~~~~~.~~~
+~~~~D~~~~~~~D~~~~~~~D~~~
+
+slots:
+12 6
+13 6
+11 6
+12 7
+14 6
+11 7
+13 5
+12 5
+
+enemies:
+# name      class     x  y  lv hp str skl spd def flags        items
+SAOIRSE     SKYRIDER 21  2 12  30 11  11  14   7   -            STEEL LANCE, JAVELIN
+DROWNED     HORROR    4 14 12  31 12   5   6   6   ambush1      CLAWS
+DROWNED     HORROR   12 14 12  31 12   5   6   6   ambush1      CLAWS
+DROWNED     HORROR    4 15 12  31 12   5   6   6   ambush1      CLAWS
+DROWNED     HORROR   20 14 12  31 12   5   6   6   ambush2      CLAWS
+DROWNED     HORROR   12 15 12  31 12   5   6   6   ambush2      CLAWS
+DROWNED     HORROR   20 15 12  31 12   5   6   6   ambush2      CLAWS, VULNERARY*
+ZEALOT      LANCER    3  6 13  29 11   8   8   8   -            STEEL LANCE
+ZEALOT      LANCER   20  6 13  29 11   8   8   8   -            STEEL LANCE
+CULTIST     MAGE      1  3 13  28 12   8   7   4   -            MIRE, ELIXIR*
+
+scene open:
+BRANNOCK: SMOKE OVER THE/CLIFFS. THE/VILLAGE BRIGID/SPOKE OF.
+[IDRA] IDRA: ROBED MEN IN THE/LANES. AND THE/CHAPEL'S BOARDED/SHUT...
+[IDRA] IDRA: ...WITH SOMEONE/STILL INSIDE.
+BRANNOCK: THEY MEAN TO/BURN IT. HOLD THE/SQUARE. GET THAT/CHAPEL OPEN.
+[WREN] WREN: SOMETHING IN THE/SKY! A BIRD... A/HUGE ONE. THERE'S/A RIDER ON IT!
+SAOIRSE: MORE OF YOU?/YOU'LL NOT TAKE/THIS VILLAGE/WHILE I FLY!
+[ROOK] ROOK: ...THAT VOICE./THAT'S HER./NOBODY TOUCH HER./LET ME TALK.
+
+scene west:
+BRANNOCK: THE WEST PATH!/THEY'RE CLIMBING/THE CLIFF!
+
+scene east:
+BRANNOCK: AND THE EAST!/HOLD THE TOP OF/THE PATHS!
+
+scene saoirse:
+ROOK: SAOIRSE! IT'S ME./IT'S ROOK.
+SAOIRSE: ...ROOK? YOU/CAME. YOU/ACTUALLY CAME,/YOU STUBBORN/FOOL.
+ROOK: THESE AREN'T/CULTISTS. THEY'RE/WITH ME. FIGHT/WITH US.
+SAOIRSE: THEN THE SKY IS/YOURS TOO. MIND/THE TALONS.
+
+scene warn:
+BRANNOCK: THE CHAPEL'S/CATCHING! GET HIM/OUT, NOW!
+
+scene recruit:
+THANE: THE BOARDS... YOU/PULLED THEM OFF./YOU'RE NOT FROM/THE TEMPLE.
+BRANNOCK: NO. WE'RE HERE TO/STOP IT.
+THANE: THEN I'LL SING/FOR YOU. THE OLD/HYMNS. THE/DROWNED HATE/THEM.
+
+scene taken:
+BRANNOCK: THE ROOF'S GONE/IN... WE WERE TOO/SLOW.
+
+village 1 1:
+BRANNOCK: A FISHER'S WIFE,/HIDING THE/CHILDREN. SHE/GIVES US WHAT/SHE HAS.
+BRANNOCK: HER HUSBAND'S/SWORD. SILVER. HE/WON'T BE COMING/BACK FOR IT.
+gift: SILVER SWORD
+
+village 19 2:
+BRANNOCK: THE HEADMAN'S/HOUSE. HE PAID/THE TRIBUTE/TWENTY YEARS.
+BRANNOCK: NOT ANY MORE,/HE SAYS. HE GIVES/US THE SPEAR HE/KEPT FOR THE DAY/THEY CAME AGAIN.
+gift: SILVER LANCE
+
+scene win:
+BRANNOCK: THEY'RE FALLING/BACK DOWN THE/CLIFFS. IT'S/OVER.
+[SAOIRSE] SAOIRSE: TWO YEARS I'VE/FLOWN FOR THESE/PEOPLE. ALONE./NOT ALONE NOW.
+[THANE] THANE: THE TOWN BELL./RING IT, AND THE/ISLAND WILL RISE./I'LL SHOW YOU.
+[!THANE] BRANNOCK: THE MONK... HE/SPOKE OF A BELL/IN THE OLD TOWN./WE'LL FIND IT.
+
+scene lose:
+BRANNOCK: OFF THE CLIFF/TOP! FALL BACK!

@@ -1,0 +1,97 @@
+# Chapter 9: with the Hollow King gone, the river under Dainholt gives up its
+# dead. Survive ten turns while Drowned climb out of the canals, two waves taking
+# turns. Aelis, the king's daughter, is trapped in the chapel; reach her before
+# the water does (she's gone after turn 6).
+event west: turn 2 every 2 ; spawn 1 ; demon
+event east: turn 3 every 2 ; spawn 2
+
+title: BLACK WATER
+goal: SURVIVE 10 TURNS
+objective: survive 10
+deploy: 8
+captive: AELIS 11 1 leaves 6
+
+map:
+....##...######...##....
+....##...#____#...##..V.
+.........#____#.........
+.T.......##G###......T..
+........................
+..##..........##......##
+~~~~=~~~~~~=~~~~~~~=~~~~
+........................
+..V..........T...~......
+.................~......
+....##...........~...##.
+.................=......
+..T..............~......
+.................~....T.
+......##.........~......
+.................~......
+
+slots:
+10 11
+11 11
+9 11
+10 12
+11 12
+9 12
+10 13
+11 13
+
+enemies:
+# name     class    x  y  lv hp str skl spd def flags          items
+DROWNED    HORROR   2  7  7  23  8   4   5   4   ambush1       CLAWS
+DROWNED    HORROR   8  7  7  23  8   4   5   4   ambush1       CLAWS
+DROWNED    HORROR  14  7  7  23  8   4   5   4   ambush1       CLAWS
+DROWNED    HORROR  21  7  7  23  8   4   5   4   ambush1       CLAWS
+DROWNED    HORROR  16  9  7  23  8   4   5   4   ambush2       CLAWS
+DROWNED    HORROR  18 10  7  23  8   4   5   4   ambush2       CLAWS
+DROWNED    HORROR  16 13  7  23  8   4   5   4   ambush2       CLAWS
+DROWNED    HORROR  18 14  7  23  8   4   5   4   ambush2       CLAWS
+CULTIST    MAGE     7  2  9  24  9   7   6   3   -             MIRE, VULNERARY*
+CULTIST    MAGE    16  2  9  24  9   7   6   3   -             MIRE
+
+scene open:
+BRANNOCK: THE CANALS. THE/WATER'S BLACK/AND IT'S RISING.
+WREN: THE GIRL WENT IN/THERE! THE CHAPEL/ON THE NORTH/BANK. SHE'S/TRAPPED!
+IDRA: AND ROBED MEN/BY THE CHAPEL,/WAITING FOR THE/WATER TO DO/THEIR WORK.
+BRANNOCK: HOLD THIS SQUARE./SOMEONE GET TO/THAT CHAPEL.
+
+scene west:
+HALE: THE CANAL!/THEY'RE CLIMBING/OUT OF THE CANAL!
+
+scene east:
+WREN: EAST SIDE TOO!/THEY JUST KEEP/COMING!
+
+scene recruit:
+AELIS: STAY BACK! I/KNOW FIRE AND I/WILL USE IT.
+BRANNOCK: WE'RE NOT HIS. WE/KILLED THE THING/ON THE THRONE.
+AELIS: ...THEN YOU/KILLED WHAT WORE/MY FATHER. I'M/AELIS. I WATCHED/HIM CHANGE.
+AELIS: I'VE READ THE OLD/TEXTS. LET ME/FIGHT. I'LL TELL/YOU THE REST IF/WE LIVE.
+
+scene warn:
+IDRA: THE WATER'S AT/THE CHAPEL STEPS!/WE'RE OUT OF/TIME!
+
+scene taken:
+WREN: THE CHAPEL'S GONE/UNDER. SHE.../SHE DIDN'T COME/OUT.
+
+village 22 1:
+HALE: AN OLD SCHOLAR/LIVED HERE. HE/LEFT A BOOK OF/STORMS ON THE/TABLE.
+gift: THUNDER
+
+village 2 8:
+IDRA: A BAKER HIDING/IN HIS OVEN. HE/SAYS TAKE WHAT/YOU NEED AND GO.
+gold: 600
+
+scene win:
+BRANNOCK: THE WATER'S/GOING DOWN. FOR/NOW.
+[AELIS] AELIS: THE DROWNED/AREN'T BORN. THEY/ARE CALLED. THE/TEXTS SAY THE/CALLING COMES...
+[AELIS] AELIS: ...FROM ACROSS/THE SEA. AND THE/ROBED ONES DO THE/CALLING. A CULT./THE UNDERTOW.
+[!9] AELIS: MY FATHER HAD THE/CATHEDRAL BELLS/MELTED DOWN. I/NEVER KNEW WHY./NOW I WONDER.
+[!AELIS] BRANNOCK: THE ROBED ONES/CALL THEMSELVES/THE UNDERTOW. A/DYING ONE SAID/SO, SMILING.
+[!AELIS] BRANNOCK: HE SAID THE CALL/COMES FROM OVER/THE SEA. THEIR/CAVES ARE ON THE/COAST.
+IDRA: THEN WE GO TO/THE COAST.
+
+scene lose:
+IDRA: BRANNOCK'S DOWN!/GET HIM OUT OF/THE WATER!

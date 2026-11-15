@@ -1,0 +1,70 @@
+# Side chapter: only played if Kell's ledger was found in chapter 3
+# (story flag 1). On turn 3 the Drowned rise out of the river.
+event rising: turn 3 ; spawn 1 ; demon
+event paid: falls VOSS ; set 8
+
+title: THE GREY ROAD
+goal: DEFEAT VOSS
+label: 3X
+requires: flag 1
+objective: boss
+deploy: 5
+
+map:
+~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
+..~~~....~~~~.....~~~~..
+.......................h
+.T....T......T......hhhh
+.....................hKh
+........................
+.TT.......T.....T......h
+........................
+....h........TT.....h...
+TT.......h.........TTT..
+TTT....TTT......TTTTT...
+TTTT..TTTTT..TTTTTTTT..T
+TTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTT
+
+slots:
+1 6
+1 5
+0 7
+2 7
+0 5
+
+enemies:
+# name   class    x  y  lv hp str skl spd def flags        items
+BANDIT   FIGHTER 11  6  4  22  6   3   5   3   -            IRON AXE
+BANDIT   FIGHTER 15  8  4  22  6   3   5   3   -            HAND AXE
+SPEAR    LANCER  18  5  4  21  6   5   5   4   -            IRON LANCE, VULNERARY
+BOWMAN   ARCHER  21  7  4  18  5   5   5   2   -            IRON BOW
+DROWNED  HORROR   5  3  5  20  6   3   4   3   ambush       CLAWS
+DROWNED  HORROR  10  3  5  20  6   3   4   3   ambush       CLAWS
+DROWNED  HORROR  14  2  5  20  6   3   4   3   ambush       CLAWS
+DROWNED  HORROR  17  3  5  20  6   3   4   3   ambush       CLAWS
+VOSS     ARCHER  22  5  7  26  6   7   6   4   boss hold    IRON BOW, KILLER BOW*
+
+scene open:
+BRANNOCK: THE GREY ROAD./FOG OFF THE RIVER/AND NOT A BIRD/SINGING.
+VOSS: KELL'S LEDGER/FOUND ITS WAY TO/YOU? HOW/TIRESOME.
+VOSS: THE RIVER IS/HUNGRY. I MEANT/TO FEED IT A/PRIEST. YOU WILL/DO INSTEAD.
+MAREN: HE MEANS IT./KEEP AWAY FROM/THE WATER.
+
+scene rising:
+WREN: THE WATER'S.../SOMETHING'S/COMING UP OUT OF/THE RIVER!
+VOSS: RISE! TAKE THEM/DOWN WITH YOU!
+IDRA: WHAT ARE THOSE/THINGS?!
+
+scene boss:
+VOSS: STEEL WON'T SAVE/YOU. THE RIVER/KEEPS WHAT IT/TAKES.
+
+scene win:
+BRANNOCK: HE'S DEAD. AND/THOSE THINGS WENT/BACK UNDER.
+MAREN: HE CALLED THEM./AND IF HE COULD,/SOMEONE TAUGHT/HIM HOW.
+IDRA: THE LEDGER'S/LAST PAGE. 'PAID/IN FULL BY LORD/CORVANE, DAIN.'
+
+scene lose:
+IDRA: BRANNOCK...!/AWAY FROM THE/RIVER! FALL BACK!

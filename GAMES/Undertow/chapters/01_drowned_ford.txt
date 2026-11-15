@@ -1,0 +1,59 @@
+# Chapter source -- see chapters/README.txt for every keyword.
+
+title: DROWNED FORD
+goal: SEIZE THE KEEP
+objective: seize 21 7
+deploy: 4
+
+map:
+TT....h.....~~.....TTTTT
+T.......T...~~......TTT.
+..h.........~~..h.......
+.......TT...~~..........
+....T.......~~......hh..
+............~~....######
+..h.........~~....#....#
+............==....#..K.#
+........T...~~.........#
+...........T~~....#....#
+TT..........~~....######
+T.....h.....~~....T.....
+............==..........
+..T.........~~...h......
+......TT....~~......TT..
+TTT.........~~.....TTTTT
+
+slots:
+# x y -- the first slot is always the lord's; the rest fill in roster order
+2 7
+2 8
+1 6
+1 9
+
+enemies:
+# name   class    x  y  lv hp str skl spd def flags      items
+RAIDER   FIGHTER 15  7  1  17  4   1   3   2   -          IRON AXE
+RAIDER   FIGHTER 15 12  1  17  4   1   3   2   -          IRON AXE, VULNERARY*
+RAIDER   FIGHTER  8 12  1  17  4   1   3   2   -          HAND AXE
+BOWMAN   ARCHER  20  4  2  15  3   3   3   1   -          IRON BOW
+SPEAR    LANCER  17  8  2  18  4   3   3   3   -          IRON LANCE
+OSK      KNIGHT  21  7  5  26  6   4   2   6   boss hold  IRON LANCE
+
+scene open:
+OSK: THE FORD DROWNS/ALL WHO CROSS IT./TURN BACK, BOY.
+BRANNOCK: OSK HOLDS THE/KEEP. TAKE IT AND/THE FORD IS OURS.
+IDRA: HIS RAIDERS WATCH/BOTH CROSSINGS./MIND THE WATER.
+BRANNOCK: HALE, YOUR AXE/FOR THAT KNIGHT./WREN, KEEP BACK.
+HALE: AYE. TIN CANS/RING NICE WHEN/YOU HIT 'EM.
+WREN: I'LL STAY BEHIND/THE SPEARS. YOU/OWE ME A DRINK.
+
+scene boss:
+OSK: NONE LEAVE THIS/WATER BREATHING./COME, THEN.
+
+scene win:
+BRANNOCK: THE FORD IS OURS/TONIGHT.
+IDRA: LOOK AT THEIR/PURSES. SILVER/FROM DAIN, NEW-/STRUCK.
+HALE: RAIDERS WITH/WAGES. THAT'S NO/RAIDING PARTY.
+
+scene lose:
+IDRA: BRANNOCK...!/FALL BACK! ALL OF/YOU, FALL BACK!
